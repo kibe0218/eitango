@@ -1,6 +1,7 @@
 import SwiftUI
 //カード用(型推論エラーが出たので外に出した）
 struct CardView: View {
+    let i: Int
     let eng: String
     let jp: String
     let isFlipped: Bool
@@ -12,14 +13,16 @@ struct CardView: View {
     let wid : Double
     let hgt : Double
     let fin: Bool
+    let finish: Bool
     let flip: () -> Void//返り値も引数もないことを示している（呼び出すと何か動く関数）
+    let finishChose: () -> Void
 
     var body: some View {
         VStack {
             ZStack {
                 Text(eng)
                     .font(.system(size: CGFloat(enFont)))
-                    .foregroundStyle(fin ? .blue : reverse ? .red : .black)
+                    .foregroundStyle(fin ? Color.accentColor : reverse ? .red : .black)
                     .frame(width: wid, height: hgt)
                     .background(Color.gray.opacity(0.15))
                     .cornerRadius(20)
@@ -36,7 +39,14 @@ struct CardView: View {
             }
             .rotation3DEffect(.degrees(isFlipped ? -180 : 0), axis: (x: 0, y: 1, z: 0))
             .animation(.easeInOut(duration: 0.5), value: isFlipped)
-            .onTapGesture { flip() }//ここで親から渡された処理を行う
+            .onTapGesture {
+                if finish{
+                    finishChose()
+                }
+                else{
+                    flip()
+                }
+            }//ここで親から渡された処理を行う
         }
     }
 }
@@ -54,6 +64,7 @@ struct ContentView: View {
     //実際に表示を担当するリスト
     
     @State private var Finishlist = Array(repeating: false, count: 4)
+    //終わったカードがtrueになる
 
         
     let tangotyou = ["単語帳１","単語帳２"]
@@ -111,24 +122,30 @@ struct ContentView: View {
             try? await Task.sleep(nanoseconds: UInt64(1_000_000_000 * UInt64(waittime)))
             //UInt64型のnsしか受け取らないキモい関数
             yy += 1
-            if(4 + yy < English.count){
+            if 4 + yy < English.count {
                 Enlist[i] = English[4 + yy]
                 Jplist[i] = Japanese[4 + yy]
                 isFlipped[i] = false
-            }else{
+                //残ったカードを表示する処理
+            }else if !finish {
                 Enlist[i] = "finish!"
                 Jplist[i] = "おしまい！"
                 Finishlist[i] = true
                 jj += 1
-                if(jj >= 4){
-                    try? await Task.sleep(nanoseconds: UInt64(1_000_000_000))
-                    (Enlist[0], Jplist[0]) = ("次の単語帳をやる", "次の単語帳をやる")
-                    (Enlist[1], Jplist[1]) = ("もう一度やる", "もう一度やる")
-                    (Enlist[2], Jplist[2]) = ("シャッフル", "シャッフル")
-                    (Enlist[3], Jplist[3]) = ("終了", "終了")
-                }
+            }
+            if jj >= 4 {
+                try? await Task.sleep(nanoseconds: UInt64(1_000_000_000))
+                (Enlist[0], Jplist[0]) = ("次の単語帳をやる", "次の単語帳をやる")
+                (Enlist[1], Jplist[1]) = ("もう一度やる", "もう一度やる")
+                (Enlist[2], Jplist[2]) = ("シャッフル", "シャッフル")
+                (Enlist[3], Jplist[3]) = ("終了", "終了")
+                finish = true
             }
         }
+    }
+    
+    func finishAction(i: Int){
+        
     }
     
     var body: some View {
@@ -136,11 +153,6 @@ struct ContentView: View {
             TabView {  // タブビューを作成
                 VStack{
                     ZStack{
-                        HStack{
-                            Image(systemName: "arrow.2.circlepath").foregroundColor(.accentColor)
-                            Spacer()
-                        }
-                        .padding(30)
                         HStack{
                             Spacer()  // 左側のスペーサーでPickerを中央に寄せる
                             Picker("単語帳", selection: $number){
@@ -159,6 +171,7 @@ struct ContentView: View {
                     }.frame(maxHeight: 70)
                     ForEach(0..<4) { i in
                         CardView(
+                            i: i,
                             eng: Enlist[i],
                             jp: Jplist[i],
                             isFlipped: isFlipped[i],
@@ -170,7 +183,9 @@ struct ContentView: View {
                             wid: Double(geo.size.width * 0.85),
                             hgt: Double(geo.size.height * 0.18),
                             fin: Finishlist[i],
-                            flip: { isFlipped[i] = true; FlippTask(i: i) }
+                            finish: finish,
+                            flip: { isFlipped[i] = true; FlippTask(i: i) },
+                            finishChose: { finishAction(i: i) }
                         )
                     }
                     .padding(.bottom,10)
