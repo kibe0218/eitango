@@ -1,4 +1,39 @@
 import SwiftUI
+
+struct CardlistView: View {
+    @Environment(\.colorScheme) var colorScheme
+    
+    let i: Int
+    let title: String
+    let Font: Int
+    let wid : Double
+    let hgt : Double
+    
+    var body: some View {
+        VStack{
+            ZStack{
+                ForEach(0..<7){ z in
+                    Text("")
+                        .frame(width: wid, height: hgt)
+                        .background(Color.gray.opacity(colorScheme == .dark ? 0.25 : 0.1))
+                        .cornerRadius(20)
+                        .offset(y: Double(z) * 5 + 5)  // 下に少しずつずらす
+                        .scaleEffect(1 - Double(z) * 0.01)  // 奥のカードを少し小さく
+                        .zIndex(Double(z))  // 手前順に表示
+                }
+                Text(title)
+                    .font(.system(size: CGFloat(Font)))
+                    .foregroundStyle(colorScheme == .dark ? .white : .black)
+                    .frame(width: wid, height: hgt)
+                    .background(Color.gray.opacity(colorScheme == .dark ? 0.6 : 0.2))
+                    .cornerRadius(20)
+                    .zIndex(100)
+            }
+            .frame(height: hgt + 30)  // 山札全体の高さ調整
+            .padding(.bottom,10)
+        }
+    }
+}
 //カード用(型推論エラーが出たので外に出した）
 struct CardView: View {
     @Environment(\.colorScheme) var colorScheme
@@ -69,7 +104,7 @@ struct ContentView: View {
     //終わったカードがtrueになる
 
         
-    let tangotyou = ["単語帳１","単語帳２"]
+    @State var tangotyou = ["単語帳１","単語帳２","単語帳３","単語帳４","デスノート"]
     let English = ["fuck you","Swift","Flutter","Thank you","React","Gfffffffffffffff","N"]
     let Japanese = ["死ね","スウィフト","フラッター","ありがとう","難しい","ゴキブリ","ニュートン"]
     
@@ -157,6 +192,47 @@ struct ContentView: View {
                     ZStack{
                         HStack{
                             Spacer()  // 左側のスペーサーでPickerを中央に寄せる
+                            Image(systemName: "plus")
+                                .resizable()
+                                .frame(width: 20, height: 20)
+                                .foregroundStyle(Color.accentColor)
+                                
+                        }
+                        .padding(.trailing, 50)  // 右だけ10ポイント
+                    }.frame(height: 70)
+                    List{
+                        ForEach(0..<tangotyou.count, id: \.self) { i in
+                            HStack {
+                                Spacer()
+                                CardlistView(
+                                    i: i,
+                                    title: tangotyou[i],
+                                    Font: JpfontSize(i: tangotyou[i]),
+                                    wid: Double(geo.size.width * 0.85),
+                                    hgt: Double(geo.size.height * 0.18)
+                                ) // 他の配列も同様に同期して削除
+                                Spacer()
+                            }
+                            .listRowSeparator(.hidden)
+                            .listRowBackground(Color.clear)
+                        }
+                        .onDelete { indices in
+                            tangotyou.remove(atOffsets: indices)
+                        }
+                        //indicesは削除される要素の位置を示している
+                        //atOffsetsで削除＆再描画
+                    }
+                    .listStyle(PlainListStyle())
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                .tabItem {  // タブのアイテム設定
+                    Image(systemName: "pencil.and.ellipsis.rectangle")
+                    Text("Edit")  // お気に入りタブのラベル
+                }
+                VStack{
+                    ZStack{
+                        HStack{
+                            Spacer()  // 左側のスペーサーでPickerを中央に寄せる
                             Picker("単語帳", selection: $number){
                                 ForEach(0..<tangotyou.count, id :\.self){
                                     index in Text(tangotyou[index]).tag(index)
@@ -196,44 +272,6 @@ struct ContentView: View {
                 .tabItem {  // タブのアイテム設定
                     Image(systemName: "play")  // 家のアイコン
                     Text("Play")  // ホームタブのラベル
-                }
-                VStack{
-                    ZStack{
-                        HStack{
-                            Spacer()  // 左側のスペーサーでPickerを中央に寄せる
-                            Image(systemName: "plus")
-                                .resizable()
-                                .frame(width: 20, height: 20)
-                                .foregroundStyle(Color.accentColor)
-                                
-                        }
-                        .padding(.trailing, 50)  // 右だけ10ポイント
-                    }.frame(height: 70)
-//                    ForEach(0..<4) { i in
-//                        CardlistView(
-//                            i: i,
-//                            eng: Enlist[i],
-//                            jp: Jplist[i],
-//                            isFlipped: isFlipped[i],
-//                            reverse: reverse,
-//                            enFont: EnfontSize(i: i),
-//                            jpFont: JpfontSize(i: i),
-//                            enOpacity: Enopacity(y: isFlipped[i], rev: reverse),
-//                            jpOpacity: Jpopacity(y: isFlipped[i], rev: reverse),
-//                            wid: Double(geo.size.width * 0.85),
-//                            hgt: Double(geo.size.height * 0.18),
-//                            fin: Finishlist[i],
-//                            finish: finish,
-//                            flip: { isFlipped[i] = true; FlippTask(i: i) },
-//                            finishChose: { finishAction(i: i) }
-//                        )
-//                    }
-//                    .padding(.bottom,10)
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                .tabItem {  // タブのアイテム設定
-                    Image(systemName: "pencil.and.ellipsis.rectangle")
-                    Text("Edit")  // お気に入りタブのラベル
                 }
             }
         }
