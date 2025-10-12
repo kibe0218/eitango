@@ -70,7 +70,7 @@ struct ContentView: View {
 
         
     let tangotyou = ["単語帳１","単語帳２"]
-    let English = ["fuck you","Swift","Flutter","Thank you","React","G","N"]
+    let English = ["fuck you","Swift","Flutter","Thank you","React","Gfffffffffffffff","N"]
     let Japanese = ["死ね","スウィフト","フラッター","ありがとう","難しい","ゴキブリ","ニュートン"]
     
     let waittime = 3
@@ -88,11 +88,11 @@ struct ContentView: View {
         _Jplist = State(initialValue: Array(Japanese.prefix(4)) + Array(repeating: "", count: max(0, 4 - Japanese.prefix(4).count)))
     }
     
-    func EnfontSize(i: Int) -> Int {
-        if(English[i].count > 15){
+    func EnfontSize(i: String) -> Int {
+        if(i.count > 15){
             return 30
         }
-        else if(English[i].count > 11){
+        else if(i.count > 11){
             return 40
         }
         else{
@@ -100,8 +100,8 @@ struct ContentView: View {
         }
     }
     
-    func JpfontSize(i: Int) -> Int{
-        if(Japanese[i].count > 7){
+    func JpfontSize(i: String) -> Int{
+        if(i.count > 7){
             return 30
         }
         else{
@@ -170,7 +170,7 @@ struct ContentView: View {
                             Toggle("",isOn: $reverse)
                         }
                         .padding(30)
-                    }.frame(maxHeight: 70)
+                    }.frame(height: 70)
                     ForEach(0..<4) { i in
                         CardView(
                             i: i,
@@ -178,8 +178,8 @@ struct ContentView: View {
                             jp: Jplist[i],
                             isFlipped: isFlipped[i],
                             reverse: reverse,
-                            enFont: EnfontSize(i: i),
-                            jpFont: JpfontSize(i: i),
+                            enFont: EnfontSize(i: Enlist[i]),
+                            jpFont: JpfontSize(i: Jplist[i]),
                             enOpacity: Enopacity(y: isFlipped[i], rev: reverse),
                             jpOpacity: Jpopacity(y: isFlipped[i], rev: reverse),
                             wid: Double(geo.size.width * 0.85),
@@ -197,9 +197,40 @@ struct ContentView: View {
                     Image(systemName: "play")  // 家のアイコン
                     Text("Play")  // ホームタブのラベル
                 }
-                VStack {  // 縦に並べるビュー
-                    Text("Favorites Placeholder").glassEffect()  // お気に入りのプレースホルダーにガラス効果を適用
+                VStack{
+                    ZStack{
+                        HStack{
+                            Spacer()  // 左側のスペーサーでPickerを中央に寄せる
+                            Image(systemName: "plus")
+                                .resizable()
+                                .frame(width: 20, height: 20)
+                                .foregroundStyle(Color.accentColor)
+                                
+                        }
+                        .padding(.trailing, 50)  // 右だけ10ポイント
+                    }.frame(height: 70)
+//                    ForEach(0..<4) { i in
+//                        CardlistView(
+//                            i: i,
+//                            eng: Enlist[i],
+//                            jp: Jplist[i],
+//                            isFlipped: isFlipped[i],
+//                            reverse: reverse,
+//                            enFont: EnfontSize(i: i),
+//                            jpFont: JpfontSize(i: i),
+//                            enOpacity: Enopacity(y: isFlipped[i], rev: reverse),
+//                            jpOpacity: Jpopacity(y: isFlipped[i], rev: reverse),
+//                            wid: Double(geo.size.width * 0.85),
+//                            hgt: Double(geo.size.height * 0.18),
+//                            fin: Finishlist[i],
+//                            finish: finish,
+//                            flip: { isFlipped[i] = true; FlippTask(i: i) },
+//                            finishChose: { finishAction(i: i) }
+//                        )
+//                    }
+//                    .padding(.bottom,10)
                 }
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                 .tabItem {  // タブのアイテム設定
                     Image(systemName: "pencil.and.ellipsis.rectangle")
                     Text("Edit")  // お気に入りタブのラベル
