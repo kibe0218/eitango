@@ -1,6 +1,8 @@
 import SwiftUI
 //カード用(型推論エラーが出たので外に出した）
 struct CardView: View {
+    @Environment(\.colorScheme) var colorScheme
+    
     let i: Int
     let eng: String
     let jp: String
@@ -22,17 +24,17 @@ struct CardView: View {
             ZStack {
                 Text(eng)
                     .font(.system(size: CGFloat(enFont)))
-                    .foregroundStyle(fin ? Color.accentColor : reverse ? .red : .black)
+                    .foregroundStyle(fin ? Color.accentColor : reverse ? .red : (colorScheme == .dark ? .white : .black))
                     .frame(width: wid, height: hgt)
-                    .background(Color.gray.opacity(0.15))
+                    .background(Color.gray.opacity(colorScheme == .dark ? 0.4 : 0.15))
                     .cornerRadius(20)
                     .opacity(enOpacity)
                     .scaleEffect(x: reverse ? -1 : 1, y: 1)
                 Text(jp)
                     .font(.system(size: CGFloat(jpFont)))
-                    .foregroundStyle(fin ? .blue : reverse ? .black : .red)
+                    .foregroundStyle(fin ? .blue : reverse ? (colorScheme == .dark ? .white : .black) : .red)
                     .frame(width: wid, height: hgt)
-                    .background(Color.gray.opacity(0.15))
+                    .background(Color.gray.opacity(colorScheme == .dark ? 0.4 : 0.15))
                     .cornerRadius(20)
                     .opacity(jpOpacity)
                     .scaleEffect(x: reverse ? 1 : -1, y: 1)
