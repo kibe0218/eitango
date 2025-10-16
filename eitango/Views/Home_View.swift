@@ -64,49 +64,14 @@ struct HomeView: View {
         NavigationStack {
             GeometryReader { geo in
                 TabView {  // タブビューを作成
-                    VStack{
-                        ZStack{
-                            HStack{
-                                Spacer()  // 左側のスペーサーでPickerを中央に寄せる
-                                NavigationLink(destination: AddCardlist()){
-                                    Image(systemName: "plus")
-                                        .resizable()
-                                        .frame(width: 20, height: 20)
-                                        .foregroundStyle(Color.accentColor)
-                                }
-                            }
-                            .padding(.trailing, 50)  // 右だけ10ポイント
-                        }.frame(height: 70)
-                        List{
-                            ForEach(0..<vm.tangotyou.count, id: \.self) { i in
-                                HStack {
-                                    Spacer()
-                                    ChecklistView(
-                                        i: i,
-                                        title: vm.tangotyou[i],
-                                        Font: JpfontSize(i: vm.tangotyou[i]),
-                                        wid: Double(geo.size.width * 0.85),
-                                        hgt: Double(geo.size.height * 0.18)
-                                    ) // 他の配列も同様に同期して削除
-                                    Spacer()
-                                }
-                                .listRowSeparator(.hidden)
-                                .listRowBackground(Color.clear)
-                            }
-                            .onDelete { indices in
-                                vm.tangotyou.remove(atOffsets: indices)
-                            }
-                            //indicesは削除される要素の位置を示している
-                            //atOffsetsで削除＆再描画
-                        }
-                        .listStyle(PlainListStyle())
+                    EditView()
+                        .environmentObject(vm)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                        .tabItem {  // タブのアイテム設定
+                            Image(systemName: "pencil.and.ellipsis.rectangle")
+                            Text("Edit")  // お気に入りタブのラベル
                     }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                    .tabItem {  // タブのアイテム設定
-                        Image(systemName: "pencil.and.ellipsis.rectangle")
-                        Text("Edit")  // お気に入りタブのラベル
-                    }
-                    CardView()
+                    PlayView()
                         .environmentObject(vm)
                         .tabItem { // タブのアイテム設定
                             Image(systemName: "play") // 家のアイコン

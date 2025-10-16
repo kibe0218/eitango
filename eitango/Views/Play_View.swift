@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct CardView: View {
+struct PlayView: View {
     @EnvironmentObject var vm: PlayViewModel
 
     var body: some View {
@@ -45,48 +45,49 @@ struct CardItemView: View{
     let height: Double
     
     var body: some View {
-            VStack {
-                ZStack {
-                    Text(vm.Enlist[i])
-                        .font(.system(size: CGFloat(vm.EnfontSize(i: vm.Enlist[i]))))
-                        .foregroundStyle(
-                            vm.reverse
-                            ? .red
-                            : (colorScheme == .dark ? .white : .black)
-                        )
-                        .frame(width: width * 0.85,height: height * 0.18)
-                        .background(
-                            Color.gray.opacity(colorScheme == .dark ? 0.4 : 0.15)
-                        )
-                        .cornerRadius(20)
-                        .opacity(vm.Enopacity(y: vm.isFlipped[i], rev: vm.reverse))
-                        .scaleEffect(x: vm.reverse ? -1 : 1, y: 1)
-                    Text(vm.Jplist[i])
-                        .font(.system(size: CGFloat(vm.JpfontSize(i: vm.Jplist[i]))))
-                        .foregroundStyle(
-                            vm.reverse
-                            ? (colorScheme == .dark ? .white : .black)
-                            : .red
-                        )
-                        .frame(width: width * 0.85, height: height * 0.18)
-                        .background(
-                            Color.gray.opacity(colorScheme == .dark ? 0.4 : 0.15)
-                        )
-                        .cornerRadius(20)
-                        .opacity(vm.Jpopacity(y: vm.isFlipped[i], rev: vm.reverse))
-                        .scaleEffect(x: vm.reverse ? 1 : -1, y: 1)
+        VStack {
+            ZStack {
+                Text(vm.Enlist[i])
+                    .font(.system(size: CGFloat(vm.EnfontSize(i: vm.Enlist[i]))))
+                    .foregroundStyle(
+                        vm.reverse
+                        ? .red
+                        : (colorScheme == .dark ? .white : .black)
+                    )
+                    .frame(width: width * 0.85,height: height * 0.18)
+                    .background(
+                        Color.gray.opacity(colorScheme == .dark ? 0.4 : 0.15)
+                    )
+                    .cornerRadius(20)
+                    .opacity(vm.Enopacity(y: vm.isFlipped[i], rev: vm.reverse))
+                    .scaleEffect(x: vm.reverse ? -1 : 1, y: 1)
+                Text(vm.Jplist[i])
+                    .font(.system(size: CGFloat(vm.JpfontSize(i: vm.Jplist[i]))))
+                    .foregroundStyle(
+                        vm.reverse
+                        ? (colorScheme == .dark ? .white : .black)
+                        : .red
+                    )
+                    .frame(width: width * 0.85, height: height * 0.18)
+                    .background(
+                        Color.gray.opacity(colorScheme == .dark ? 0.4 : 0.15)
+                    )
+                    .cornerRadius(20)
+                    .opacity(vm.Jpopacity(y: vm.isFlipped[i], rev: vm.reverse))
+                    .scaleEffect(x: vm.reverse ? 1 : -1, y: 1)
+            }
+            .padding(.bottom,10)
+            .rotation3DEffect(
+                .degrees(vm.isFlipped[i] ? -180 : 0),
+                axis: (x: 0, y: 1, z: 0)
+            )
+            .animation(.easeInOut(duration: 0.5), value: vm.isFlipped[i])
+            .onTapGesture {
+                if !vm.Finishlist[i] && vm.isFlipped[i] == vm.reverse {
+                    vm.FlippTask(i: i)
                 }
-                .rotation3DEffect(
-                    .degrees(vm.isFlipped[i] ? -180 : 0),
-                    axis: (x: 0, y: 1, z: 0)
-                )
-                .animation(.easeInOut(duration: 0.5), value: vm.isFlipped[i])
-                .onTapGesture {
-                    if !vm.Finishlist[i] && vm.isFlipped[i] == vm.reverse {
-                        vm.FlippTask(i: i)
-                    }
-                } // ここで親から渡された処理を行う
             }
         }
+    }
 }
 
