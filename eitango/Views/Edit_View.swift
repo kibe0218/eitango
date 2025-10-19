@@ -4,56 +4,96 @@ struct EditView: View {
     @EnvironmentObject var vm: PlayViewModel
     @Environment(\.colorScheme) var colorScheme
     
+    @State private var showAlert = false
+    @State private var title: String = ""
+    @State private var navigateToCardList = false//画面遷移を監視
+    @State private var CardListTitle: String = ""
+    @State private var path = NavigationPath()
+    
     var body: some View {
         
-        GeometryReader { geo in
-            VStack{
-                ZStack{
-                    HStack{
-                        Spacer()  // 左側のスペーサーでPickerを中央に寄せる
-                        NavigationLink(destination: AddCardlist()){
-                            Image(systemName: "plus")
-                                .resizable()
-                                .frame(width: 20, height: 20)
-                                .foregroundStyle(Color.accentColor)
-                        }
-                    }
-                    .padding(.trailing, 50)  // 右だけ10ポイント
-                }.frame(height: 70)
-                List{
-                    ForEach(0..<vm.tangotyou.count, id: \.self) { i in
-                        HStack {
-                            Spacer()
-                            VStack{
-                                ZStack{
-                                    ForEach(0..<vm.tangotyou.count, id: \.self){ z in
-                                        CardListView(i: i, z: z, width: geo.size.width, height: geo.size.height)
-                                            .environmentObject(vm)
-                                    }
-                                    Text(vm.tangotyou[i])
-                                        .font(.system(size: CGFloat(vm.JpfontSize(i: vm.tangotyou[i]))))
-                                        .foregroundStyle(colorScheme == .dark ? .white : .black)
-                                        .frame(width: geo.size.width * 0.85, height: geo.size.height * 0.18)
-                                        .background(Color.gray.opacity(colorScheme == .dark ? 0.6 : 0.2))
-                                        .cornerRadius(20)
-                                        .zIndex(100)
-                                }
-                                .frame(height: geo.size.height * 0.18 + 30)
-                                .padding(.bottom,10)
+        NavigationStack{
+            GeometryReader { geo in
+                VStack{
+                    ZStack{
+                        HStack{
+                            Spacer()  // 左側のスペーサーでPickerを中央に寄せる
+                            Button(action: {
+                                showAlert = true
+                            }) {
+                                Image(systemName: "plus")
+                                    .resizable()
+                                    .frame(width: 20, height: 20)
+                                    .foregroundStyle(Color.accentColor)
                             }
-                            Spacer()
+                            .alert("新しい単語帳を作成", isPresented: $showAlert) {
+                                TextField("タイトル", text: $title)
+                                Button("キャンセル", role: .cancel) {
+                                    showAlert.toggle()
+                                }
+                                Button("OK") {
+                                    guard !title.trimmingCharacters(in: .whitespaces).isEmpty else { return }
+                                    _ = vm.addCardList(title: title)
+                                    CardListTitle = title
+                                    title = ""
+                                    navigateToCardList = true
+                                }
+                                .disabled(title.trimmingCharacters(in: .whitespaces).isEmpty)
+                                //trimmingで先頭や末尾にある特定の文字を削除してくれる
+                                //isEmptyでから文字列をtrueにしてしまう->disabledでボタンを無効化
+                            }
                         }
-                        .listRowSeparator(.hidden)
-                        .listRowBackground(Color.clear)
+                        .padding(.trailing, 50)  // 右だけ10ポイント
+                    }.frame(height: 70)
+                    List{
+                        ForEach(0..<vm.tangotyou.count, id: \.self) { i in
+                            HStack {
+                                Spacer()
+                                VStack{
+                                    ZStack{
+                                        ForEach(0..<6, id: \.self){ z in
+                                            CardListView(i: i, z: z, width: geo.size.width, height: geo.size.height)
+                                                .environmentObject(vm)
+                                        }
+                                        Text(vm.tangotyou[i])
+                                            .onTapGesture{
+                                                CardListTitle = vm.tangotyou[i]
+                                                navigateToCardList = true
+                                            }
+                                            .font(.system(size: CGFloat(vm.JpfontSize(i: vm.tangotyou[i]))))
+                                            .foregroundStyle(colorScheme == .dark ? .white : .black)
+                                            .frame(width: geo.size.width * 0.85, height: geo.size.height * 0.18)
+                                            .background(Color.gray.opacity(colorScheme == .dark ? 0.6 : 0.2))
+                                            .cornerRadius(20)
+                                            .zIndex(100)
+                                    }
+                                    .frame(height: geo.size.height * 0.18 + 30)
+                                    .padding(.bottom,10)
+                                }
+                                Spacer()
+                            }
+                            .listRowSeparator(.hidden)
+                            .listRowBackground(Color.clear)
+                        }
+                        .onDelete { indices in
+                            for index in indices {
+                                let title = vm.tangotyou[index]
+                                if let list = self.vm.loadCardList().first(where: { $0.title == title }) {
+                                    vm.deleteCardList(list)
+                                }
+                            }
+                            vm.tangotyou.remove(atOffsets: indices)
+                        }
+                        //indicesは削除される要素の位置を示している
+                        //atOffsetsで削除＆再描画
                     }
-                    .onDelete { indices in
-                        vm.tangotyou.remove(atOffsets: indices)
-                    }
-                    //indicesは削除される要素の位置を示している
-                    //atOffsetsで削除＆再描画
+                    .listStyle(PlainListStyle())
                 }
-                .listStyle(PlainListStyle())
             }
+        }
+        .navigationDestination(isPresented: $navigateToCardList) {
+            CardsView(title: CardListTitle, path: $path)
+                .environmentObject(vm)
         }
     }
 }
