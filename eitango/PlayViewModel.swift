@@ -17,6 +17,7 @@ final class PlayViewModel: ObservableObject {
     @Published var Jplist: [String] = []
     @Published var Finishlist: [Bool] = [false, false, false, false]
     @Published var tangotyou: [String] = []
+    @Published var cards: [CardEntity] = []
     
     @Published var reverse = false
     @Published var number = 0

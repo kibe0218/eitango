@@ -4,60 +4,60 @@ struct CardsView: View {
     @Environment(\.colorScheme) var colorScheme
     @EnvironmentObject var vm: PlayViewModel
     
+    @FocusState private var isTextFieldFocused: Bool
+    
     let title: String
     @Binding var path: NavigationPath
     
     @State private var newWord: String = ""
-
-
+    
+    
     var body: some View {
         NavigationStack(path: $path) {//NavigationStackで画面を積んでいく
             GeometryReader { geo in
-                VStack {
-                    ZStack {
-                        HStack {
-                            Spacer() // 左側のスペーサーでPickerを中央に寄せる
-                            Toggle("", isOn: $vm.reverse)
-                        }
-                        .padding(30)
-                    }
-                    .frame(height: 70)
-                    
-                    ScrollView(.vertical, showsIndicators: false) {
+                VStack{
+                    List {
                         ForEach(0..<vm.English.count, id: \.self) { i in
                             ItemView(i: i,width: geo.size.width, height: geo.size.height)
                                 .environmentObject(vm)
                         }
                         .onDelete { indices in
+                            for index in indices{
+                                let card = vm.cards[index]
+                                vm.deleteCard(card)
+                            }
                             vm.English.remove(atOffsets: indices)
                             vm.Japanese.remove(atOffsets: indices)
                         }
+                        .listRowSeparator(.hidden)
+                        .listRowBackground(Color.clear)
                         .padding(.bottom, 10)
-                        TextField("Add a new card", text: $newWord)
-                            .padding(.all,40)
-                            .onSubmit {
-                                guard !newWord.isEmpty else { return }//空文字防止
-                                if let list = vm.loadCardList().first(where: { $0.title == title }) {
-                                    vm.addCard(to: list, en: newWord, jp: "日本語訳")
-                                    vm.English.append(newWord)   // 英語リストに追加
-                                    newWord = ""                 // 入力欄をクリア
-                                }
-                            }
-                            .frame(width: geo.size.width * 0.85, height: geo.size.height * 0.18, alignment: .center)
-                            .foregroundStyle(.black)
-                            .background(
-                                Color.gray.opacity(colorScheme == .dark ? 0.4 : 0.15)
-                            )
-                            .cornerRadius(20)
                     }
+                    TextField("Add a new card", text: $newWord)
+                        .focused($isTextFieldFocused)
+                        .padding(.all,40)
+                        .onSubmit {
+                            guard !newWord.isEmpty else { return }//空文字防止
+                            if let list = vm.loadCardList().first(where: { $0.title == title }) {
+                                vm.addCard(to: list, en: newWord, jp: "日本語訳")
+                                vm.English.append(newWord)   // 英語リストに追加
+                                newWord = ""                 // 入力欄をクリア
+                            }
+                        }
+                        .frame(width: geo.size.width * 0.85, height: geo.size.height * 0.18, alignment: .center)
+                        .foregroundStyle(.black)
+                        .background(
+                            Color.gray.opacity(colorScheme == .dark ? 0.4 : 0.15)
+                        )
+                        .cornerRadius(20)
+                        .frame(maxWidth: .infinity, alignment: .center)
                 }
-                .frame(alignment: .top)
             }
-            .navigationBarBackButtonHidden(true) // Hide back button
             .foregroundColor(.accentColor)
             .onAppear {
-                // 1. タイトルに一致する単語帳を検索
-                let cards = vm.loadCards(title: title)
+                // 初期化：カード配列にタイトルに一致するカードを代入
+                vm.cards = vm.loadCards(title: title)
+                let cards = vm.cards
                 if cards.isEmpty {
                     vm.English = []
                     vm.Japanese = []
@@ -65,10 +65,14 @@ struct CardsView: View {
                     vm.English = cards.compactMap { $0.en ?? "" }
                     vm.Japanese = cards.compactMap { $0.jp ?? "" }
                 }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        isTextFieldFocused = true
+                }
             }
         }
     }
 }
+
 
 struct ItemView: View{
     @EnvironmentObject var vm: PlayViewModel

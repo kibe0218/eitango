@@ -56,16 +56,16 @@ struct EditView: View {
                                                 .environmentObject(vm)
                                         }
                                         Text(vm.tangotyou[i])
-                                            .onTapGesture{
-                                                CardListTitle = vm.tangotyou[i]
-                                                navigateToCardList = true
-                                            }
                                             .font(.system(size: CGFloat(vm.JpfontSize(i: vm.tangotyou[i]))))
                                             .foregroundStyle(colorScheme == .dark ? .white : .black)
                                             .frame(width: geo.size.width * 0.85, height: geo.size.height * 0.18)
                                             .background(Color.gray.opacity(colorScheme == .dark ? 0.6 : 0.2))
                                             .cornerRadius(20)
                                             .zIndex(100)
+                                    }
+                                    .onTapGesture{
+                                        CardListTitle = vm.tangotyou[i]
+                                        navigateToCardList = true
                                     }
                                     .frame(height: geo.size.height * 0.18 + 30)
                                     .padding(.bottom,10)
