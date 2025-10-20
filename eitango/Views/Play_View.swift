@@ -27,7 +27,6 @@ struct PlayView: View {
                     .padding(30)
                 }
                 .frame(height: 70)
-                
                 ForEach(0..<min(vm.Enlist.count, vm.Jplist.count, 4), id: \.self) { i in
                     CardItemView(i: i,width: geo.size.width, height: geo.size.height)
                         .environmentObject(vm)
@@ -37,6 +36,7 @@ struct PlayView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         }
         .onChange(of: vm.number) {vm.updateView()}
+        .onChange(of: vm.reverse) {vm.updateView()}
     }
 }
 

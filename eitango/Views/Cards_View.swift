@@ -36,7 +36,7 @@ struct CardsView: View {
                     }
                     .listStyle(PlainListStyle())
                     .frame(maxWidth: .infinity, alignment: .center)
-                    TextField("新しいカードを追加...", text: $newWord)
+                    TextField("add a new card...", text: $newWord)
                         .focused($isTextFieldFocused)
                         .padding(.all,40)
                         .onSubmit {
@@ -45,6 +45,7 @@ struct CardsView: View {
                                 vm.addCard(to: list, en: newWord, jp: "日本語訳")
                                 vm.updateView()
                                 newWord = ""                 // 入力欄をクリア
+                                isTextFieldFocused = true
                             }
                         }
                         .frame(width: geo.size.width * 0.85, height: geo.size.height * 0.18, alignment: .center)

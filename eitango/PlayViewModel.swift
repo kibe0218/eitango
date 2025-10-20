@@ -26,6 +26,7 @@ final class PlayViewModel: ObservableObject {
         let jpbase = Array(cards.prefix(4)).compactMap { $0.jp ?? "-" }
         Enlist = enbase + Array(repeating: "-", count: max(0, 4 - enbase.count))
         Jplist = jpbase + Array(repeating: "-", count: max(0, 4 - jpbase.count))
+        isFlipped = reverse ? Array(repeating:true, count:4) : Array(repeating: false, count:4)
         for i in 0..<Enlist.count {
             if Enlist[i] == "-" {
                 Finishlist[i] = true
@@ -56,8 +57,6 @@ final class PlayViewModel: ObservableObject {
         let jpbase = Array(cards.prefix(4)).compactMap { $0.jp ?? "-" }
         Enlist = enbase + Array(repeating: "-", count: max(0, 4 - enbase.count))
         Jplist = jpbase + Array(repeating: "-", count: max(0, 4 - jpbase.count))
-        print(Enlist)
-        print(cards)
         for i in 0..<Enlist.count {
             if Enlist[i] == "-" {
                 Finishlist[i] = true
@@ -67,7 +66,7 @@ final class PlayViewModel: ObservableObject {
                 Finishlist[i] = false
             }
         }
-        isFlipped = [false, false, false, false]
+        isFlipped = reverse ? Array(repeating:true, count:4) : Array(repeating: false, count:4)
         // Mark Finishlist[i] = true for each "-" element in Enlist
         print(Finishlist)
     }
@@ -80,6 +79,7 @@ final class PlayViewModel: ObservableObject {
         // 取得したいエンティティ（データの種類）を指定するリクエストを作成します。
         // ここではCardlistEntity（単語リスト）を取得するためのリクエストを生成。
         let request: NSFetchRequest<CardlistEntity> = CardlistEntity.fetchRequest()
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \CardlistEntity.createdAt, ascending: false)]
         //let request: NSFetchRequest<Entity名> = Entity名.fetchReequest()
         
         do{
@@ -109,7 +109,6 @@ final class PlayViewModel: ObservableObject {
         
         // CardEntity（単語カード）を取得するためのリクエストを作成します。
         let request: NSFetchRequest<CardEntity> = CardEntity.fetchRequest()
-        
         // 特定の単語リストに属するカードだけを取得するための条件（predicate）を設定。
         // これにより関連付けられたカードのみを抽出可能です。
         request.predicate = NSPredicate(format: "cardlist == %@", list)
@@ -117,8 +116,10 @@ final class PlayViewModel: ObservableObject {
         //cardlistというプロパティがlistと一緒のものだけ取得する
         //CoreDataには文字列で渡さないといけないだから""
         
+        
+        
         // 取得結果を作成日時の昇順でソートする指定を加えています。
-        request.sortDescriptors = [NSSortDescriptor(keyPath: \CardEntity.createdAt, ascending: true)]
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \CardEntity.createdAt, ascending: false)]
         //keyPath:どのプロパティで並び替えるか,ascending:昇順（true)or降順
         
         do{
