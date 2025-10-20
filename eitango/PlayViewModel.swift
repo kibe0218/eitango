@@ -3,16 +3,6 @@ import Combine
 import CoreData
 
 final class PlayViewModel: ObservableObject {
-    @Published var English: [String] = [
-        "apple", "banana", "orange", "grape",
-        "peach", "melon", "lemon", "pineapple",
-        "strawberry", "cherry", "watermelon", "kiwi"
-    ]
-    @Published var Japanese: [String] = [
-        "りんご", "バナナ", "オレンジ", "ぶどう",
-        "もも", "メロン", "レモン", "パイナップル",
-        "いちご", "さくらんぼ", "すいか", "キウイ"
-    ]
     @Published var Enlist: [String] = []
     @Published var Jplist: [String] = []
     @Published var Finishlist: [Bool] = [false, false, false, false]
@@ -26,12 +16,61 @@ final class PlayViewModel: ObservableObject {
     @Published var yy = 1
     @Published var jj = 0
     @Published var finish = false
+    @Published var title = ""
+    @Published var cancelFlag = false
     
     init() {
-            // English / Japanese の最初4単語をコピーして初期化
-            Enlist = Array(English.prefix(4))
-            Jplist = Array(Japanese.prefix(4))
+            // 最初4単語をコピーして初期化
+        updateView()
+        let enbase = Array(cards.prefix(4)).compactMap { $0.en ?? "-" }
+        let jpbase = Array(cards.prefix(4)).compactMap { $0.jp ?? "-" }
+        Enlist = enbase + Array(repeating: "-", count: max(0, 4 - enbase.count))
+        Jplist = jpbase + Array(repeating: "-", count: max(0, 4 - jpbase.count))
+        for i in 0..<Enlist.count {
+            if Enlist[i] == "-" {
+                Finishlist[i] = true
+                jj += 1
+            }
+            
         }
+        //repeatingで繰り返し配列にaddする
+        
+    }
+    
+    func updateView() {
+        yy = 1
+        jj = 0
+        finish = false
+        
+        tangotyou = loadCardList()
+            .sorted { ($0.createdAt ?? Date.distantPast) > ($1.createdAt ?? Date.distantPast) }
+            .compactMap { $0.title ?? "" }
+        if tangotyou.indices.contains(number) {
+            //containsでそれが範囲に含まれるかチェック
+            title = tangotyou[number]
+        } else {
+            title = tangotyou.first ?? ""
+        }
+        cards = loadCards(title: title)
+        let enbase = Array(cards.prefix(4)).compactMap { $0.en ?? "-" }
+        let jpbase = Array(cards.prefix(4)).compactMap { $0.jp ?? "-" }
+        Enlist = enbase + Array(repeating: "-", count: max(0, 4 - enbase.count))
+        Jplist = jpbase + Array(repeating: "-", count: max(0, 4 - jpbase.count))
+        print(Enlist)
+        print(cards)
+        for i in 0..<Enlist.count {
+            if Enlist[i] == "-" {
+                Finishlist[i] = true
+                jj += 1
+            }
+            else{
+                Finishlist[i] = false
+            }
+        }
+        isFlipped = [false, false, false, false]
+        // Mark Finishlist[i] = true for each "-" element in Enlist
+        print(Finishlist)
+    }
     
     func loadCardList() -> [CardlistEntity] {//戻り値はCardlistEntityの配列
         // CoreData操作の要となる「コンテキスト」を取得します。
@@ -107,11 +146,13 @@ final class PlayViewModel: ObservableObject {
         newCard.jp = jp              // 日本語訳
         newCard.createdAt = Date()   // 作成日時を現在時刻で設定
         newCard.cardlist = list      // 所属する単語リストを紐付け
+        list.addToCards(newCard)
         
         do {
             // コンテキストに保持された変更を永続ストア（データベース）に保存します。
             // これにより実際にデータが書き込まれます。
             try context.save()
+            print(newCard.en ?? "nil")
             //既存のCardlistEntityに追加するだけなのでreturn文は必要ない
         } catch {
             // 保存に失敗した場合はエラー内容をコンソールに出力します。
@@ -186,16 +227,26 @@ final class PlayViewModel: ObservableObject {
             isFlipped[i] = reverse ? false : true
         }
         Task {
-            try? await Task.sleep(nanoseconds: UInt64(1_000_000_000 * UInt64(waittime)))
-            if 4 + yy < English.count {
-                Enlist[i] = English[4 + yy]
-                Jplist[i] = Japanese[4 + yy]
+            let sleepInterval: UInt64 = 50_000_000 // 0.05 second
+            var waited: UInt64 = 0
+            let totalWait: UInt64 = UInt64(1_000_000_000 * UInt64(waittime))
+            while waited < totalWait && !self.cancelFlag {
+                try? await Task.sleep(nanoseconds: sleepInterval)
+                waited += sleepInterval
+            }
+            if self.cancelFlag { return }
+            let nextIndex = 4 + yy
+            if i < Enlist.count && nextIndex < cards.count {
+                Enlist[i] = cards[nextIndex].en ?? "-"
+                Jplist[i] = cards[nextIndex].jp ?? "-"
                 isFlipped[i] = reverse ? true : false
                 yy += 1
             } else {
-                Enlist[i] = "-"
-                Jplist[i] = "-"
-                Finishlist[i] = true
+                if i < Enlist.count {
+                    Enlist[i] = "-"
+                    Jplist[i] = "-"
+                    Finishlist[i] = true
+                }
                 jj += 1
             }
             if jj >= 4 {
@@ -204,3 +255,4 @@ final class PlayViewModel: ObservableObject {
         }
     }
 }
+

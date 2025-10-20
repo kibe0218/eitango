@@ -2,6 +2,8 @@ import SwiftUI
 
 struct PlayView: View {
     @EnvironmentObject var vm: PlayViewModel
+    
+    @State var title: String = ""
 
     var body: some View {
         GeometryReader { geo in
@@ -34,6 +36,7 @@ struct PlayView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         }
+        .onChange(of: vm.number) {vm.updateView()}
     }
 }
 
@@ -47,7 +50,7 @@ struct CardItemView: View{
     var body: some View {
         ZStack {
             Text(vm.Enlist[i])
-                .font(.system(size: CGFloat(vm.EnfontSize(i: vm.Enlist[i]))))
+                .font(.system(size: vm.Finishlist[i] ? CGFloat(vm.JpfontSize(i: vm.Enlist[i])) : CGFloat(vm.EnfontSize(i: vm.Enlist[i]))))
                 .foregroundStyle(
                     vm.reverse
                     ? .red
@@ -88,3 +91,4 @@ struct CardItemView: View{
         }
     }
 }
+
