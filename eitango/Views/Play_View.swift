@@ -52,9 +52,7 @@ struct CardItemView: View{
             Text(vm.Enlist[i])
                 .font(.system(size: vm.Finishlist[i] ? CGFloat(vm.JpfontSize(i: vm.Enlist[i])) : CGFloat(vm.EnfontSize(i: vm.Enlist[i]))))
                 .foregroundStyle(
-                    vm.reverse
-                    ? .red
-                    : (colorScheme == .dark ? .white : .black)
+                    vm.EnColor(y: vm.isFlipped[i], rev: vm.reverse, colorScheme: colorScheme)
                 )
                 .frame(width: width * 0.85,height: height * 0.18)
                 .background(
@@ -66,9 +64,7 @@ struct CardItemView: View{
             Text(vm.Jplist[i])
                 .font(.system(size: CGFloat(vm.JpfontSize(i: vm.Jplist[i]))))
                 .foregroundStyle(
-                    vm.reverse
-                    ? (colorScheme == .dark ? .white : .black)
-                    : .red
+                    vm.JpColor(y: vm.isFlipped[i], rev: vm.reverse, colorScheme: colorScheme)
                 )
                 .frame(width: width * 0.85, height: height * 0.18)
                 .background(
@@ -85,10 +81,9 @@ struct CardItemView: View{
         )
         .animation(.easeInOut(duration: 0.5), value: vm.isFlipped[i])
         .onTapGesture {
-            if !vm.Finishlist[i] && vm.isFlipped[i] == vm.reverse {
+            if !vm.Finishlist[i]{
                 vm.FlippTask(i: i)
             }
         }
     }
 }
-

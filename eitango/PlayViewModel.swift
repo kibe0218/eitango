@@ -13,7 +13,7 @@ final class PlayViewModel: ObservableObject {
     @Published var number = 0
     @Published var waittime = 2
     @Published var isFlipped: [Bool] = [false, false, false, false]
-    @Published var yy = 1
+    @Published var yy = 0
     @Published var jj = 0
     @Published var finish = false
     @Published var title = ""
@@ -26,7 +26,7 @@ final class PlayViewModel: ObservableObject {
         let jpbase = Array(cards.prefix(4)).compactMap { $0.jp ?? "-" }
         Enlist = enbase + Array(repeating: "-", count: max(0, 4 - enbase.count))
         Jplist = jpbase + Array(repeating: "-", count: max(0, 4 - jpbase.count))
-        isFlipped = reverse ? Array(repeating:true, count:4) : Array(repeating: false, count:4)
+        isFlipped = Array(repeating: false, count:4)
         for i in 0..<Enlist.count {
             if Enlist[i] == "-" {
                 Finishlist[i] = true
@@ -39,10 +39,15 @@ final class PlayViewModel: ObservableObject {
     }
     
     func updateView() {
-        yy = 1
+        cancelFlag = true
+
+        // 0.1秒待つ
+        yy = 0
         jj = 0
         finish = false
+        Thread.sleep(forTimeInterval: 0.1)
         
+        isFlipped = Array(repeating: false, count:4)
         tangotyou = loadCardList()
             .sorted { ($0.createdAt ?? Date.distantPast) > ($1.createdAt ?? Date.distantPast) }
             .compactMap { $0.title ?? "" }
@@ -66,9 +71,7 @@ final class PlayViewModel: ObservableObject {
                 Finishlist[i] = false
             }
         }
-        isFlipped = reverse ? Array(repeating:true, count:4) : Array(repeating: false, count:4)
-        // Mark Finishlist[i] = true for each "-" element in Enlist
-        print(Finishlist)
+        cancelFlag = false
     }
     
     func loadCardList() -> [CardlistEntity] {//戻り値はCardlistEntityの配列
@@ -153,8 +156,6 @@ final class PlayViewModel: ObservableObject {
             // コンテキストに保持された変更を永続ストア（データベース）に保存します。
             // これにより実際にデータが書き込まれます。
             try context.save()
-            print(newCard.en ?? "nil")
-            //既存のCardlistEntityに追加するだけなのでreturn文は必要ない
         } catch {
             // 保存に失敗した場合はエラー内容をコンソールに出力します。
             print("addcarderror: \(error.localizedDescription)")
@@ -222,10 +223,28 @@ final class PlayViewModel: ObservableObject {
     func Jpopacity(y: Bool, rev: Bool) -> Double {
         return y ? (rev ? 0 : 1) : (reverse ? 1 : 0)
     }
+    
+    func EnColor(y: Bool, rev: Bool, colorScheme: ColorScheme) -> Color {
+        // 表（y=false）が黒、裏（y=true）が赤
+        if y {
+            return .red
+        } else {
+            return colorScheme == .dark ? .white : .black
+        }
+    }
+
+    func JpColor(y: Bool, rev: Bool, colorScheme: ColorScheme) -> Color {
+        // 表（y=false）が黒、裏（y=true）が赤（英日問わず統一）
+        if y {
+            return .red
+        } else {
+            return colorScheme == .dark ? .white : .black
+        }
+    }
 
     func FlippTask(i: Int) {
         withAnimation {
-            isFlipped[i] = reverse ? false : true
+            isFlipped[i] = true
         }
         Task {
             let sleepInterval: UInt64 = 50_000_000 // 0.05 second
@@ -240,20 +259,22 @@ final class PlayViewModel: ObservableObject {
             if i < Enlist.count && nextIndex < cards.count {
                 Enlist[i] = cards[nextIndex].en ?? "-"
                 Jplist[i] = cards[nextIndex].jp ?? "-"
-                isFlipped[i] = reverse ? true : false
+                isFlipped[i] = false
                 yy += 1
+                
             } else {
                 if i < Enlist.count {
                     Enlist[i] = "-"
                     Jplist[i] = "-"
                     Finishlist[i] = true
                 }
+                yy += 1
                 jj += 1
             }
             if jj >= 4 {
                 finish = true
+                print("finish",finish)
             }
         }
     }
 }
-
