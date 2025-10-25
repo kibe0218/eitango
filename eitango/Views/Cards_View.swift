@@ -100,7 +100,7 @@ struct CardsView: View {
                             }
                         }
                         .frame(width: geo.size.width * 0.85, height: geo.size.height * 0.18, alignment: .center)
-                        .foregroundStyle(.black)
+                        .foregroundStyle(colorScheme == .dark ? .white : .black)
                         .background(
                             Color.gray.opacity(colorScheme == .dark ? 0.4 : 0.15)
                         )
@@ -128,19 +128,23 @@ struct ItemView: View{
     let height: Double
     
     var body: some View {
-        ZStack{
+        VStack{
             Text(card.en ?? "")
                 .font(.system(size: CGFloat(vm.EnfontSize(i: card.en ?? ""))))
-                .foregroundStyle(.black)
-                .frame(width: width * 0.85,height: height * 0.18, alignment: .center)
-                .background(
-                    Color.gray.opacity(colorScheme == .dark ? 0.4 : 0.15)
-                )
-                .cornerRadius(20)
-                .scaleEffect(x: vm.reverse ? -1 : 1, y: 1)
-                .frame(maxWidth: .infinity, alignment: .center)
-                .onTapGesture {
-                }
+                .foregroundStyle(colorScheme == .dark ? .white : .black)
+            Text(card.jp ?? "")
+                .font(.system(size: 30))
+                .foregroundStyle(Color.gray)
+        }
+        .frame(width: width * 0.85, height: height * 0.18, alignment: .center)
+        .background(
+            Color.gray.opacity(colorScheme == .dark ? 0.4 : 0.15)
+        )
+        .cornerRadius(20)
+        .scaleEffect(x: vm.reverse ? -1 : 1, y: 1)
+        .frame(maxWidth: .infinity, alignment: .center)
+        .onTapGesture {
+            // ここにタップ時の処理を書く
         }
     }
 }
