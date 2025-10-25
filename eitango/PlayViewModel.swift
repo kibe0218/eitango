@@ -13,7 +13,7 @@ final class PlayViewModel: ObservableObject {
     
     
     @Published var reverse = false
-    @Published var number = 0
+    @Published var number  = 0
     @Published var waittime = 2
     @Published var isFlipped: [Bool] = [false, false, false, false]
     @Published var yy = 0
@@ -26,14 +26,9 @@ final class PlayViewModel: ObservableObject {
     @Published var numberFlag: Bool = false
     
     init() {
-            // 最初4単語をコピーして初期化
+        loadSettings()
         numberFlag = true
         updateView()
-        enbase = Array(cards.prefix(4)).compactMap { $0.en ?? "-" }
-        jpbase = Array(cards.prefix(4)).compactMap { $0.jp ?? "-" }
-        Enlist = enbase + Array(repeating: "-", count: max(0, 4 - enbase.count))
-        Jplist = jpbase + Array(repeating: "-", count: max(0, 4 - jpbase.count))
-        isFlipped = Array(repeating: false, count:4)
         for i in 0..<Enlist.count {
             if Enlist[i] == "-" {
                 Finishlist[i] = true
@@ -43,6 +38,56 @@ final class PlayViewModel: ObservableObject {
         }
         //repeatingで繰り返し配列にaddする
         
+    }
+    
+    func loadSettings() {
+        // Core Dataのコンテキストを取得
+        let context = PersistenceController.shared.container.viewContext
+        // AppSettingsエンティティのフェッチリクエストを作成
+        let request: NSFetchRequest<AppSettings> = AppSettings.fetchRequest()
+        do {
+            // AppSettingsは1件のみ保存される想定
+            if let settings = try context.fetch(request).first {
+                self.number = Int(settings.number)
+                self.shuffleFlag = settings.shuffleFlag
+                self.repeatFlag = settings.repeatFlag
+            } else {
+                // データが存在しない場合はデフォルト値を設定
+                self.number = 0
+                self.shuffleFlag = false
+                self.repeatFlag = false
+            }
+        } catch {
+            // エラー発生時はデフォルト値を設定
+            print("loadSettingsError: \(error.localizedDescription)")
+            self.number = 0
+            self.shuffleFlag = false
+            self.repeatFlag = false
+        }
+    }
+    
+    func saveSettings() {
+        // Core Dataのコンテキストを取得
+        let context = PersistenceController.shared.container.viewContext
+        // AppSettingsエンティティのフェッチリクエストを作成
+        let request: NSFetchRequest<AppSettings> = AppSettings.fetchRequest()
+        do {
+            // 既存のAppSettingsを取得、なければ新規作成
+            let settings: AppSettings
+            if let existing = try context.fetch(request).first {
+                settings = existing
+            } else {
+                settings = AppSettings(context: context)
+                settings.id = UUID()
+            }
+            // 値を更新
+            settings.number = Int16(number)
+            settings.shuffleFlag = shuffleFlag
+            settings.repeatFlag = repeatFlag
+            try context.save()
+        } catch {
+            print("saveSettingsError: \(error.localizedDescription)")
+        }
     }
     
     func updateView() {
@@ -73,8 +118,8 @@ final class PlayViewModel: ObservableObject {
         shuffleCards(i: shuffleFlag)
         self.enbase = Array(cards.prefix(4)).compactMap { $0.en ?? "-" }
         self.jpbase = Array(cards.prefix(4)).compactMap { $0.jp ?? "-" }
-        Enlist = self.enbase + Array(repeating: "-", count: max(0, 4 - self.enbase.count))
-        Jplist = self.jpbase + Array(repeating: "-", count: max(0, 4 - self.jpbase.count))
+        Enlist = self.enbase + Array(repeating: "✅", count: max(0, 4 - self.enbase.count))
+        Jplist = self.jpbase + Array(repeating: "✅", count: max(0, 4 - self.jpbase.count))
         for i in 0..<Enlist.count {
             if Enlist[i] == "-" {
                 Finishlist[i] = true
@@ -85,6 +130,7 @@ final class PlayViewModel: ObservableObject {
             }
         }
         cancelFlag = false
+        saveSettings()
     }
     
     func loadCardList() -> [CardlistEntity] {//戻り値はCardlistEntityの配列
@@ -283,8 +329,8 @@ final class PlayViewModel: ObservableObject {
                 
             } else {
                 if i < Enlist.count {
-                    Enlist[i] = "-"
-                    Jplist[i] = "-"
+                    Enlist[i] = "✅"
+                    Jplist[i] = "✅"
                     Finishlist[i] = true
                 }
                 yy += 1

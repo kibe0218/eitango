@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="24299" systemVersion="24G90" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
+    <entity name="AppSettings" representedClassName="AppSettings" syncable="YES" codeGenerationType="class">
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="number" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="repeatFlag" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="shuffleFlag" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+    </entity>
     <entity name="CardEntity" representedClassName="CardEntity" syncable="YES" codeGenerationType="class">
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="en" optional="YES" attributeType="String"/>

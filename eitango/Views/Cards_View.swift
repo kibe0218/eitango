@@ -76,12 +76,16 @@ struct CardsView: View {
                     .listStyle(PlainListStyle())
                     .frame(maxWidth: .infinity, alignment: .center)
                     TextField("add a new card...", text: $newWord)
+                        .keyboardType(.asciiCapable)//英語キーボードを表示
                         .focused($isTextFieldFocused)
                         .padding(.all,40)
                         .onSubmit {
                             // 空文字防止
                             let trimmedWord = newWord.trimmingCharacters(in: .whitespacesAndNewlines)
+                            //trimmingCharacters(in:)は指定した文字セットを文字列の先頭と末尾から削除
+                            //.whitespacesAndNewlines空白と改行を削除
                             guard !trimmedWord.isEmpty && trimmedWord != "-" else { return }
+                            //文字列がからではないことと-だけの文字列でないことを確認(終了マークと紛らわしい）
                             // 入力欄をクリア
                             newWord = ""
                             isTextFieldFocused = true
