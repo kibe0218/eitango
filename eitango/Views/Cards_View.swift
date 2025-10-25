@@ -11,32 +11,43 @@ struct CardsView: View {
     
     @State private var newWord: String = ""
     
+    //デフォルトはen->ja
     func translateTextWithGAS(_ text: String, source: String = "en", target: String = "ja") async throws -> String {
-        // 入力されたテキスト・言語情報をURLパラメータとしてGASのAPIエンドポイントに組み込む
-        let urlString = "https://script.google.com/macros/s/AKfycbyEyNW2gf1PexlqfE6mhUa4QDIjF8N5E7vTHcWB35R_ZxvSdKgwjAPuWLgZEggTIKU/exec?text=\(text.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")&source=\(source)&target=\(target)"
+        let urlString = "https://script.google.com/macros/s/AKfycbw-tJbHtEj9-Ock0ef_2ysVogKl7y5rCUadj6XzJ7llMZAncnehIMUrhCs2IuXcc10D/exec?text=\(text.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")&source=\(source)&target=\(target)" // 入力されたテキスト・言語情報をURLパラメータとしてGASのAPIエンドポイントに組み込む \()でURLに変数を組み込んでる // addingPercentEncodingで＋＋などの特殊文字を安全な文字列に変換 // withAllowedCharacters: .urlQueryAllowedは空白や？を%26などに変換 // withAllowedChaaractersはURLに安全にう目込むためのルールを指定するところ
+            
         
-        // 文字列からURL型を生成し、失敗した場合はエラーを投げる
-        guard let url = URL(string: urlString) else {
-            throw URLError(.badURL)
+        guard let url = URL(string: urlString) else { // 文字列からURL型を生成し、失敗した場合はエラーを投げる
+            // guardはSwiftの条件をチェックして早期退出する文 // if文と違い、elseが必須
+            throw URLError(.badURL) // この後関数を終了
         }
         
-        // URLSessionで非同期リクエストを送り、レスポンスデータを取得する
         let (data, _) = try await URLSession.shared.data(from: url)
+        // URLSessionで非同期リクエストを送り、レスポンスデータを取得する
+        //URLSeesio.shared->iOS標準のネットワーク通信を行うクラス
+        //.data(from: url)->指定したURLからデータを取得するメソッド
+        //dataだけ受け取り、responseは受け取らないから_
+        //簡単
         
-        // レスポンスデータをJSONとしてデコードし、ステータスコードと翻訳結果を抽出する
         if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-           let code = json["code"] as? Int, // ステータスコードを取得
+            // レスポンスデータをJSONとしてデコードし、ステータスコードと翻訳結果を抽出する
+            //JSONserialization.jsonObject(with:)でサーバーから取得したバイト列のdataをswiftの型に変換する
+            //バイト型はサーバから受け取った生のデータのこといろんなデータをバイト単位で格納（swiftではData型で表現される）
+            //try?は失敗したらnilになる安全な書き方
+            //as? [String:A Any]はJSONオブジェクトを辞書型にキャスト
+            //Any型とは全ての型を受け取ることができる型
+           let code = json["code"] as? Int,
+            // ステータスコードを取得
            code == 200, // 成功かどうか判定
            let translated = json["text"] as? String { // 翻訳テキストを取得
             return translated // 翻訳結果を返す
         } else {
-            // エラー時はエラーメッセージを含むNSErrorを投げる
-            throw NSError(domain: "TranslationAPI", code: 1, userInfo: [NSLocalizedDescriptionKey: "翻訳失敗"])
+            throw NSError(domain: "TranslationAPI", code: 1, userInfo: [NSLocalizedDescriptionKey: "翻訳失敗"]) // エラー時はエラーメッセージを含むNSErrorを投げる
         }
     }
     
     var body: some View {
-        NavigationStack(path: $path) {//NavigationStackで画面を積んでいく
+        // NavigationStackで画面を積んでいく
+        NavigationStack(path: $path) {
             GeometryReader { geo in
                 VStack{
                     List {
@@ -63,9 +74,11 @@ struct CardsView: View {
                         .focused($isTextFieldFocused)
                         .padding(.all,40)
                         .onSubmit {
+                            // 空文字防止
                             let trimmedWord = newWord.trimmingCharacters(in: .whitespacesAndNewlines)
-                            guard !trimmedWord.isEmpty && trimmedWord != "-" else { return }//空文字防止
-                            newWord = ""                 // 入力欄をクリア
+                            guard !trimmedWord.isEmpty && trimmedWord != "-" else { return }
+                            // 入力欄をクリア
+                            newWord = ""
                             isTextFieldFocused = true
                             if let list = vm.loadCardList().first(where: { $0.title == title }) {
                                 Task {
@@ -99,7 +112,7 @@ struct CardsView: View {
             .onAppear {
                 vm.cards = vm.loadCards(title: title)
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                        isTextFieldFocused = true
+                    isTextFieldFocused = true
                 }
             }
         }
