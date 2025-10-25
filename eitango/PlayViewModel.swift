@@ -23,9 +23,11 @@ final class PlayViewModel: ObservableObject {
     @Published var cancelFlag = false
     @Published var shuffleFlag: Bool = false
     @Published var repeatFlag: Bool = false
+    @Published var numberFlag: Bool = false
     
     init() {
             // 最初4単語をコピーして初期化
+        numberFlag = true
         updateView()
         enbase = Array(cards.prefix(4)).compactMap { $0.en ?? "-" }
         jpbase = Array(cards.prefix(4)).compactMap { $0.jp ?? "-" }
@@ -56,11 +58,16 @@ final class PlayViewModel: ObservableObject {
         tangotyou = loadCardList()
             .sorted { ($0.createdAt ?? Date.distantPast) > ($1.createdAt ?? Date.distantPast) }
             .compactMap { $0.title ?? "" }
-        if tangotyou.indices.contains(number) {
+        if tangotyou.indices.contains(number) && numberFlag{
             //containsでそれが範囲に含まれるかチェック
+            //tangotyou は 現在の単語リストタイトルの配列
+            //number は 現在表示しているリストのインデックス
+            //.indices は 0..<(配列の要素数) の範囲 を返す
             title = tangotyou[number]
-        } else {
+            numberFlag = false
+        }else if numberFlag || !tangotyou.indices.contains(number){
             title = tangotyou.first ?? ""
+            numberFlag = false
         }
         cards = loadCards(title: title)
         shuffleCards(i: shuffleFlag)

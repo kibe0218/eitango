@@ -56,7 +56,10 @@ struct PlayView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         }
-        .onChange(of: vm.number) {vm.updateView()}
+        .onChange(of: vm.number) {
+            vm.numberFlag = true
+            vm.updateView()
+        }
         .onChange(of: vm.reverse) {vm.updateView()}
     }
 }

@@ -13,7 +13,7 @@ struct CardsView: View {
     
     //デフォルトはen->ja
     func translateTextWithGAS(_ text: String, source: String = "en", target: String = "ja") async throws -> String {
-        let urlString = "https://script.google.com/macros/s/AKfycbw-tJbHtEj9-Ock0ef_2ysVogKl7y5rCUadj6XzJ7llMZAncnehIMUrhCs2IuXcc10D/exec?text=\(text.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")&source=\(source)&target=\(target)"
+        let urlString = "https://script.google.com/macros/s/AKfycbwQILljpasT8-lGpErSksKhuuJTfp3_RvSv9WZvUN9mS3ogHKgwGWkmBBbimeH0LHVA/exec?text=\(text.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")&source=\(source)&target=\(target)"
         // 入力されたテキスト・言語情報をURLパラメータとしてGASのAPIエンドポイントに組み込む \()でURLに変数を組み込んでる
         // addingPercentEncodingで＋＋などの特殊文字を安全な文字列に変換
         // withAllowedCharacters: .urlQueryAllowedは空白や？を%26などに変換
@@ -39,11 +39,12 @@ struct CardsView: View {
             //try?は失敗したらnilになる安全な書き方
             //as? [String:A Any]はJSONオブジェクトを辞書型にキャスト
             //Any型とは全ての型を受け取ることができる型
-           let code = json["code"] as? Int,
+            let code = json["code"] as? Int,
             // ステータスコードを取得
-           code == 200, // 成功かどうか判定
-           let translated = json["text"] as? String { // 翻訳テキストを取得
-            return translated // 翻訳結果を返す
+            code == 200, // 成功かどうか判定
+            let translated = json["text"] as? String { // 翻訳テキストを取得
+            return translated.removingPercentEncoding ?? translated
+            // 翻訳結果を返す（デコード失敗時は元の文字列を返す）
         } else {
             throw NSError(domain: "TranslationAPI", code: 1, userInfo: [NSLocalizedDescriptionKey: "翻訳失敗"]) // エラー時はエラーメッセージを含むNSErrorを投げる
         }
@@ -55,7 +56,7 @@ struct CardsView: View {
             GeometryReader { geo in
                 VStack{
                     List {
-                        ForEach(vm.cards, id: \.self) { card in
+                        ForEach(vm.cards, id: \.objectID) { card in
                             ItemView(card: card, width: geo.size.width, height: geo.size.height)
                                 .environmentObject(vm)
                         }
@@ -92,6 +93,7 @@ struct CardsView: View {
                                             print("翻訳結果: \(translated)") // 例: "こんにちは"
                                             DispatchQueue.main.async {
                                                 vm.addCard(to: list, en: trimmedWord, jp: translated)
+                                                print("タイトル",vm.title)
                                                 vm.updateView()
                                             }
                                         } else {
@@ -114,6 +116,7 @@ struct CardsView: View {
             }
             .foregroundColor(.accentColor)
             .onAppear {
+                vm.title = title
                 vm.cards = vm.loadCards(title: title)
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     isTextFieldFocused = true
@@ -122,7 +125,6 @@ struct CardsView: View {
         }
     }
 }
-
 
 struct ItemView: View{
     @EnvironmentObject var vm: PlayViewModel
@@ -145,7 +147,6 @@ struct ItemView: View{
             Color.gray.opacity(colorScheme == .dark ? 0.4 : 0.15)
         )
         .cornerRadius(20)
-        .scaleEffect(x: vm.reverse ? -1 : 1, y: 1)
         .frame(maxWidth: .infinity, alignment: .center)
         .onTapGesture {
             // ここにタップ時の処理を書く
