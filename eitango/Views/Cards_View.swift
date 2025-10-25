@@ -93,11 +93,13 @@ struct CardsView: View {
                                 Task {
                                     do {
                                         if let encodedWord = trimmedWord.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
+                                            //%18とかにするのがaddingPercentEncding
+                                            //.urlQueryAllowedはURLのクエリ部分で使える文字ののみということを定義している
                                             let translated = try await translateTextWithGAS(encodedWord, source: "en", target: "ja")
                                             print("翻訳結果: \(translated)") // 例: "こんにちは"
                                             DispatchQueue.main.async {
+                                            //DispatchQueue.mainとはSwiftのメインスレッドを示す
                                                 vm.addCard(to: list, en: trimmedWord, jp: translated)
-                                                print("タイトル",vm.title)
                                                 vm.updateView()
                                             }
                                         } else {

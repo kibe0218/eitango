@@ -29,13 +29,6 @@ final class PlayViewModel: ObservableObject {
         loadSettings()
         numberFlag = true
         updateView()
-        for i in 0..<Enlist.count {
-            if Enlist[i] == "-" {
-                Finishlist[i] = true
-                jj += 1
-            }
-            
-        }
         //repeatingで繰り返し配列にaddする
         
     }
@@ -121,7 +114,7 @@ final class PlayViewModel: ObservableObject {
         Enlist = self.enbase + Array(repeating: "✅", count: max(0, 4 - self.enbase.count))
         Jplist = self.jpbase + Array(repeating: "✅", count: max(0, 4 - self.jpbase.count))
         for i in 0..<Enlist.count {
-            if Enlist[i] == "-" {
+            if Enlist[i] == "✅" {
                 Finishlist[i] = true
                 jj += 1
             }
