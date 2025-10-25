@@ -13,7 +13,11 @@ struct CardsView: View {
     
     //デフォルトはen->ja
     func translateTextWithGAS(_ text: String, source: String = "en", target: String = "ja") async throws -> String {
-        let urlString = "https://script.google.com/macros/s/AKfycbw-tJbHtEj9-Ock0ef_2ysVogKl7y5rCUadj6XzJ7llMZAncnehIMUrhCs2IuXcc10D/exec?text=\(text.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")&source=\(source)&target=\(target)" // 入力されたテキスト・言語情報をURLパラメータとしてGASのAPIエンドポイントに組み込む \()でURLに変数を組み込んでる // addingPercentEncodingで＋＋などの特殊文字を安全な文字列に変換 // withAllowedCharacters: .urlQueryAllowedは空白や？を%26などに変換 // withAllowedChaaractersはURLに安全にう目込むためのルールを指定するところ
+        let urlString = "https://script.google.com/macros/s/AKfycbw-tJbHtEj9-Ock0ef_2ysVogKl7y5rCUadj6XzJ7llMZAncnehIMUrhCs2IuXcc10D/exec?text=\(text.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")&source=\(source)&target=\(target)"
+        // 入力されたテキスト・言語情報をURLパラメータとしてGASのAPIエンドポイントに組み込む \()でURLに変数を組み込んでる
+        // addingPercentEncodingで＋＋などの特殊文字を安全な文字列に変換
+        // withAllowedCharacters: .urlQueryAllowedは空白や？を%26などに変換
+        // withAllowedChaaractersはURLに安全にう目込むためのルールを指定するところ
             
         
         guard let url = URL(string: urlString) else { // 文字列からURL型を生成し、失敗した場合はエラーを投げる

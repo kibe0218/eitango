@@ -8,6 +8,9 @@ final class PlayViewModel: ObservableObject {
     @Published var Finishlist: [Bool] = [false, false, false, false]
     @Published var tangotyou: [String] = []
     @Published var cards: [CardEntity] = []
+    @Published var enbase: [String] = []
+    @Published var jpbase: [String] = []
+    
     
     @Published var reverse = false
     @Published var number = 0
@@ -18,12 +21,14 @@ final class PlayViewModel: ObservableObject {
     @Published var finish = false
     @Published var title = ""
     @Published var cancelFlag = false
+    @Published var shuffleFlag: Bool = false
+    @Published var repeatFlag: Bool = false
     
     init() {
             // 最初4単語をコピーして初期化
         updateView()
-        let enbase = Array(cards.prefix(4)).compactMap { $0.en ?? "-" }
-        let jpbase = Array(cards.prefix(4)).compactMap { $0.jp ?? "-" }
+        enbase = Array(cards.prefix(4)).compactMap { $0.en ?? "-" }
+        jpbase = Array(cards.prefix(4)).compactMap { $0.jp ?? "-" }
         Enlist = enbase + Array(repeating: "-", count: max(0, 4 - enbase.count))
         Jplist = jpbase + Array(repeating: "-", count: max(0, 4 - jpbase.count))
         isFlipped = Array(repeating: false, count:4)
@@ -58,10 +63,11 @@ final class PlayViewModel: ObservableObject {
             title = tangotyou.first ?? ""
         }
         cards = loadCards(title: title)
-        let enbase = Array(cards.prefix(4)).compactMap { $0.en ?? "-" }
-        let jpbase = Array(cards.prefix(4)).compactMap { $0.jp ?? "-" }
-        Enlist = enbase + Array(repeating: "-", count: max(0, 4 - enbase.count))
-        Jplist = jpbase + Array(repeating: "-", count: max(0, 4 - jpbase.count))
+        shuffleCards(i: shuffleFlag)
+        self.enbase = Array(cards.prefix(4)).compactMap { $0.en ?? "-" }
+        self.jpbase = Array(cards.prefix(4)).compactMap { $0.jp ?? "-" }
+        Enlist = self.enbase + Array(repeating: "-", count: max(0, 4 - self.enbase.count))
+        Jplist = self.jpbase + Array(repeating: "-", count: max(0, 4 - self.jpbase.count))
         for i in 0..<Enlist.count {
             if Enlist[i] == "-" {
                 Finishlist[i] = true
@@ -95,6 +101,12 @@ final class PlayViewModel: ObservableObject {
             // エラーが発生した場合、その詳細をコンソールに出力し、空の配列を返します。
             print("loadcardlisterror: \(error.localizedDescription)")
             return []
+        }
+    }
+    
+    func shuffleCards(i: Bool){
+        if i {
+            cards.shuffle()
         }
     }
     
@@ -273,7 +285,9 @@ final class PlayViewModel: ObservableObject {
             }
             if jj >= 4 {
                 finish = true
-                print("finish",finish)
+                if repeatFlag{
+                    updateView()
+                }
             }
         }
     }

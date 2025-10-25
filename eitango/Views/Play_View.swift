@@ -10,6 +10,27 @@ struct PlayView: View {
             VStack {
                 ZStack {
                     HStack {
+                        Button(action: {
+                            vm.shuffleFlag.toggle()
+                            vm.updateView()
+                        }) {
+                            Image(systemName: "shuffle")
+                                .resizable()
+                                .frame(width: 20, height: 20)
+                                .foregroundStyle(vm.shuffleFlag ? Color.accentColor : Color.gray)
+                        }
+                        .padding(EdgeInsets(top: 0,leading: 40, bottom: 0, trailing: 10))
+                        Button(action: {
+                            vm.repeatFlag.toggle()
+                        }) {
+                            Image(systemName: "repeat")
+                                .resizable()
+                                .frame(width: 20, height: 20)
+                                .foregroundStyle(vm.repeatFlag ? Color.accentColor : Color.gray)
+                        }
+                        Spacer()
+                    }
+                    HStack {
                         Spacer() // 左側のスペーサーでPickerを中央に寄せる
                         Picker("単語帳", selection: $vm.number) {
                             ForEach(0..<vm.tangotyou.count, id: \.self) { index in
