@@ -46,6 +46,9 @@ struct PlayView: View {
                         Toggle("", isOn: $vm.reverse)
                     }
                     .padding(30)
+                    .onChange(of: vm.reverse) {
+                        vm.updateView()
+                    }
                 }
                 .frame(height: 70)
                 ForEach(0..<min(vm.Enlist.count, vm.Jplist.count, 4), id: \.self) { i in

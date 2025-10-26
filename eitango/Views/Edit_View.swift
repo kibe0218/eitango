@@ -37,6 +37,8 @@ struct EditView: View {
                                     _ = vm.addCardList(title: title)
                                     CardListTitle = title
                                     title = ""
+                                    vm.noshuffleFlag = true
+                                    vm.updateView()
                                     navigateToCardList = true
                                 }
                                 .disabled(title.trimmingCharacters(in: .whitespaces).isEmpty)
@@ -66,6 +68,8 @@ struct EditView: View {
                                     }
                                     .onTapGesture{
                                         CardListTitle = vm.tangotyou[i]
+                                        vm.noshuffleFlag = true
+                                        vm.updateView()
                                         navigateToCardList = true
                                     }
                                     .frame(height: geo.size.height * 0.18 + 30)

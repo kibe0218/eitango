@@ -141,6 +141,9 @@ struct CardsView: View {
                     isTextFieldFocused = true
                 }
             }
+            .onDisappear {
+                vm.noshuffleFlag = false
+            }
         }
     }
 }
