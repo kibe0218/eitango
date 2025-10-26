@@ -12,6 +12,7 @@ struct CardsView: View {
     
     let title: String
     @State private var geo_height: CGFloat = 0
+    @State private var ing: Int = 0
     @Binding var path: NavigationPath
     
     @State private var newWord: String = ""
@@ -66,7 +67,6 @@ struct CardsView: View {
                                 .environmentObject(vm)
                         }
                         .onDelete { indices in
-                            print("deleteキーボード高さ:",keyboard.keyboardHeight)
                             // Core Data側から削
                             let cardsToDelete = indices.map { vm.cards[$0] }
                             for card in cardsToDelete {
@@ -85,7 +85,8 @@ struct CardsView: View {
                         .focused($isTextFieldFocused)
                         .padding(.all,40)
                         .onSubmit {
-                            print("submitキーボード高さ:",keyboard.keyboardHeight)
+                            ing += 1
+                            print("翻訳中",ing)
                             // 空文字防止
                             let trimmedWord = newWord.trimmingCharacters(in: .whitespacesAndNewlines)
                             //trimmingCharacters(in:)は指定した文字セットを文字列の先頭と末尾から削除
@@ -100,9 +101,11 @@ struct CardsView: View {
                                     do {
                                         if let encodedWord = trimmedWord.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
                                             //%18とかにするのがaddingPercentEncding
-                                            //.urlQueryAllowedはURLのクエリ部分で使える文字ののみということを定義している
+                                            //urlQueryAllowedはURLのクエリ部分で使える文字ののみということを定義している
                                             let translated = try await translateTextWithGAS(encodedWord, source: "en", target: "ja")
+                                            ing -= 1
                                             print("翻訳結果: \(translated)") // 例: "こんにちは"
+                                            print("翻訳中:",ing)
                                             DispatchQueue.main.async {
                                             //DispatchQueue.mainとはSwiftのメインスレッドを示す
                                                 vm.addCard(to: list, en: trimmedWord, jp: translated)

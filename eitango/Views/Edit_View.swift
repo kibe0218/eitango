@@ -27,7 +27,6 @@ struct EditView: View {
                                     .frame(width: 20, height: 20)
                                     .foregroundStyle(Color.accentColor)
                             }
-                            .padding(10)
                             .alert("新しい単語帳を作成", isPresented: $showAlert) {
                                 TextField("タイトル", text: $title)
                                 Button("キャンセル", role: .cancel) {
