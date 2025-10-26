@@ -3,6 +3,8 @@ import SwiftUI
 struct HomeView: View {
     @EnvironmentObject var vm: PlayViewModel
     @State private var selection = 0
+    @StateObject var keyboard = KeyboardObserver()
+
     
     
     var body: some View {
@@ -18,6 +20,7 @@ struct HomeView: View {
                         .tag(0)
                     EditView()
                         .environmentObject(vm)
+                        .environmentObject(keyboard)
                         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                         .tabItem {  // タブのアイテム設定
                             Image(systemName: "pencil.and.ellipsis.rectangle")

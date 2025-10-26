@@ -1,12 +1,17 @@
 import SwiftUI
+import Combine
+
+// キーボードの高さを監視するObservableObject
+
 
 struct CardsView: View {
     @Environment(\.colorScheme) var colorScheme
     @EnvironmentObject var vm: PlayViewModel
-    
+    @StateObject var keyboard = KeyboardObserver()
     @FocusState private var isTextFieldFocused: Bool
     
     let title: String
+    @State private var geo_height: CGFloat = 0
     @Binding var path: NavigationPath
     
     @State private var newWord: String = ""
@@ -57,11 +62,12 @@ struct CardsView: View {
                 VStack{
                     List {
                         ForEach(vm.cards, id: \.objectID) { card in
-                            ItemView(card: card, width: geo.size.width, height: geo.size.height)
+                            ItemView(card: card, width: geo.size.width, height: geo_height)
                                 .environmentObject(vm)
                         }
                         .onDelete { indices in
-                            // Core Data側から削除
+                            print("deleteキーボード高さ:",keyboard.keyboardHeight)
+                            // Core Data側から削
                             let cardsToDelete = indices.map { vm.cards[$0] }
                             for card in cardsToDelete {
                                 vm.deleteCard(card)
@@ -74,12 +80,12 @@ struct CardsView: View {
                         .padding(.bottom, 10)
                     }
                     .listStyle(PlainListStyle())
-                    .frame(maxWidth: .infinity, alignment: .center)
                     TextField("add a new card...", text: $newWord)
                         .keyboardType(.asciiCapable)//英語キーボードを表示
                         .focused($isTextFieldFocused)
                         .padding(.all,40)
                         .onSubmit {
+                            print("submitキーボード高さ:",keyboard.keyboardHeight)
                             // 空文字防止
                             let trimmedWord = newWord.trimmingCharacters(in: .whitespacesAndNewlines)
                             //trimmingCharacters(in:)は指定した文字セットを文字列の先頭と末尾から削除
@@ -118,6 +124,10 @@ struct CardsView: View {
                         )
                         .cornerRadius(20)
                         .frame(maxWidth: .infinity, alignment: .center)
+                }
+                .animation(.easeInOut, value: keyboard.keyboardHeight)
+                .onAppear {
+                    geo_height = geo.size.height
                 }
             }
             .foregroundColor(.accentColor)

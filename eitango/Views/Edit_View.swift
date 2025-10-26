@@ -2,6 +2,7 @@ import SwiftUI
 
 struct EditView: View {
     @EnvironmentObject var vm: PlayViewModel
+    @StateObject var keyboard = KeyboardObserver()
     @Environment(\.colorScheme) var colorScheme
     
     @State private var showAlert = false
@@ -95,6 +96,7 @@ struct EditView: View {
         .navigationDestination(isPresented: $navigateToCardList) {
             CardsView(title: CardListTitle, path: $path)
                 .environmentObject(vm)
+                .environmentObject(keyboard)
         }
     }
 }
