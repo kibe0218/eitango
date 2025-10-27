@@ -16,7 +16,6 @@ struct CardsView: View {
     @Binding var path: NavigationPath
     
     @State private var newWord: String = ""
-    
     //デフォルトはen->ja
     func translateTextWithGAS(_ text: String, source: String = "en", target: String = "ja") async throws -> String {
         let urlString = "https://script.google.com/macros/s/AKfycbwQILljpasT8-lGpErSksKhuuJTfp3_RvSv9WZvUN9mS3ogHKgwGWkmBBbimeH0LHVA/exec?text=\(text.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")&source=\(source)&target=\(target)"
@@ -63,7 +62,7 @@ struct CardsView: View {
                 VStack{
                     List {
                         ForEach(vm.cards, id: \.objectID) { card in
-                            ItemView(card: card, width: geo.size.width, height: geo_height)
+                            ItemView(card: card, width: geo.size.width, height: geo_height, title: title)
                                 .environmentObject(vm)
                         }
                         .onDelete { indices in
@@ -151,18 +150,33 @@ struct CardsView: View {
 struct ItemView: View{
     @EnvironmentObject var vm: PlayViewModel
     @Environment(\.colorScheme) var colorScheme
+    @State private var inputText: String = ""
+
     let card: CardEntity
     let width: Double
     let height: Double
+    let title: String
     
     var body: some View {
         VStack{
             Text(card.en ?? "")
                 .font(.system(size: CGFloat(vm.EnfontSize(i: card.en ?? ""))))
                 .foregroundStyle(colorScheme == .dark ? .white : .black)
-            Text(card.jp ?? "")
+            TextField(card.jp ?? "", text: $inputText)
                 .font(.system(size: 30))
                 .foregroundStyle(Color.gray)
+                .onSubmit{
+                    let trimmedWord = inputText.trimmingCharacters(in: .whitespacesAndNewlines)
+                    guard !trimmedWord.isEmpty && trimmedWord != "-" else { return }
+                    let pasten = card.en ?? ""
+                    if let list = vm.loadCardList().first(where: { $0.title == title }) {
+                        vm.deleteCard(card)
+                        vm.addCard(to: list, en: pasten, jp: trimmedWord)
+                        vm.updateView()
+                    }
+                    
+                }
+                .multilineTextAlignment(.center)
         }
         .frame(width: width * 0.85, height: height * 0.18, alignment: .center)
         .background(
