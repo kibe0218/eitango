@@ -9,7 +9,7 @@ struct eitangoApp: App {
     
     var body: some Scene {
         WindowGroup {
-            HomeView()
+            SplashScreenView()
                 .environment(\.managedObjectContext, PersistenceController.shared.container.viewContext)
                 .environmentObject(vm)
                 .environmentObject(keyboard)
