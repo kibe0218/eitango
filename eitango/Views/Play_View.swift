@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct PlayView: View {
+    @Environment(\.colorScheme) var colorScheme
     @EnvironmentObject var vm: PlayViewModel
     
     @State var title: String = ""
@@ -17,7 +18,7 @@ struct PlayView: View {
                             Image(systemName: "shuffle")
                                 .resizable()
                                 .frame(width: 20, height: 20)
-                                .foregroundStyle(vm.shuffleFlag ? Color.accentColor : Color.gray)
+                                .foregroundStyle(vm.shuffleFlag ? vm.customaccentColor : vm.noaccentColor)
                         }
                         .padding(EdgeInsets(top: 0,leading: 40, bottom: 0, trailing: 10))
                         Button(action: {
@@ -26,7 +27,7 @@ struct PlayView: View {
                             Image(systemName: "repeat")
                                 .resizable()
                                 .frame(width: 20, height: 20)
-                                .foregroundStyle(vm.repeatFlag ? Color.accentColor : Color.gray)
+                                .foregroundStyle(vm.repeatFlag ? vm.customaccentColor : vm.noaccentColor)
                         }
                         Spacer()
                     }
@@ -37,6 +38,7 @@ struct PlayView: View {
                                 Text(vm.tangotyou[index]).tag(index)
                             }
                         }
+                        .tint(vm.toggleColor)
                         Spacer()
                     }
                     .padding(20)
@@ -44,6 +46,7 @@ struct PlayView: View {
                     HStack {
                         Spacer() // 左側のスペーサーでPickerを中央に寄せる
                         Toggle("", isOn: $vm.reverse)
+                            .tint(vm.customaccentColor)
                     }
                     .padding(30)
                     .onChange(of: vm.reverse) {
@@ -59,11 +62,15 @@ struct PlayView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         }
+        .onAppear{
+            vm.colorS = colorScheme
+        }
         .onChange(of: vm.number) {
             vm.numberFlag = true
             vm.updateView()
         }
         .onChange(of: vm.reverse) {vm.updateView()}
+        .background(vm.backColor.ignoresSafeArea())
     }
 }
 
@@ -82,9 +89,7 @@ struct CardItemView: View{
                     vm.EnColor(y: vm.isFlipped[i], rev: vm.reverse, colorScheme: colorScheme)
                 )
                 .frame(width: width * 0.85,height: height * 0.18)
-                .background(
-                    Color.gray.opacity(colorScheme == .dark ? 0.4 : 0.15)
-                )
+                .background(vm.cardColor)
                 .cornerRadius(20)
                 .opacity(vm.Enopacity(y: vm.isFlipped[i], rev: vm.reverse))
                 .scaleEffect(x: vm.reverse ? -1 : 1, y: 1)
@@ -94,9 +99,7 @@ struct CardItemView: View{
                     vm.JpColor(y: vm.isFlipped[i], rev: vm.reverse, colorScheme: colorScheme)
                 )
                 .frame(width: width * 0.85, height: height * 0.18)
-                .background(
-                    Color.gray.opacity(colorScheme == .dark ? 0.4 : 0.15)
-                )
+                .background(vm.cardColor)
                 .cornerRadius(20)
                 .opacity(vm.Jpopacity(y: vm.isFlipped[i], rev: vm.reverse))
                 .scaleEffect(x: vm.reverse ? 1 : -1, y: 1)

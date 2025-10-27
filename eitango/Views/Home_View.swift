@@ -2,6 +2,7 @@ import SwiftUI
 
 struct HomeView: View {
     @EnvironmentObject var vm: PlayViewModel
+    @Environment(\.colorScheme) var colorScheme
     @State private var selection = 0
     @StateObject var keyboard = KeyboardObserver()
 
@@ -28,8 +29,12 @@ struct HomeView: View {
                         }
                         .tag(1)
                 }
+                .accentColor(vm.customaccentColor)
                 .onChange(of: selection) {vm.updateView()}
-                .onAppear{vm.updateView()}
+                .onAppear{
+                    vm.updateView()
+                    vm.colorS = colorScheme
+                }
             }
         }
     }

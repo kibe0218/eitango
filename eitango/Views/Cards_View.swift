@@ -120,10 +120,8 @@ struct CardsView: View {
                             }
                         }
                         .frame(width: geo.size.width * 0.85, height: geo.size.height * 0.18, alignment: .center)
-                        .foregroundStyle(colorScheme == .dark ? .white : .black)
-                        .background(
-                            Color.gray.opacity(colorScheme == .dark ? 0.4 : 0.15)
-                        )
+                        .foregroundStyle(vm.cardfrontColor)
+                        .background(vm.cardColor)
                         .cornerRadius(20)
                         .frame(maxWidth: .infinity, alignment: .center)
                 }
@@ -134,6 +132,7 @@ struct CardsView: View {
             }
             .foregroundColor(.accentColor)
             .onAppear {
+                vm.colorS = colorScheme
                 vm.title = title
                 vm.cards = vm.loadCards(title: title)
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -144,6 +143,7 @@ struct CardsView: View {
                 vm.noshuffleFlag = false
             }
         }
+        .background(vm.backColor.ignoresSafeArea())
     }
 }
 
@@ -161,7 +161,7 @@ struct ItemView: View{
         VStack{
             Text(card.en ?? "")
                 .font(.system(size: CGFloat(vm.EnfontSize(i: card.en ?? ""))))
-                .foregroundStyle(colorScheme == .dark ? .white : .black)
+                .foregroundStyle(vm.cardfrontColor)
             TextField(card.jp ?? "", text: $inputText)
                 .font(.system(size: 30))
                 .foregroundStyle(Color.gray)
@@ -177,11 +177,10 @@ struct ItemView: View{
                     
                 }
                 .multilineTextAlignment(.center)
+                .frame(height: height * 0.02)
         }
         .frame(width: width * 0.85, height: height * 0.18, alignment: .center)
-        .background(
-            Color.gray.opacity(colorScheme == .dark ? 0.4 : 0.15)
-        )
+        .background(vm.cardColor)
         .cornerRadius(20)
         .frame(maxWidth: .infinity, alignment: .center)
         .onTapGesture {

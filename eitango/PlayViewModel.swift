@@ -2,6 +2,22 @@ import SwiftUI
 import Combine
 import CoreData
 
+extension Color {
+    init(hex: String) {
+        let scanner = Scanner(string: hex)
+        _ = scanner.scanString("#")
+
+        var rgb: UInt64 = 0
+        scanner.scanHexInt64(&rgb)
+
+        let r = Double((rgb >> 16) & 0xFF) / 255.0
+        let g = Double((rgb >> 8) & 0xFF) / 255.0
+        let b = Double(rgb & 0xFF) / 255.0
+
+        self.init(red: r, green: g, blue: b)
+    }
+}
+
 class KeyboardObserver: ObservableObject {
     @Published var keyboardHeight: CGFloat = 0
     private var cancellable: AnyCancellable?
@@ -31,6 +47,7 @@ class KeyboardObserver: ObservableObject {
 }
 
 final class PlayViewModel: ObservableObject {
+    
     @Published var Enlist: [String] = []
     @Published var Jplist: [String] = []
     @Published var Finishlist: [Bool] = [false, false, false, false]
@@ -39,27 +56,67 @@ final class PlayViewModel: ObservableObject {
     @Published var enbase: [String] = []
     @Published var jpbase: [String] = []
     
-    
-    @Published var reverse = false
     @Published var number  = 0
     @Published var waittime = 2
-    @Published var isFlipped: [Bool] = [false, false, false, false]
     @Published var yy = 0
     @Published var jj = 0
-    @Published var finish = false
+    @Published var colortheme = 1
+    
     @Published var title = ""
+    
+    @Published var isFlipped: [Bool] = [false, false, false, false]
+    @Published var finish = false
     @Published var cancelFlag = false
+    @Published var reverse = false
     @Published var shuffleFlag: Bool = false
     @Published var noshuffleFlag: Bool = false
     @Published var repeatFlag: Bool = false
     @Published var numberFlag: Bool = false
     
+    @Published var colorS: ColorScheme = .light
+    @Published var cardColor: Color = Color(hex:"cc7a6b").opacity(0.4)
+    @Published var backColor: Color = Color(hex:"f8e8d3")
+    @Published var customaccentColor: Color = Color(hex: "8b2f3c")
+    @Published var noaccentColor: Color = Color.gray
+    @Published var cardfrontColor: Color = Color.black
+    @Published var cardbackColor: Color = Color(hex:"7b2b36")
+    @Published var toggleColor: Color = Color(hex: "8b2f3c")
+    @Published var cardlistColor: Color = Color(hex: "cc7a6b").opacity(0.6)
+    @Published var cardlistmobColor: Color = Color(hex: "cc7a6b").opacity(0.25)
+    
+    
     init() {
+        ColorSetting()
         loadSettings()
         numberFlag = true
         updateView()
         //repeatingで繰り返し配列にaddする
         
+    }
+    
+    func ColorSetting() {
+        switch colortheme {
+        case 1:
+            cardColor = Color(hex: "cc7a6b").opacity(0.4)
+            backColor = Color(hex: "f8e8d3")
+            customaccentColor = Color(hex: "8b2f3c")
+            noaccentColor = Color.gray
+            cardfrontColor = Color.black
+            cardbackColor = Color(hex: "7b2b36")
+            toggleColor = Color(hex: "8b2f3c")
+            cardlistColor = Color(hex: "cc7a6b").opacity(0.6)
+            cardlistmobColor = Color(hex: "cc7a6b").opacity(0.25)
+        default:
+            cardColor = Color.gray.opacity(colorS == .dark ? 0.4 : 0.15)
+            backColor = colorS == .dark ? .black : .white
+            customaccentColor = .accentColor
+            noaccentColor = Color.gray
+            cardfrontColor = colorS == .dark ? .white : .black
+            cardbackColor = .red
+            toggleColor = .accentColor
+            cardlistColor = Color.gray.opacity(colorS == .dark ? 0.6 : 0.2)
+            cardlistmobColor = Color.gray.opacity(colorS == .dark ? 0.25 : 0.1)
+        }
     }
     
     func loadSettings() {
@@ -140,10 +197,10 @@ final class PlayViewModel: ObservableObject {
         if !noshuffleFlag {shuffleCards(i: shuffleFlag)}
         self.enbase = Array(cards.prefix(4)).compactMap { $0.en ?? "-" }
         self.jpbase = Array(cards.prefix(4)).compactMap { $0.jp ?? "-" }
-        Enlist = self.enbase + Array(repeating: "✅", count: max(0, 4 - self.enbase.count))
-        Jplist = self.jpbase + Array(repeating: "✅", count: max(0, 4 - self.jpbase.count))
+        Enlist = self.enbase + Array(repeating: "✔︎", count: max(0, 4 - self.enbase.count))
+        Jplist = self.jpbase + Array(repeating: "✔︎", count: max(0, 4 - self.jpbase.count))
         for i in 0..<Enlist.count {
-            if Enlist[i] == "✅" {
+            if Enlist[i] == "✔︎" {
                 Finishlist[i] = true
                 jj += 1
             }
@@ -314,18 +371,18 @@ final class PlayViewModel: ObservableObject {
     func EnColor(y: Bool, rev: Bool, colorScheme: ColorScheme) -> Color {
         // 表（y=false）が黒、裏（y=true）が赤
         if y {
-            return .red
+            return cardbackColor
         } else {
-            return colorScheme == .dark ? .white : .black
+            return cardfrontColor
         }
     }
 
     func JpColor(y: Bool, rev: Bool, colorScheme: ColorScheme) -> Color {
         // 表（y=false）が黒、裏（y=true）が赤（英日問わず統一）
         if y {
-            return .red
+            return cardbackColor
         } else {
-            return colorScheme == .dark ? .white : .black
+            return cardfrontColor
         }
     }
 
@@ -351,8 +408,8 @@ final class PlayViewModel: ObservableObject {
                 
             } else {
                 if i < Enlist.count {
-                    Enlist[i] = "✅"
-                    Jplist[i] = "✅"
+                    Enlist[i] = "✔︎"
+                    Jplist[i] = "✔︎"
                     Finishlist[i] = true
                 }
                 yy += 1

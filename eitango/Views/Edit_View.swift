@@ -18,6 +18,15 @@ struct EditView: View {
                 VStack{
                     ZStack{
                         HStack{
+//                            Button(action: {
+//                                showAlert = true
+//                            }) {
+//                                Image("memodog")
+//                                    .resizable()
+//                                    .frame(width: 90, height: 90)
+//                                    .foregroundStyle(vm.customaccentColor)
+//                                    .padding(.leading, 30)
+//                            }
                             Spacer()  // 左側のスペーサーでPickerを中央に寄せる
                             Button(action: {
                                 showAlert = true
@@ -25,7 +34,7 @@ struct EditView: View {
                                 Image(systemName: "plus")
                                     .resizable()
                                     .frame(width: 20, height: 20)
-                                    .foregroundStyle(Color.accentColor)
+                                    .foregroundStyle(vm.customaccentColor)
                             }
                             .alert("新しい単語帳を作成", isPresented: $showAlert) {
                                 TextField("タイトル", text: $title)
@@ -60,9 +69,9 @@ struct EditView: View {
                                         }
                                         Text(vm.tangotyou[i])
                                             .font(.system(size: CGFloat(vm.JpfontSize(i: vm.tangotyou[i]))))
-                                            .foregroundStyle(colorScheme == .dark ? .white : .black)
+                                            .foregroundStyle(vm.cardfrontColor)
                                             .frame(width: geo.size.width * 0.85, height: geo.size.height * 0.18)
-                                            .background(Color.gray.opacity(colorScheme == .dark ? 0.6 : 0.2))
+                                            .background(vm.cardColor)
                                             .cornerRadius(20)
                                             .zIndex(100)
                                     }
@@ -96,6 +105,10 @@ struct EditView: View {
                 }
             }
         }
+        .background(vm.backColor.ignoresSafeArea())
+        .onAppear{
+            vm.colorS = colorScheme
+        }
         .navigationDestination(isPresented: $navigateToCardList) {
             CardsView(title: CardListTitle, path: $path)
                 .environmentObject(vm)
@@ -116,7 +129,7 @@ struct CardListView: View {
     var body: some View {
             Text("")
                 .frame(width: width * 0.85, height: height * 0.18)
-                .background(Color.gray.opacity(colorScheme == .dark ? 0.25 : 0.1))
+                .background(vm.cardlistmobColor)
                 .cornerRadius(20)
                 .offset(y: Double(z) * 5 + 5)
                 .scaleEffect(1 - Double(z) * 0.01)
