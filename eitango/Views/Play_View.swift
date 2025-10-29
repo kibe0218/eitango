@@ -109,7 +109,7 @@ struct CardItemView: View{
             .degrees(vm.isFlipped[i] ? -180 : 0),
             axis: (x: 0, y: 1, z: 0)
         )
-        .animation(.easeInOut(duration: 0.5), value: vm.isFlipped[i])
+        .animation(.easeOut(duration: 0.4), value: vm.isFlipped[i])
         .onTapGesture {
             if !vm.Finishlist[i]{
                 vm.FlippTask(i: i)

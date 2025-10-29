@@ -388,9 +388,9 @@ final class PlayViewModel: ObservableObject {
     }
 
     func FlippTask(i: Int) {
-        withAnimation {
-            isFlipped[i] = true
-        }
+        DispatchQueue.main.async {
+                self.isFlipped[i] = true
+            }
         Task {
             let sleepInterval: UInt64 = 50_000_000 // 0.05 second
             var waited: UInt64 = 0
@@ -415,6 +415,7 @@ final class PlayViewModel: ObservableObject {
                 Enlist[i] = randomCard.en
                 Jplist[i] = randomCard.jp
                 isFlipped[i] = false
+                
             } else {
                 if i < Enlist.count {
                     Enlist[i] = "✔︎"
