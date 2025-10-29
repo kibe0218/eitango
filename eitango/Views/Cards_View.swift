@@ -61,6 +61,17 @@ struct CardsView: View {
             GeometryReader { geo in
                 VStack{
                     List {
+                        if(ing != 0){
+                            HStack{
+                                Spacer()
+                                Text("翻訳中: \(ing)件...")
+                                    .font(.system(size: CGFloat(10)))
+                                    .frame(height: geo_height * 0.05, alignment: .center)
+                                    .background(vm.backColor)
+                                Spacer()
+                            }
+                            .listRowBackground(vm.backColor)
+                        }
                         ForEach(vm.cards, id: \.objectID) { card in
                             ItemView(card: card, width: geo.size.width, height: geo_height, title: title)
                                 .environmentObject(vm)
@@ -75,6 +86,7 @@ struct CardsView: View {
                             vm.cards = vm.loadCards(title: title)
                         }
                         .listRowSeparator(.hidden)
+                        .scrollContentBackground(.hidden) // ← これ大事！
                         .listRowBackground(Color.clear)
                         .padding(.bottom, 10)
                     }
@@ -183,8 +195,5 @@ struct ItemView: View{
         .background(vm.cardColor)
         .cornerRadius(20)
         .frame(maxWidth: .infinity, alignment: .center)
-        .onTapGesture {
-            // ここにタップ時の処理を書く
-        }
     }
 }

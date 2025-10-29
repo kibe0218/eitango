@@ -55,6 +55,7 @@ final class PlayViewModel: ObservableObject {
     @Published var cards: [CardEntity] = []
     @Published var enbase: [String] = []
     @Published var jpbase: [String] = []
+    @Published var mistakecardlist: [(en: String, jp: String)] = []
     
     @Published var number  = 0
     @Published var waittime = 2
@@ -406,6 +407,14 @@ final class PlayViewModel: ObservableObject {
                 isFlipped[i] = false
                 yy += 1
                 
+            } else if !mistakecardlist.isEmpty {
+                let index = Int.random(in: 0..<mistakecardlist.count)
+                //ランダムにindexを取得
+                let randomCard = mistakecardlist[index]
+                mistakecardlist.remove(at: index)
+                Enlist[i] = randomCard.en
+                Jplist[i] = randomCard.jp
+                isFlipped[i] = false
             } else {
                 if i < Enlist.count {
                     Enlist[i] = "✔︎"
@@ -423,4 +432,10 @@ final class PlayViewModel: ObservableObject {
             }
         }
     }
+        
+    func MistakeTask(i: Int) {
+        mistakecardlist.append((en: Enlist[i], jp: Jplist[i]))
+        print("間違えたやつ",mistakecardlist)
+    }
+        
 }

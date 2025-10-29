@@ -115,5 +115,10 @@ struct CardItemView: View{
                 vm.FlippTask(i: i)
             }
         }
+        .onTapGesture(count: 2) {
+            if vm.isFlipped[i] {
+                vm.MistakeTask(i: i)
+            }
+        }
     }
 }
