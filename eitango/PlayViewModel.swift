@@ -61,7 +61,7 @@ final class PlayViewModel: ObservableObject {
     @Published var waittime = 2
     @Published var yy = 0
     @Published var jj = 0
-    @Published var colortheme = 1
+    @Published var colortheme = 0
     
     @Published var title = ""
     
@@ -73,6 +73,8 @@ final class PlayViewModel: ObservableObject {
     @Published var noshuffleFlag: Bool = false
     @Published var repeatFlag: Bool = false
     @Published var numberFlag: Bool = false
+    @Published var showNotification: Bool = false
+    @Published var showToast: Bool = false
     
     @Published var colorS: ColorScheme = .light
     @Published var cardColor: Color = Color(hex:"cc7a6b").opacity(0.4)
@@ -437,6 +439,7 @@ final class PlayViewModel: ObservableObject {
     func MistakeTask(i: Int) {
         mistakecardlist.append((en: Enlist[i], jp: Jplist[i]))
         print("間違えたやつ",mistakecardlist)
+        showNotification = true
     }
         
 }
