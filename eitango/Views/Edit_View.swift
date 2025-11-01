@@ -18,22 +18,19 @@ struct EditView: View {
                 VStack{
                     ZStack{
                         HStack{
-//                            Button(action: {
-//                                showAlert = true
-//                            }) {
-//                                Image("memodog")
-//                                    .resizable()
-//                                    .frame(width: 90, height: 90)
-//                                    .foregroundStyle(vm.customaccentColor)
-//                                    .padding(.leading, 30)
-//                            }
+                            Button(action: {
+                                showAlert = true
+                            }) {
+                                Image(systemName: "ellipsis")
+                                    .font(.title)
+                                    .foregroundStyle(vm.customaccentColor)
+                            }
                             Spacer()  // 左側のスペーサーでPickerを中央に寄せる
                             Button(action: {
                                 showAlert = true
                             }) {
                                 Image(systemName: "plus")
-                                    .resizable()
-                                    .frame(width: 20, height: 20)
+                                    .font(.title)
                                     .foregroundStyle(vm.customaccentColor)
                             }
                             .alert("新しい単語帳を作成", isPresented: $showAlert) {
@@ -55,7 +52,7 @@ struct EditView: View {
                                 //isEmptyでから文字列をtrueにしてしまう->disabledでボタンを無効化
                             }
                         }
-                        .padding(.trailing, 50)  // 右だけ10ポイント
+                        .padding(.horizontal, 50)
                     }.frame(height: 70)
                     List{
                         ForEach(0..<vm.tangotyou.count, id: \.self) { i in

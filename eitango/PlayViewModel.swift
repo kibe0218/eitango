@@ -61,7 +61,7 @@ final class PlayViewModel: ObservableObject {
     @Published var waittime = 2
     @Published var yy = 0
     @Published var jj = 0
-    @Published var colortheme = 0
+    @Published var colortheme = 1
     
     @Published var title = ""
     

@@ -174,9 +174,13 @@ struct ItemView: View{
             Text(card.en ?? "")
                 .font(.system(size: CGFloat(vm.EnfontSize(i: card.en ?? ""))))
                 .foregroundStyle(vm.cardfrontColor)
-            TextField(card.jp ?? "", text: $inputText)
-                .font(.system(size: 30))
-                .foregroundStyle(Color.gray)
+            TextField(
+                "",
+                text: $inputText,
+                prompt: Text(card.jp ?? "").foregroundColor(vm.cardbackColor)
+            )
+            .font(.system(size: 30))
+            .foregroundStyle(vm.cardbackColor)
                 .onSubmit{
                     let trimmedWord = inputText.trimmingCharacters(in: .whitespacesAndNewlines)
                     guard !trimmedWord.isEmpty && trimmedWord != "-" else { return }
