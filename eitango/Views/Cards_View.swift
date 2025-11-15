@@ -66,6 +66,7 @@ struct CardsView: View {
                                 Spacer()
                                 Text("翻訳中: \(ing)件...")
                                     .font(.system(size: CGFloat(10)))
+                                    .foregroundStyle(vm.customaccentColor)
                                     .frame(height: geo_height * 0.05, alignment: .center)
                                     .background(vm.backColor)
                                 Spacer()

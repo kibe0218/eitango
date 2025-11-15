@@ -8,20 +8,21 @@ struct EditView: View {
     @State private var showAlert = false
     @State private var title: String = ""
     @State private var navigateToCardList = false//画面遷移を監視
+    @State private var navigateToSettings = false
+    
     @State private var CardListTitle: String = ""
     @State private var path = NavigationPath()
     
-    var body: some View {
-        
+    var body: some View {        
         NavigationStack{
             GeometryReader { geo in
                 VStack{
                     ZStack{
                         HStack{
                             Button(action: {
-                                showAlert = true
+                                navigateToSettings = true
                             }) {
-                                Image(systemName: "ellipsis")
+                                Image(systemName: "gearshape.2.fill")
                                     .font(.title)
                                     .foregroundStyle(vm.customaccentColor)
                             }
@@ -111,6 +112,11 @@ struct EditView: View {
                 .environmentObject(vm)
                 .environmentObject(keyboard)
         }
+        .navigationDestination(isPresented: $navigateToSettings) {
+            SettingsView()
+                .environmentObject(vm)
+        }
+        
     }
 }
 

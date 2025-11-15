@@ -17,17 +17,15 @@ struct PlayView: View {
                                 vm.updateView()
                             }) {
                                 Image(systemName: "shuffle")
-                                    .resizable()
-                                    .frame(width: 20, height: 20)
+                                    .font(.title)
                                     .foregroundStyle(vm.shuffleFlag ? vm.customaccentColor : vm.noaccentColor)
                             }
-                            .padding(EdgeInsets(top: 0,leading: 40, bottom: 0, trailing: 10))
+                            .padding(.leading, 40)
                             Button(action: {
                                 vm.repeatFlag.toggle()
                             }) {
                                 Image(systemName: "repeat")
-                                    .resizable()
-                                    .frame(width: 20, height: 20)
+                                    .font(.title)
                                     .foregroundStyle(vm.repeatFlag ? vm.customaccentColor : vm.noaccentColor)
                             }
                             Spacer()

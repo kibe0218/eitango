@@ -133,11 +133,15 @@ final class PlayViewModel: ObservableObject {
                 self.number = Int(settings.number)
                 self.shuffleFlag = settings.shuffleFlag
                 self.repeatFlag = settings.repeatFlag
+                self.colortheme = Int(settings.colortheme)
+                self.waittime = Int(settings.waittime)
             } else {
                 // データが存在しない場合はデフォルト値を設定
                 self.number = 0
                 self.shuffleFlag = false
                 self.repeatFlag = false
+                self.colortheme = 1
+                self.waittime = 2
             }
         } catch {
             // エラー発生時はデフォルト値を設定
@@ -145,6 +149,8 @@ final class PlayViewModel: ObservableObject {
             self.number = 0
             self.shuffleFlag = false
             self.repeatFlag = false
+            self.colortheme = 1
+            self.waittime = 2
         }
     }
     
@@ -166,6 +172,8 @@ final class PlayViewModel: ObservableObject {
             settings.number = Int16(number)
             settings.shuffleFlag = shuffleFlag
             settings.repeatFlag = repeatFlag
+            settings.colortheme = Int16(colortheme)
+            settings.waittime = Int16(waittime)
             try context.save()
         } catch {
             print("saveSettingsError: \(error.localizedDescription)")
@@ -175,12 +183,12 @@ final class PlayViewModel: ObservableObject {
     func updateView() {
         cancelFlag = true
         Thread.sleep(forTimeInterval: 0.07)
-        
         // 0.1秒待つ
         yy = 0
         jj = 0
         finish = false
         
+        ColorSetting()
         isFlipped = Array(repeating: false, count:4)
         tangotyou = loadCardList()
             .sorted { ($0.createdAt ?? Date.distantPast) > ($1.createdAt ?? Date.distantPast) }
@@ -213,6 +221,7 @@ final class PlayViewModel: ObservableObject {
         }
         cancelFlag = false
         saveSettings()
+        print("待機：\(waittime)")
     }
     
     func loadCardList() -> [CardlistEntity] {//戻り値はCardlistEntityの配列

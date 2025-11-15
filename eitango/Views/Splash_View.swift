@@ -55,6 +55,3 @@ struct SplashScreenView: View {
     }
 }
 
-#Preview {
-    SplashScreenView()
-}
