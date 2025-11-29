@@ -4,10 +4,18 @@ import CoreData
 struct PersistenceController {
     static let shared = PersistenceController()
     
+    // NSPersistentCloudKitContainer に変更して iCloud コンテナを指定
     let container: NSPersistentCloudKitContainer
     
     init(inMemory: Bool = false) {
         container = NSPersistentCloudKitContainer(name: "eitangoData")
+        
+        // CloudKit コンテナを指定
+        if let description = container.persistentStoreDescriptions.first {
+            description.cloudKitContainerOptions = NSPersistentCloudKitContainerOptions(
+                containerIdentifier: "iCloud.com.yourcompany.eitango" // 自分のコンテナIDに変更
+            )
+        }
         
         if inMemory {
             container.persistentStoreDescriptions.first?.url = URL(fileURLWithPath: "/dev/null")

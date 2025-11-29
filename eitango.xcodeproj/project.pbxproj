@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXFileReference section */
-		1821FF682E98E2100021BAF9 /* memoRize.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = memoRize.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1821FF682E98E2100021BAF9 /* memoRise.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = memoRise.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -40,7 +40,7 @@
 		1821FF692E98E2100021BAF9 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1821FF682E98E2100021BAF9 /* memoRize.app */,
+				1821FF682E98E2100021BAF9 /* memoRise.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -48,9 +48,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		1821FF672E98E2100021BAF9 /* memoRize */ = {
+		1821FF672E98E2100021BAF9 /* memoRise */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1821FF732E98E2110021BAF9 /* Build configuration list for PBXNativeTarget "memoRize" */;
+			buildConfigurationList = 1821FF732E98E2110021BAF9 /* Build configuration list for PBXNativeTarget "memoRise" */;
 			buildPhases = (
 				1821FF642E98E2100021BAF9 /* Sources */,
 				1821FF652E98E2100021BAF9 /* Frameworks */,
@@ -63,11 +63,11 @@
 			fileSystemSynchronizedGroups = (
 				1821FF6A2E98E2100021BAF9 /* eitango */,
 			);
-			name = memoRize;
+			name = memoRise;
 			packageProductDependencies = (
 			);
 			productName = eitango;
-			productReference = 1821FF682E98E2100021BAF9 /* memoRize.app */;
+			productReference = 1821FF682E98E2100021BAF9 /* memoRise.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -99,7 +99,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				1821FF672E98E2100021BAF9 /* memoRize */,
+				1821FF672E98E2100021BAF9 /* memoRise */,
 			);
 		};
 /* End PBXProject section */
@@ -334,7 +334,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		1821FF732E98E2110021BAF9 /* Build configuration list for PBXNativeTarget "memoRize" */ = {
+		1821FF732E98E2110021BAF9 /* Build configuration list for PBXNativeTarget "memoRise" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1821FF742E98E2110021BAF9 /* Debug */,

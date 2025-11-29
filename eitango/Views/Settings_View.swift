@@ -9,21 +9,24 @@ struct SettingsView: View {
             GeometryReader { geo in
                 ZStack {
                     Form {
-                        Section(header: Text("テーマ")) {
-                            Picker("色",selection: $vm.colortheme) {
-                                Text("シンプル(ダーク/ライトモード対応)").tag(0)
-                                Text("暖色").tag(1)
-                            }
-                            .onChange(of: vm.colortheme){
-                                vm.updateView()
+                        Section(header: Text("テーマ").foregroundColor(vm.textColor)) {
+                            Toggle(isOn: Binding<Bool>(
+                                get: { vm.colortheme == 0 },
+                                set: { newValue in
+                                    vm.colortheme = newValue ? 0 : 1
+                                    vm.updateView()
+                                }
+                            )) {
+                                Text("シンプルモード")
+                                    .foregroundColor(vm.textColor)
                             }
                         }
                         .listRowBackground(vm.cardColor)
-                        Section(header: Text("機能")) {
-                            Text("待機時間：\(vm.waittime)秒")
+                        Section(header: Text("機能").foregroundColor(vm.textColor)) {
+                            Text("待機時間：\(vm.waittime)秒").foregroundColor(vm.textColor)
                             Picker("", selection: $vm.waittime) {
                                 ForEach(1..<10) { second in
-                                    Text("\(second) 秒").tag(second)
+                                    Text("\(second) 秒").tag(second).foregroundColor(vm.textColor)
                                 }
                             }
                             .pickerStyle(WheelPickerStyle())

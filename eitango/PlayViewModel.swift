@@ -86,6 +86,7 @@ final class PlayViewModel: ObservableObject {
     @Published var toggleColor: Color = Color(hex: "8b2f3c")
     @Published var cardlistColor: Color = Color(hex: "cc7a6b").opacity(0.6)
     @Published var cardlistmobColor: Color = Color(hex: "cc7a6b").opacity(0.25)
+    @Published var textColor: Color = .primary
     
     
     init() {
@@ -109,6 +110,7 @@ final class PlayViewModel: ObservableObject {
             toggleColor = Color(hex: "8b2f3c")
             cardlistColor = Color(hex: "cc7a6b").opacity(0.6)
             cardlistmobColor = Color(hex: "cc7a6b").opacity(0.25)
+            textColor = .black
         default:
             cardColor = Color.gray.opacity(colorS == .dark ? 0.4 : 0.15)
             backColor = colorS == .dark ? .black : .white
@@ -119,6 +121,7 @@ final class PlayViewModel: ObservableObject {
             toggleColor = .accentColor
             cardlistColor = Color.gray.opacity(colorS == .dark ? 0.6 : 0.2)
             cardlistmobColor = Color.gray.opacity(colorS == .dark ? 0.25 : 0.1)
+            textColor = colorS == .dark ? .white : .black
         }
     }
     

@@ -24,7 +24,7 @@ struct SplashScreenView: View {
                             Image("memodog")
                                 .resizable()
                                 .frame(width: 200, height: 200)
-                            Text("memoRize")
+                            Text("memoRise")
                                 .font(Font.custom("Baskerville-Bold", size: 26))
                                 .foregroundColor(.black.opacity(0.80))
                         }
