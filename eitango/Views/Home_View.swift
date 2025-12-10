@@ -28,6 +28,13 @@ struct HomeView: View {
                             Text("Edit")  // お気に入りタブのラベル
                         }
                         .tag(1)
+//                    DogView()
+//                        .environmentObject(vm)
+//                        .tabItem {
+//                            Image(systemName: "dog")
+//                            Text("Dog")
+//                        }
+//                        .tag(2)
                 }
                 .accentColor(vm.customaccentColor)
                 .onChange(of: selection) {vm.updateView()}
