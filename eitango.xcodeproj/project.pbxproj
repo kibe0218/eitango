@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXFileReference section */
-		1821FF682E98E2100021BAF9 /* memoRise.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = memoRise.app; path = "/Users/apple/app/eitango_proj/eitango/build/Debug-iphoneos/memoRise.app"; sourceTree = "<absolute>"; };
+		1862C2C62EF0BF3C00077808 /* memoRise.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = memoRise.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -33,6 +33,7 @@
 			isa = PBXGroup;
 			children = (
 				1821FF6A2E98E2100021BAF9 /* eitango */,
+				1862C2C62EF0BF3C00077808 /* memoRise.app */,
 			);
 			sourceTree = "<group>";
 		};
@@ -58,7 +59,7 @@
 			packageProductDependencies = (
 			);
 			productName = eitango;
-			productReference = 1821FF682E98E2100021BAF9 /* memoRise.app */;
+			productReference = 1862C2C62EF0BF3C00077808 /* memoRise.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */

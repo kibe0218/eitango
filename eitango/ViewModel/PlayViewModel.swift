@@ -1,3 +1,33 @@
+//================================================
+// 🧠 PlayViewModel / 中央司令塔
+//================================================
+//
+// 【役割】
+// ・📡 アプリ全体の状態を一元管理する中核 ViewModel
+// ・🧩 各 PVM（Card / List / Color / Settings / UIUpdate / Flips）の集合体
+// ・🖥 SwiftUI View から唯一参照される状態コンテナ
+//
+// 【責務】
+// ・@Published による UI への状態配信
+// ・各機能 PVM の関数を束ねて提供
+// ・初期化時に「設定 → 色 → データ → 画面」の順で準備
+//
+// 【基本フロー】
+// ① init() で ColorSetting() を実行
+// ② loadSettings() で CoreData 設定を復元
+// ③ updateView() で画面状態を初期構築
+// ④ UI はこの ViewModel のみを監視
+//
+// 【設計方針】
+// ・View はロジックを持たず、PlayViewModel のみを見る
+// ・状態はできるだけここに集約し、分割 PVM は extension で構成
+// ・「ViewModel が世界、View は鏡」という思想
+//
+// 【注意】
+// ⚠️ このファイルは薄く保ち、処理は各 *_PVM.swift に分離する
+// ⚠️ @Published 追加時は UI 影響範囲を必ず確認する
+//
+//================================================
 import SwiftUI
 import Combine
 import CoreData
@@ -40,6 +70,7 @@ final class PlayViewModel: ObservableObject {
     @Published var enbase: [String] = []
     @Published var jpbase: [String] = []
     @Published var mistakecardlist: [(en: String, jp: String)] = []
+    @Published var cardLists: [List_ST] = []
     
     @Published var number  = 0
     @Published var waittime = 2
