@@ -1,16 +1,12 @@
 import SwiftUI
 import Combine
 
-// キーボードの高さを監視するObservableObject
-
-
 struct CardsView: View {
     @Environment(\.colorScheme) var colorScheme
     @EnvironmentObject var vm: PlayViewModel
     @StateObject var keyboard = KeyboardObserver()
     @FocusState private var isTextFieldFocused: Bool
     
-    let title: String
     @State private var geo_height: CGFloat = 0
     @State private var ing: Int = 0
     @Binding var path: NavigationPath
@@ -18,7 +14,7 @@ struct CardsView: View {
     @State private var newWord: String = ""
     //デフォルトはen->ja
     func translateTextWithGAS(_ text: String, source: String = "en", target: String = "ja") async throws -> String {
-        let urlString = "https://script.google.com/macros/s/AKfycbwQILljpasT8-lGpErSksKhuuJTfp3_RvSv9WZvUN9mS3ogHKgwGWkmBBbimeH0LHVA/exec?text=\(text.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")&source=\(source)&target=\(target)"
+        let urlString = "https://script.google.com/macros/s/AKfycbxotVWEIFCz2YhhUZSdPJ7jkYlQKj2W2ya7QWRlFiGixeRaoFg7P9E75HfgQEN-GakP/exec?text=\(text.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")&source=\(source)&target=\(target)"
         // 入力されたテキスト・言語情報をURLパラメータとしてGASのAPIエンドポイントに組み込む \()でURLに変数を組み込んでる
         // addingPercentEncodingで＋＋などの特殊文字を安全な文字列に変換
         // withAllowedCharacters: .urlQueryAllowedは空白や？を%26などに変換
@@ -73,18 +69,15 @@ struct CardsView: View {
                             }
                             .listRowBackground(vm.backColor)
                         }
-                        ForEach(vm.cards, id: \.objectID) { card in
-                            ItemView(card: card, width: geo.size.width, height: geo_height, title: title)
-                                .environmentObject(vm)
+                        ForEach(vm.Cards, id: \.objectID) { card in
+                            ItemView(card: card, width: geo.size.width, height: geo_height, title: vm.fetchListsFromCoreData().first(where: { $0.id == vm.selectedListId })?.title ?? "")                                .environmentObject(vm)
                         }
-                        .onDelete { indices in
-                            // Core Data側から削
-                            let cardsToDelete = indices.map { vm.cards[$0] }
-                            for card in cardsToDelete {
-                                vm.deleteCard(card)
-                            }
-                            // Core Dataの削除後に配列を再取得
-                            vm.cards = vm.loadCards(title: title)
+                        .onDelete { indexSet in
+                            indexSet
+                                .map { vm.Cards[$0] }
+                                .forEach { card in
+                                    vm.deleteCardAPI(userId: "user1", listId: vm.selectedListId ?? "", cardId: card.id ?? "")
+                                }
                         }
                         .listRowSeparator(.hidden)
                         .scrollContentBackground(.hidden) // ← これ大事！
@@ -99,36 +92,30 @@ struct CardsView: View {
                         .onSubmit {
                             ing += 1
                             print("翻訳中",ing)
-                            // 空文字防止
+                            //空白と改行を先頭と末尾から削除
                             let trimmedWord = newWord.trimmingCharacters(in: .whitespacesAndNewlines)
-                            //trimmingCharacters(in:)は指定した文字セットを文字列の先頭と末尾から削除
-                            //.whitespacesAndNewlines空白と改行を削除
                             guard !trimmedWord.isEmpty && trimmedWord != "-" else { return }
-                            //文字列がからではないことと-だけの文字列でないことを確認(終了マークと紛らわしい）
-                            // 入力欄をクリア
                             newWord = ""
                             isTextFieldFocused = true
-                            if let list = vm.loadCardList().first(where: { $0.title == title }) {
-                                Task {
-                                    do {
-                                        if let encodedWord = trimmedWord.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
-                                            //%18とかにするのがaddingPercentEncding
-                                            //urlQueryAllowedはURLのクエリ部分で使える文字ののみということを定義している
-                                            let translated = try await translateTextWithGAS(encodedWord, source: "en", target: "ja")
-                                            ing -= 1
-                                            print("翻訳結果: \(translated)") // 例: "こんにちは"
-                                            print("翻訳中:",ing)
-                                            DispatchQueue.main.async {
-                                            //DispatchQueue.mainとはSwiftのメインスレッドを示す
-                                                vm.addCard(to: list, en: trimmedWord, jp: translated)
-                                                vm.updateView()
-                                            }
-                                        } else {
-                                            print("Encoding failed for input word")
+                            Task {
+                                do {
+                                    if let encodedWord = trimmedWord.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
+                                        //%18とかにするのがaddingPercentEncding
+                                        //urlQueryAllowedはURLのクエリ部分で使える文字ののみということを定義している
+                                        let translated = try await translateTextWithGAS(encodedWord, source: "en", target: "ja")
+                                        ing -= 1
+                                        print("翻訳結果: \(translated)") // 例: "こんにちは"
+                                        print("翻訳中:",ing)
+                                        DispatchQueue.main.async {
+                                        //DispatchQueue.mainとはSwiftのメインスレッドを示す
+                                            vm.addCardAPI(userId: "user1", listId: vm.selectedListId ?? "", en: trimmedWord, jp: translated)
+                                            vm.updateView()
                                         }
-                                    } catch {
-                                        print("翻訳失敗: \(error)")
+                                    } else {
+                                        print("Encoding failed for input word")
                                     }
+                                } catch {
+                                    print("翻訳失敗: \(error)")
                                 }
                             }
                         }
@@ -146,8 +133,7 @@ struct CardsView: View {
             .foregroundColor(.accentColor)
             .onAppear {
                 vm.colorS = colorScheme
-                vm.title = title
-                vm.cards = vm.loadCards(title: title)
+                vm.Cards = vm.fetchCardsFromCoreData(listid: vm.selectedListId ?? "")
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     isTextFieldFocused = true
                 }
@@ -186,12 +172,17 @@ struct ItemView: View{
                     let trimmedWord = inputText.trimmingCharacters(in: .whitespacesAndNewlines)
                     guard !trimmedWord.isEmpty && trimmedWord != "-" else { return }
                     let pasten = card.en ?? ""
-                    if let list = vm.loadCardList().first(where: { $0.title == title }) {
-                        vm.deleteCard(card)
-                        vm.addCard(to: list, en: pasten, jp: trimmedWord)
-                        vm.updateView()
-                    }
-                    
+                    guard let listId = vm.selectedListId,
+                          let cardId = card.id else { return }
+                    vm.updateCardAPI(
+                        userId: "user1",
+                        listId: listId,
+                        cardId: cardId,
+                        en: pasten,
+                        jp: trimmedWord,
+                        createdAt: card.createdAt ?? Date()
+                    )
+                    vm.updateView()
                 }
                 .multilineTextAlignment(.center)
                 .frame(height: height * 0.02)

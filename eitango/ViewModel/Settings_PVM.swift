@@ -43,14 +43,14 @@ extension PlayViewModel{
         do {
             // AppSettingsは1件のみ保存される想定
             if let settings = try context.fetch(request).first {
-                self.number = Int(settings.number)
+                self.selectedListId = settings.selectedListId
                 self.shuffleFlag = settings.shuffleFlag
                 self.repeatFlag = settings.repeatFlag
                 self.colortheme = Int(settings.colortheme)
                 self.waittime = Int(settings.waittime)
             } else {
                 // データが存在しない場合はデフォルト値を設定
-                self.number = 0
+                self.selectedListId = nil
                 self.shuffleFlag = false
                 self.repeatFlag = false
                 self.colortheme = 1
@@ -59,7 +59,7 @@ extension PlayViewModel{
         } catch {
             // エラー発生時はデフォルト値を設定
             print("loadSettingsError: \(error.localizedDescription)")
-            self.number = 0
+            self.selectedListId = nil
             self.shuffleFlag = false
             self.repeatFlag = false
             self.colortheme = 1
@@ -82,7 +82,7 @@ extension PlayViewModel{
                 settings.id = UUID()
             }
             // 値を更新
-            settings.number = Int16(number)
+            settings.selectedListId = selectedListId
             settings.shuffleFlag = shuffleFlag
             settings.repeatFlag = repeatFlag
             settings.colortheme = Int16(colortheme)

@@ -50,9 +50,9 @@ extension PlayViewModel{
             }
             if self.cancelFlag { return }
             let nextIndex = 4 + yy
-            if i < Enlist.count && nextIndex < cards.count {
-                Enlist[i] = cards[nextIndex].en ?? "-"
-                Jplist[i] = cards[nextIndex].jp ?? "-"
+            if i < Enlist.count && nextIndex < Cards.count {
+                Enlist[i] = Cards[nextIndex].en ?? "-"
+                Jplist[i] = Cards[nextIndex].jp ?? "-"
                 isFlipped[i] = false
                 yy += 1
                 

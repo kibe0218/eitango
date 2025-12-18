@@ -3,21 +3,22 @@
     <entity name="AppSettings" representedClassName="AppSettings" syncable="YES" codeGenerationType="class">
         <attribute name="colortheme" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
-        <attribute name="number" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="repeatFlag" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="selectedListId" optional="YES" attributeType="String"/>
         <attribute name="shuffleFlag" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="waittime" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
     </entity>
     <entity name="CardEntity" representedClassName="CardEntity" syncable="YES" codeGenerationType="class">
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="en" optional="YES" attributeType="String"/>
-        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="String"/>
         <attribute name="jp" optional="YES" attributeType="String"/>
-        <relationship name="cardlist" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CardlistEntity" inverseName="cards" inverseEntity="CardlistEntity"/>
+        <attribute name="listid" optional="YES" attributeType="String"/>
+        <relationship name="cardlist" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ListEntity" inverseName="cards" inverseEntity="ListEntity"/>
     </entity>
-    <entity name="CardlistEntity" representedClassName="CardlistEntity" syncable="YES" codeGenerationType="class">
+    <entity name="ListEntity" representedClassName="ListEntity" syncable="YES" codeGenerationType="class">
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="String"/>
         <attribute name="title" optional="YES" attributeType="String"/>
         <relationship name="cards" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CardEntity" inverseName="cardlist" inverseEntity="CardEntity"/>
     </entity>

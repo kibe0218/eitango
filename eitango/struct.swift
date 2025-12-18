@@ -30,13 +30,14 @@ import Foundation
 
 struct Card_ST: Codable, Identifiable {
     var id: String
+    var listid: String
     var en: String
     var jp: String
     var createdAt: Date?
 }
 
 struct List_ST: Codable, Identifiable {
-    let id: String          // Firestore の documentID
-    let listname: String
+    let id: String       // Firestore の documentID
+    let title: String
     let createdAt: Date?
 }

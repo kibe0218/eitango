@@ -39,31 +39,30 @@ extension PlayViewModel{
     func updateView() {
         cancelFlag = true
         Thread.sleep(forTimeInterval: 0.07)
-        // 0.1秒待つ
+
         yy = 0
         jj = 0
         finish = false
         
         ColorSetting()
+        
         isFlipped = Array(repeating: false, count:4)
-        tangotyou = loadCardList()
-            .sorted { ($0.createdAt ?? Date.distantPast) > ($1.createdAt ?? Date.distantPast) }
-            .compactMap { $0.title ?? "" }
-        if tangotyou.indices.contains(number) && numberFlag{
-            //containsでそれが範囲に含まれるかチェック
-            //tangotyou は 現在の単語リストタイトルの配列
-            //number は 現在表示しているリストのインデックス
-            //.indices は 0..<(配列の要素数) の範囲 を返す
-            title = tangotyou[number]
-            numberFlag = false
-        }else if numberFlag || !tangotyou.indices.contains(number){
-            title = tangotyou.first ?? ""
-            numberFlag = false
+        
+        Lists = fetchListsFromCoreData()
+        if let selectedId = selectedListId,
+           Lists.contains(where: { $0.id == selectedId }) {
+        } else {
+            selectedListId = Lists.first?.id
         }
-        cards = loadCards(title: title)
+        if let idString = selectedListId {
+            Cards = fetchCardsFromCoreData(listid: idString)
+        } else {
+            Cards = []
+        }
         if !noshuffleFlag {shuffleCards(i: shuffleFlag)}
-        self.enbase = Array(cards.prefix(4)).compactMap { $0.en ?? "-" }
-        self.jpbase = Array(cards.prefix(4)).compactMap { $0.jp ?? "-" }
+        
+        self.enbase = Array(Cards.prefix(4)).compactMap { $0.en ?? "-" }
+        self.jpbase = Array(Cards.prefix(4)).compactMap { $0.jp ?? "-" }
         Enlist = self.enbase + Array(repeating: "✔︎", count: max(0, 4 - self.enbase.count))
         Jplist = self.jpbase + Array(repeating: "✔︎", count: max(0, 4 - self.jpbase.count))
         for i in 0..<Enlist.count {
@@ -83,7 +82,7 @@ extension PlayViewModel{
     
     func shuffleCards(i: Bool){
         if i {
-            cards.shuffle()
+            Cards.shuffle()
         }
     }
     

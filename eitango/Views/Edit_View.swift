@@ -13,7 +13,8 @@ struct EditView: View {
     @State private var CardListTitle: String = ""
     @State private var path = NavigationPath()
     
-    var body: some View {        
+    
+    var body: some View {
         NavigationStack{
             GeometryReader { geo in
                 VStack{
@@ -41,7 +42,7 @@ struct EditView: View {
                                 }
                                 Button("OK") {
                                     guard !title.trimmingCharacters(in: .whitespaces).isEmpty else { return }
-                                    _ = vm.addCardList(title: title)
+                                    vm.addListAPI(userId: "user1", title: title)
                                     CardListTitle = title
                                     title = ""
                                     vm.noshuffleFlag = true
@@ -56,17 +57,17 @@ struct EditView: View {
                         .padding(.horizontal, 50)
                     }.frame(height: 70)
                     List{
-                        ForEach(0..<vm.tangotyou.count, id: \.self) { i in
+                        ForEach(vm.Lists, id: \.objectID) { list in
                             HStack {
                                 Spacer()
                                 VStack{
                                     ZStack{
                                         ForEach(0..<6, id: \.self){ z in
-                                            CardListView(i: i, z: z, width: geo.size.width, height: geo.size.height)
+                                            CardListView(z: z, width: geo.size.width, height: geo.size.height)
                                                 .environmentObject(vm)
                                         }
-                                        Text(vm.tangotyou[i])
-                                            .font(.system(size: CGFloat(vm.JpfontSize(i: vm.tangotyou[i]))))
+                                        Text(list.title ?? "")
+                                            .font(.system(size: CGFloat(vm.JpfontSize(i: list.title ?? ""))))
                                             .foregroundStyle(vm.cardfrontColor)
                                             .frame(width: geo.size.width * 0.85, height: geo.size.height * 0.18)
                                             .background(vm.cardColor)
@@ -74,7 +75,7 @@ struct EditView: View {
                                             .zIndex(100)
                                     }
                                     .onTapGesture{
-                                        CardListTitle = vm.tangotyou[i]
+                                        vm.selectedListId = list.id
                                         vm.noshuffleFlag = true
                                         vm.updateView()
                                         navigateToCardList = true
@@ -88,13 +89,11 @@ struct EditView: View {
                             .listRowBackground(Color.clear)
                         }
                         .onDelete { indices in
+                            let lists = vm.Lists
                             for index in indices {
-                                let title = vm.tangotyou[index]
-                                if let list = self.vm.loadCardList().first(where: { $0.title == title }) {
-                                    vm.deleteCardList(list)
-                                }
+                                let list = lists[index]
+                                vm.deleteListAPI(userId: "user1", listId: list.id ?? "")
                             }
-                            vm.tangotyou.remove(atOffsets: indices)
                         }
                         //indicesは削除される要素の位置を示している
                         //atOffsetsで削除＆再描画
@@ -108,7 +107,7 @@ struct EditView: View {
             vm.colorS = colorScheme
         }
         .navigationDestination(isPresented: $navigateToCardList) {
-            CardsView(title: CardListTitle, path: $path)
+            CardsView(path: $path)
                 .environmentObject(vm)
                 .environmentObject(keyboard)
         }
@@ -124,7 +123,6 @@ struct CardListView: View {
     @EnvironmentObject var vm: PlayViewModel
     @Environment(\.colorScheme) var colorScheme
     
-    let i: Int
     let z: Int
     let width: Double
     let height: Double

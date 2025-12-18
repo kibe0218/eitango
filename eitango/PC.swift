@@ -4,24 +4,17 @@ import CoreData
 struct PersistenceController {
     static let shared = PersistenceController()
     
-    // NSPersistentCloudKitContainer に変更して iCloud コンテナを指定
-    let container: NSPersistentCloudKitContainer
+    // NSPersistentContainer に変更
+    let container: NSPersistentContainer
     
     init(inMemory: Bool = false) {
-        container = NSPersistentCloudKitContainer(name: "eitangoData")
-        
-        // CloudKit コンテナを指定
-        if let description = container.persistentStoreDescriptions.first {
-            description.cloudKitContainerOptions = NSPersistentCloudKitContainerOptions(
-                containerIdentifier: "iCloud.com.yourcompany.eitango" // 自分のコンテナIDに変更
-            )
-        }
+        container = NSPersistentContainer(name: "eitangoData")
         
         if inMemory {
             container.persistentStoreDescriptions.first?.url = URL(fileURLWithPath: "/dev/null")
         }
         
-        // CloudKit同期を有効にしたストアを読み込む
+        // ストアを読み込む
         container.loadPersistentStores { storeDescription, error in
             if let error = error as NSError? {
                 fatalError("Unresolved error \(error), \(error.userInfo)")

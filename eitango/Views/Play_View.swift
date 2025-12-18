@@ -10,49 +10,8 @@ struct PlayView: View {
         GeometryReader { geo in
             ZStack{
                 VStack {
-                    ZStack {
-                        HStack {
-                            Button(action: {
-                                vm.shuffleFlag.toggle()
-                                vm.updateView()
-                            }) {
-                                Image(systemName: "shuffle")
-                                    .font(.title)
-                                    .foregroundStyle(vm.shuffleFlag ? vm.customaccentColor : vm.noaccentColor)
-                            }
-                            .padding(.leading, 40)
-                            Button(action: {
-                                vm.repeatFlag.toggle()
-                            }) {
-                                Image(systemName: "repeat")
-                                    .font(.title)
-                                    .foregroundStyle(vm.repeatFlag ? vm.customaccentColor : vm.noaccentColor)
-                            }
-                            Spacer()
-                        }
-                        HStack {
-                            Spacer() // 左側のスペーサーでPickerを中央に寄せる
-                            Picker("単語帳", selection: $vm.number) {
-                                ForEach(0..<vm.tangotyou.count, id: \.self) { index in
-                                    Text(vm.tangotyou[index]).tag(index)
-                                }
-                            }
-                            .tint(vm.toggleColor)
-                            Spacer()
-                        }
-                        .padding(20)
-                        
-                        HStack {
-                            Spacer() // 左側のスペーサーでPickerを中央に寄せる
-                            Toggle("", isOn: $vm.reverse)
-                                .tint(vm.customaccentColor)
-                        }
-                        .padding(30)
-                        .onChange(of: vm.reverse) {
-                            vm.updateView()
-                        }
-                    }
-                    .frame(height: 70)
+                    PlayHeaderView()
+                        .environmentObject(vm)
                     ForEach(0..<min(vm.Enlist.count, vm.Jplist.count, 4), id: \.self) { i in
                         CardItemView(i: i,width: geo.size.width, height: geo.size.height)
                             .environmentObject(vm)
@@ -84,8 +43,7 @@ struct PlayView: View {
         .onAppear{
             vm.colorS = colorScheme
         }
-        .onChange(of: vm.number) {
-            vm.numberFlag = true
+        .onChange(of: vm.selectedListId) {
             vm.updateView()
         }
         .onChange(of: vm.reverse) {vm.updateView()}
@@ -105,6 +63,54 @@ struct PlayView: View {
             }
         }
         .background(vm.backColor.ignoresSafeArea())
+    }
+}
+
+struct PlayHeaderView: View {
+    @EnvironmentObject var vm: PlayViewModel
+
+    var body: some View {
+        ZStack {
+            HStack {
+                Button(action: {
+                    vm.shuffleFlag.toggle()
+                    vm.updateView()
+                }) {
+                    Image(systemName: "shuffle")
+                        .font(.title)
+                        .foregroundStyle(vm.shuffleFlag ? vm.customaccentColor : vm.noaccentColor)
+                }
+                .padding(.leading, 40)
+                Button(action: {
+                    vm.repeatFlag.toggle()
+                }) {
+                    Image(systemName: "repeat")
+                        .font(.title)
+                        .foregroundStyle(vm.repeatFlag ? vm.customaccentColor : vm.noaccentColor)
+                }
+                Spacer()
+            }
+            HStack {
+                Spacer()
+                Picker("単語帳", selection: $vm.selectedListId) {
+                    ForEach(vm.Lists) { list in
+                        Text(list.title ?? "")
+                            .tag(list.id)
+                    }
+                }
+                .tint(vm.toggleColor)
+                Spacer()
+            }
+            .padding(20)
+
+            HStack {
+                Spacer()
+                Toggle("", isOn: $vm.reverse)
+                    .tint(vm.customaccentColor)
+            }
+            .padding(30)
+        }
+        .frame(height: 70)
     }
 }
 

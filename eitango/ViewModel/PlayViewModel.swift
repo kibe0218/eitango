@@ -62,17 +62,21 @@ class KeyboardObserver: ObservableObject{
 
 final class PlayViewModel: ObservableObject {
     
-    @Published var Enlist: [String] = []
+    @Published var Enlist: [String] = []//画面表示用の一時的なリスト
     @Published var Jplist: [String] = []
+    @Published var isFlipped: [Bool] = [false, false, false, false]
     @Published var Finishlist: [Bool] = [false, false, false, false]
-    @Published var tangotyou: [String] = []
-    @Published var cards: [CardEntity] = []
+
+    
+    @Published var Lists: [ListEntity] = []//保持用リスト
+    @Published var Cards: [CardEntity] = []
+    
     @Published var enbase: [String] = []
     @Published var jpbase: [String] = []
     @Published var mistakecardlist: [(en: String, jp: String)] = []
-    @Published var cardLists: [List_ST] = []
     
-    @Published var number  = 0
+    @Published var selectedListId: String?
+    
     @Published var waittime = 2
     @Published var yy = 0
     @Published var jj = 0
@@ -80,14 +84,12 @@ final class PlayViewModel: ObservableObject {
     
     @Published var title = ""
     
-    @Published var isFlipped: [Bool] = [false, false, false, false]
     @Published var finish = false
     @Published var cancelFlag = false
     @Published var reverse = false
     @Published var shuffleFlag: Bool = false
     @Published var noshuffleFlag: Bool = false
     @Published var repeatFlag: Bool = false
-    @Published var numberFlag: Bool = false
     @Published var showNotification: Bool = false
     @Published var showToast: Bool = false
     
@@ -107,10 +109,7 @@ final class PlayViewModel: ObservableObject {
     init() {
         ColorSetting()
         loadSettings()
-        numberFlag = true
-        updateView()
-        //repeatingで繰り返し配列にaddする
-        
+        fetchLists(userId: "user1")        
     }
         
 }
