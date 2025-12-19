@@ -80,6 +80,8 @@ extension PlayViewModel{
         }
         cancelFlag = false
         saveSettings()
+        print("Enlist:\(Enlist),Jplist\(Jplist)")
+        print("Lists\(self.Lists)")
     }
     
     

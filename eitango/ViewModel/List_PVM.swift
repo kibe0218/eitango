@@ -74,7 +74,6 @@ extension PlayViewModel{
                         print("保存エラー: \(error)")
                     }
                     self.Lists = self.fetchListsFromCoreData()
-                    print("リスト: \(self.Lists)")
                     self.updateView()
                 }
 
