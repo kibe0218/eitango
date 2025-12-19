@@ -92,13 +92,14 @@ struct PlayHeaderView: View {
             }
             HStack {
                 Spacer()
-                Picker("単語帳", selection: $vm.selectedListId) {
-                    ForEach(vm.Lists) { list in
-                        Text(list.title ?? "")
-                            .tag(list.id)
+                if !vm.Lists.isEmpty {
+                    Picker("単語帳", selection: $vm.selectedListId) {
+                        ForEach(vm.Lists) { list in
+                            Text(list.title ?? "")
+                                .tag(list.id)
+                        }
                     }
                 }
-                .tint(vm.toggleColor)
                 Spacer()
             }
             .padding(20)

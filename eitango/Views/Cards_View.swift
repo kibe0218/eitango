@@ -61,13 +61,15 @@ struct CardsView: View {
                             HStack{
                                 Spacer()
                                 Text("翻訳中: \(ing)件...")
-                                    .font(.system(size: CGFloat(10)))
+                                    .font(.system(size: CGFloat(20)))
                                     .foregroundStyle(vm.customaccentColor)
                                     .frame(height: geo_height * 0.05, alignment: .center)
                                     .background(vm.backColor)
                                 Spacer()
                             }
                             .listRowBackground(vm.backColor)
+                            .listRowSeparator(.hidden)
+                            .scrollContentBackground(.hidden) // ← これ大事！
                         }
                         ForEach(vm.Cards, id: \.objectID) { card in
                             ItemView(card: card, width: geo.size.width, height: geo_height, title: vm.fetchListsFromCoreData().first(where: { $0.id == vm.selectedListId })?.title ?? "")                                .environmentObject(vm)
@@ -91,7 +93,6 @@ struct CardsView: View {
                         .padding(.all,40)
                         .onSubmit {
                             ing += 1
-                            print("翻訳中",ing)
                             //空白と改行を先頭と末尾から削除
                             let trimmedWord = newWord.trimmingCharacters(in: .whitespacesAndNewlines)
                             guard !trimmedWord.isEmpty && trimmedWord != "-" else { return }
@@ -104,8 +105,6 @@ struct CardsView: View {
                                         //urlQueryAllowedはURLのクエリ部分で使える文字ののみということを定義している
                                         let translated = try await translateTextWithGAS(encodedWord, source: "en", target: "ja")
                                         ing -= 1
-                                        print("翻訳結果: \(translated)") // 例: "こんにちは"
-                                        print("翻訳中:",ing)
                                         DispatchQueue.main.async {
                                         //DispatchQueue.mainとはSwiftのメインスレッドを示す
                                             vm.addCardAPI(userId: "user1", listId: vm.selectedListId ?? "", en: trimmedWord, jp: translated)

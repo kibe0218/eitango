@@ -37,17 +37,14 @@ import CoreData
 extension PlayViewModel{
     
     func updateView() {
+        
         cancelFlag = true
         Thread.sleep(forTimeInterval: 0.07)
-
         yy = 0
         jj = 0
         finish = false
-        
         ColorSetting()
-        
         isFlipped = Array(repeating: false, count:4)
-        
         Lists = fetchListsFromCoreData()
         if let selectedId = selectedListId,
            Lists.contains(where: { $0.id == selectedId }) {
@@ -60,11 +57,18 @@ extension PlayViewModel{
             Cards = []
         }
         if !noshuffleFlag {shuffleCards(i: shuffleFlag)}
-        
-        self.enbase = Array(Cards.prefix(4)).compactMap { $0.en ?? "-" }
-        self.jpbase = Array(Cards.prefix(4)).compactMap { $0.jp ?? "-" }
-        Enlist = self.enbase + Array(repeating: "✔︎", count: max(0, 4 - self.enbase.count))
-        Jplist = self.jpbase + Array(repeating: "✔︎", count: max(0, 4 - self.jpbase.count))
+        if let listId = selectedListId,
+           Lists.contains(where: { $0.id == listId }) {
+            self.enbase = Array(Cards.prefix(4)).compactMap { $0.en ?? "-" }
+            self.jpbase = Array(Cards.prefix(4)).compactMap { $0.jp ?? "-" }
+            Enlist = self.enbase + Array(repeating: "✔︎", count: max(0, 4 - self.enbase.count))
+            Jplist = self.jpbase + Array(repeating: "✔︎", count: max(0, 4 - self.jpbase.count))
+        } else {
+            Enlist = Array(repeating: "", count: 4)
+            Jplist = Array(repeating: "", count: 4)
+            Finishlist = Array(repeating: true, count: 4)
+            isFlipped = Array(repeating: false, count: 4)
+        }
         for i in 0..<Enlist.count {
             if Enlist[i] == "✔︎" {
                 Finishlist[i] = true
@@ -76,7 +80,6 @@ extension PlayViewModel{
         }
         cancelFlag = false
         saveSettings()
-        print("待機：\(waittime)")
     }
     
     
