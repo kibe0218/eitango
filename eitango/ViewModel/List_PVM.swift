@@ -49,9 +49,11 @@ extension PlayViewModel{
             }
 
             do {
+                print("Raw data: \(String(data: data, encoding: .utf8) ?? "nil")")
                 let decoder = JSONDecoder()
                 decoder.dateDecodingStrategy = .iso8601
                 let result = try decoder.decode([List_ST].self, from: data)
+                print("Decoded result: \(result)")
 
                 DispatchQueue.main.async {
                     let context = PersistenceController.shared.container.viewContext
@@ -78,7 +80,7 @@ extension PlayViewModel{
                 }
 
             } catch {
-                print("デコード失敗: \(error)")
+                print("デコード失敗: \(error), raw data: \(String(data: data, encoding: .utf8) ?? "nil")")
             }
 
         }.resume() // 通信を開始
