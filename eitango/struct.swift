@@ -41,3 +41,21 @@ struct List_ST: Codable, Identifiable {
     let title: String
     let createdAt: Date?
 }
+
+nonisolated 
+struct CreateListResponse: Decodable {
+    let id: String
+}
+
+nonisolated
+struct AddUserResponse: Decodable {
+    let message: String
+    let id: String
+}
+
+struct User_ST: Codable, Identifiable {
+    let id: String
+    let name: String
+    let createdAt: String
+    let warning: Bool
+}

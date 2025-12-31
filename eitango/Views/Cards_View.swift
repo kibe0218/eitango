@@ -78,7 +78,7 @@ struct CardsView: View {
                             indexSet
                                 .map { vm.Cards[$0] }
                                 .forEach { card in
-                                    vm.deleteCardAPI(userId: "user1", listId: vm.selectedListId ?? "", cardId: card.id ?? "")
+                                    vm.deleteCardAPI(userId: vm.userid, listId: vm.selectedListId ?? "", cardId: card.id ?? "")
                                 }
                         }
                         .listRowSeparator(.hidden)
@@ -107,7 +107,7 @@ struct CardsView: View {
                                         ing -= 1
                                         DispatchQueue.main.async {
                                         //DispatchQueue.mainとはSwiftのメインスレッドを示す
-                                            vm.addCardAPI(userId: "user1", listId: vm.selectedListId ?? "", en: trimmedWord, jp: translated)
+                                            vm.addCardAPI(userId: vm.userid, listId: vm.selectedListId ?? "", en: trimmedWord, jp: translated)
                                             vm.updateView()
                                         }
                                     } else {
@@ -174,7 +174,7 @@ struct ItemView: View{
                     guard let listId = vm.selectedListId,
                           let cardId = card.id else { return }
                     vm.updateCardAPI(
-                        userId: "user1",
+                        userId: vm.userid,
                         listId: listId,
                         cardId: cardId,
                         en: pasten,

@@ -42,12 +42,13 @@ struct EditView: View {
                                 }
                                 Button("OK") {
                                     guard !title.trimmingCharacters(in: .whitespaces).isEmpty else { return }
-                                    vm.addListAPI(userId: "user1", title: title)
-                                    CardListTitle = title
-                                    title = ""
-                                    vm.noshuffleFlag = true
-                                    vm.updateView()
-                                    navigateToCardList = true
+                                    vm.addListAPI(userId: vm.userid, title: title) { newId in
+                                        guard let newId else { return }
+                                        vm.selectedListId = newId
+                                        vm.noshuffleFlag = true
+                                        vm.updateView()
+                                        navigateToCardList = true
+                                    }
                                 }
                                 .disabled(title.trimmingCharacters(in: .whitespaces).isEmpty)
                                 //trimmingで先頭や末尾にある特定の文字を削除してくれる
@@ -92,7 +93,7 @@ struct EditView: View {
                             let lists = vm.Lists
                             for index in indices {
                                 let list = lists[index]
-                                vm.deleteListAPI(userId: "user1", listId: list.id ?? "")
+                                vm.deleteListAPI(userId: vm.userid, listId: list.id ?? "")
                             }
                         }
                         //indicesは削除される要素の位置を示している

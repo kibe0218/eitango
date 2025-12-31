@@ -2,10 +2,10 @@
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="24299" systemVersion="24G90" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
     <entity name="AppSettings" representedClassName="AppSettings" syncable="YES" codeGenerationType="class">
         <attribute name="colortheme" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="repeatFlag" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="selectedListId" optional="YES" attributeType="String"/>
         <attribute name="shuffleFlag" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="userid" optional="YES" attributeType="String"/>
         <attribute name="waittime" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
     </entity>
     <entity name="CardEntity" representedClassName="CardEntity" syncable="YES" codeGenerationType="class">

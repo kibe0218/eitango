@@ -6,6 +6,11 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		189175AA2EFB850B0066AC02 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 189175A92EFB850B0066AC02 /* FirebaseAuth */; };
+		189175AC2EFB850B0066AC02 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 189175AB2EFB850B0066AC02 /* FirebaseCore */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		1862C2C62EF0BF3C00077808 /* memoRise.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = memoRise.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -23,6 +28,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				189175AC2EFB850B0066AC02 /* FirebaseCore in Frameworks */,
+				189175AA2EFB850B0066AC02 /* FirebaseAuth in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -57,6 +64,8 @@
 			);
 			name = memoRise;
 			packageProductDependencies = (
+				189175A92EFB850B0066AC02 /* FirebaseAuth */,
+				189175AB2EFB850B0066AC02 /* FirebaseCore */,
 			);
 			productName = eitango;
 			productReference = 1862C2C62EF0BF3C00077808 /* memoRise.app */;
@@ -86,6 +95,9 @@
 			);
 			mainGroup = 1821FF5F2E98E2100021BAF9;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				189175A82EFB850B0066AC02 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 1821FF5F2E98E2100021BAF9;
 			projectDirPath = "";
@@ -334,6 +346,30 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		189175A82EFB850B0066AC02 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.7.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		189175A92EFB850B0066AC02 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 189175A82EFB850B0066AC02 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		189175AB2EFB850B0066AC02 /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 189175A82EFB850B0066AC02 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 1821FF602E98E2100021BAF9 /* Project object */;
 }

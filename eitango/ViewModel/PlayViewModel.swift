@@ -76,6 +76,7 @@ final class PlayViewModel: ObservableObject {
     @Published var mistakecardlist: [(en: String, jp: String)] = []
     
     @Published var selectedListId: String?
+    @Published var userid: String = ""
     
     @Published var waittime = 2
     @Published var yy = 0
@@ -105,11 +106,12 @@ final class PlayViewModel: ObservableObject {
     @Published var cardlistmobColor: Color = Color(hex: "cc7a6b").opacity(0.25)
     @Published var textColor: Color = .primary
     
+    @Published var urlsession = "http://172.20.10.2:8080/"
+    
     
     init() {
         ColorSetting()
         loadSettings()
-        fetchLists(userId: "user1")        
+        fetchLists(userId: userid)
     }
-        
 }

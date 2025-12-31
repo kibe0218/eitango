@@ -33,7 +33,7 @@ extension PlayViewModel{
     //========
     
     func fetchLists(userId: String) {
-        guard let url = URL(string: "http://localhost:8080/lists?userId=\(userId)") else {
+        guard let url = URL(string: urlsession + "lists?userId=\(userId)") else {
             print("URLエラー")
             return
         }
@@ -112,9 +112,14 @@ extension PlayViewModel{
     //📝追加📝
     //========
     
-    func addListAPI(userId: String, title: String) {
-        guard let url = URL(string: "http://localhost:8080/lists?userId=\(userId)") else {
+    func addListAPI(
+        userId: String,
+        title: String,
+        completion: @escaping (String?) -> Void
+    ) {
+        guard let url = URL(string: "\(userId)") else {
             print("URLエラー")
+            completion(nil)
             return
         }
 
@@ -122,43 +127,52 @@ extension PlayViewModel{
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
-        // Go 側の List struct に合わせる
         let body: [String: Any] = [
             "title": title
         ]
 
-        do {
-            request.httpBody = try JSONSerialization.data(withJSONObject: body)
-        } catch {
-            print("JSON作成エラー: \(error)")
-            return
-        }
+        request.httpBody = try? JSONSerialization.data(withJSONObject: body)
 
-        URLSession.shared.dataTask(with: request) { _, response, error in
+        URLSession.shared.dataTask(with: request) { data, _, error in
             if let error = error {
                 print("通信エラー: \(error)")
+                completion(nil)
                 return
             }
 
-            DispatchQueue.main.async {
-                // 🔁 Firestore を正として CoreData を作り直す
-                self.fetchLists(userId: userId)
+            guard let data else {
+                print("レスポンスなし")
+                completion(nil)
+                return
             }
+
+            do {
+                let result = try JSONDecoder().decode(CreateListResponse.self, from: data)
+                DispatchQueue.main.async {
+                    // 🔁 Firestore を正として同期
+                    self.fetchLists(userId: userId)
+                    completion(result.id)
+                }
+            } catch {
+                print("デコード失敗: \(error)")
+                completion(nil)
+            }
+
         }.resume()
     }
     
 //    func addCardList(title: String) -> ListEntity? {
 //        // 新しい単語リストを追加するためのコンテキストを取得します。
 //        let context = PersistenceController.shared.container.viewContext
-//        
+//
 //        // CardlistEntity（単語リスト）の新規インスタンスをコンテキスト内に作成。
 //        let newList = ListEntity(context: context)
-//        
+//
 //        // リストの各プロパティに値をセットします。
 //        newList.id = UUID()          // 一意な識別子
 //        newList.title = title        // タイトル名
 //        newList.createdAt = Date()   // 作成日時
-//        
+//
 //        do {
 //            // 変更内容を永続化します。成功すれば新規リストを返却。
 //            try context.save()
@@ -177,7 +191,7 @@ extension PlayViewModel{
     
     func deleteListAPI(userId: String, listId: String) {
         guard let url = URL(
-            string: "http://localhost:8080/lists?userId=\(userId)&listId=\(listId)"
+            string: urlsession + "(userId)&listId=\(listId)"
         ) else {
             print("URLエラー")
             return

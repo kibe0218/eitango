@@ -40,7 +40,7 @@ extension PlayViewModel{
     
     func fetchCards(userId: String, listId: String) {
         guard let url = URL(string:
-            "http://localhost:8080/cards?userId=\(userId)&listId=\(listId)"
+            urlsession + "cards?userId=\(userId)&listId=\(listId)"
         ) else {
             print("URLエラー")
             return
@@ -127,7 +127,7 @@ extension PlayViewModel{
         jp: String
     ) {
         guard let url = URL(
-            string: "http://localhost:8080/cards?userId=\(userId)&listId=\(listId)"
+            string: urlsession + "cards?userId=\(userId)&listId=\(listId)"
         ) else {
             print("URLエラーっピ")
             return
@@ -193,7 +193,7 @@ extension PlayViewModel{
         createdAt: Date
     ) {
         guard let url = URL(
-            string: "http://localhost:8080/cards?userId=\(userId)&listId=\(listId)&cardId=\(cardId)"
+            string: urlsession + "cards?userId=\(userId)&listId=\(listId)&cardId=\(cardId)"
         ) else {
             print("URLエラーっピ")
             return
@@ -239,7 +239,7 @@ extension PlayViewModel{
         cardId: String
     ) {
         guard let url = URL(
-            string: "http://localhost:8080/cards?userId=\(userId)&listId=\(listId)&cardId=\(cardId)"
+            string: urlsession + "cards?userId=\(userId)&listId=\(listId)&cardId=\(cardId)"
         ) else {
             print("URLエラーっピ")
             return
