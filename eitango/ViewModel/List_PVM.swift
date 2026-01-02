@@ -117,7 +117,7 @@ extension PlayViewModel{
         title: String,
         completion: @escaping (String?) -> Void
     ) {
-        guard let url = URL(string: "\(userId)") else {
+        guard let url = URL(string: urlsession + "lists?userId=\(userId)") else {
             print("URLエラー")
             completion(nil)
             return

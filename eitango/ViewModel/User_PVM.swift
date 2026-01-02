@@ -39,9 +39,11 @@ extension PlayViewModel {
 
         request.httpBody = try? JSONSerialization.data(withJSONObject: body)
         print("🟡 API送信直前 id =", id)
+        print("🟡 リクエストURL =", request.url?.absoluteString ?? "nil")
         URLSession.shared.dataTask(with: request) { data, response, error in
-            if let _ = error {
+            if let error = error {
                 completion(.failure(.network))
+                print("🟡 URLSession error =", error)
                 return
             }
             
@@ -49,6 +51,8 @@ extension PlayViewModel {
                 completion(.failure(.invalidResponse))
                 return
             }
+            
+            print("🟡 statusCode =", httpResponse.statusCode)
 
             switch httpResponse.statusCode {
                 case 201:

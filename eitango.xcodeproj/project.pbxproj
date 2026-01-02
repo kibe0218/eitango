@@ -13,6 +13,7 @@
 
 /* Begin PBXFileReference section */
 		1862C2C62EF0BF3C00077808 /* memoRise.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = memoRise.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		189175AF2F0698A00066AC02 /* memoRise-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "memoRise-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -39,6 +40,7 @@
 		1821FF5F2E98E2100021BAF9 = {
 			isa = PBXGroup;
 			children = (
+				189175AF2F0698A00066AC02 /* memoRise-Info.plist */,
 				1821FF6A2E98E2100021BAF9 /* eitango */,
 				1862C2C62EF0BF3C00077808 /* memoRise.app */,
 			);
@@ -260,6 +262,7 @@
 				DEVELOPMENT_TEAM = Y896Y98DM5;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "memoRise-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -297,6 +300,7 @@
 				DEVELOPMENT_TEAM = Y896Y98DM5;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "memoRise-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

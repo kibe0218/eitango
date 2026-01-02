@@ -106,7 +106,7 @@ final class PlayViewModel: ObservableObject {
     @Published var cardlistmobColor: Color = Color(hex: "cc7a6b").opacity(0.25)
     @Published var textColor: Color = .primary
     
-    @Published var urlsession = "http://172.20.10.2:8080/"
+    @Published var urlsession = "http://192.168.2.105:8080/"
     
     
     init() {

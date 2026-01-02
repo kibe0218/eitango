@@ -1,5 +1,13 @@
+
 import SwiftUI
 import FirebaseAuth
+
+extension Character {
+    var isEmoji: Bool {
+        unicodeScalars.first?.properties.isEmojiPresentation == true
+        || unicodeScalars.first?.properties.isEmoji == true
+    }
+}
 
 struct UserView: View {
     @EnvironmentObject var vm: PlayViewModel
@@ -11,11 +19,14 @@ struct UserView: View {
     @State private var pass: String = ""
     @State private var selectedOption = "新規作成"
     
-    @State private var inputuser: String = ""
-    @State private var inputemail: String = ""
-    
     @State private var geo_height: CGFloat = 0
     @State private var geo_width: CGFloat = 0
+    
+    @State private var danger_user: Bool = false
+    @State private var danger_email: Bool = false
+    @State private var danger_pass: Bool = false
+
+    
             
     let options = ["新規作成", "ログイン"]
     
@@ -53,18 +64,34 @@ struct UserView: View {
     
     private func isValidUsername(_ name: String) -> String? {
         let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
+
         guard !trimmed.isEmpty,
-              trimmed.rangeOfCharacter(from: CharacterSet.alphanumerics) != nil
+              trimmed.count <= 4
         else {
             return nil
         }
+
+        for ch in trimmed {
+            if ch.isEmoji {
+                continue // 絵文字OK
+            }
+            if ch.isLetter || ch.isNumber {
+                continue // 漢字・ひらがな・英数字OK
+            }
+            return nil // 記号だけNG
+        }
+
         return trimmed
     }
     
     private func isValidEmail(_ email: String) -> String? {
         let trimmed = email.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        let pattern =
+        #"^[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$"#
+
         guard !trimmed.isEmpty,
-              trimmed.contains("@")
+              trimmed.range(of: pattern, options: .regularExpression) != nil
         else {
             return nil
         }
@@ -118,8 +145,6 @@ struct UserView: View {
         name: String
     ) {
         print("🟡 addUser 呼ばれたっピ")
-        print("🟡 email =", email)
-        print("🟡 name =", name)
         Auth.auth().createUser(withEmail: email, password: password) { result, error in
             if let error = error {
                 print("Authエラー",error)
@@ -127,19 +152,59 @@ struct UserView: View {
             }
             
             guard let uid = result?.user.uid else {return}
-            print("🟡 これを API に送る id =", uid)
-            
             vm.addUserAPI(name: name, id: uid) { result in
                 switch result {
                 case .success(_):
                     DispatchQueue.main.async {
                         vm.userid = uid
-                        print("🟡 vm.userid にセット =", self.vm.userid)
                         vm.saveSettings()
                         moveToSplash()
                     }
                 case .failure(let error):
                     print("API登録失敗:", error)
+                }
+            }
+        }
+    }
+    
+    //========
+    //吹き出し💬
+    //========
+    
+    struct Triangle: Shape {
+        func path(in rect: CGRect) -> Path {//rectは描画可能領域
+            var path = Path()
+            path.move(to: CGPoint(x: rect.minX, y: rect.midY))
+            path.addLine(to: CGPoint(x: rect.maxX, y: rect.minY))
+            path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
+            path.closeSubpath()
+            return path
+        }
+    }
+    
+    struct SpeechBubble: View {
+        @EnvironmentObject var vm: PlayViewModel
+        let text = "😢"
+        var body: some View {
+            GeometryReader { geo in
+                ZStack(alignment: .bottom) {
+                    HStack{
+                        Spacer()
+                        Text(text)
+                            .frame(width: geo.size.width * 0.7, height: geo.size.height)
+                            .multilineTextAlignment(.center)
+                            .background(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(vm.backColor)
+                            )
+                        Spacer()
+                            .frame(width: geo.size.width * 0.1)
+                    }
+                    Triangle()
+                        .fill(vm.backColor)
+                        .frame(width: geo.size.width * 0.2, height: geo.size.height * 0.2)
+                        .padding(.leading, geo.size.width * 0.05)
+                        .offset(x: -0.4 * geo.size.width, y: -0.5 * geo.size.height)
                 }
             }
         }
@@ -167,7 +232,7 @@ struct UserView: View {
                     }
                     if keyboard.keyboardHeight.isZero {
                         Spacer()
-                            .frame(height: max(0, geo_height * 0.23 - 50))
+                            .frame(height: max(0, geo_height * 0.18 - 30))
                     }
                     Picker("", selection: $selectedOption){
                         ForEach(options, id: \.self) {
@@ -182,93 +247,143 @@ struct UserView: View {
                     Spacer()
                         .frame(height: geo_height * 0.03)
                     if selectedOption == "新規作成" {
-                        Text("アカウント名(1~6文字)")
-                            .font(.system(size: 20))
+                        Text("アカウント名(1~4文字)")
+                            .font(.system(size: geo_height * 0.025))
                             .foregroundStyle(vm.backColor)
-                        TextField("", text: $user)
+                        ZStack{
+                            TextField("", text: $user)
+                                .foregroundStyle(.black)
+                                .multilineTextAlignment(.center)
+                                .frame(width: geo_width * 0.6, height: geo_height * 0.05)
+                                .background(vm.backColor)
+                                .cornerRadius(10)
+                                .focused($focusedField, equals: .user)
+                                .submitLabel(.next)
+                                .textContentType(.username)
+                                .onSubmit {
+                                    guard isValidUsername(user) != nil
+                                    else {
+                                        danger_user = true
+                                        focusedField = .user
+                                        return
+                                    }
+                                    danger_user = false
+                                    focusedField = .email
+                                }
+                            if danger_user {
+                                HStack{
+                                    Spacer()
+                                    SpeechBubble()
+                                        .multilineTextAlignment(.center)
+                                        .frame(width: geo_width * 0.2, height: geo_height * 0.05)
+                                }
+                            }
+                        }
+                    }
+                    if selectedOption == "新規作成" {
+                        Spacer()
+                            .frame(height: geo_height * 0.03)
+                    }
+                    Text("E-mailアドレス")
+                        .font(.system(size: geo_height * 0.025))
+                        .foregroundStyle(vm.backColor)
+                    ZStack{
+                        TextField("", text: $email)
                             .foregroundStyle(.black)
                             .multilineTextAlignment(.center)
                             .frame(width: geo_width * 0.6, height: geo_height * 0.05)
                             .background(vm.backColor)
                             .cornerRadius(10)
-                            .focused($focusedField, equals: .user)
+                            .focused($focusedField, equals: .email)
                             .submitLabel(.next)
-                            .textContentType(.username)
+                            .textContentType(.emailAddress)
                             .onSubmit {
-                                if let validUser = isValidUsername(user) {
-                                    inputuser = validUser
-                                    focusedField = .pass
-                                } else {
+                                guard isValidEmail(email) != nil
+                                else {
+                                    danger_email = true
+                                    focusedField = .email
                                     return
                                 }
-                            }
-                            .onChange(of: focusedField) {
-                                if focusedField == .pass || focusedField == .email {
-                                    if let validUser = isValidUsername(user) {
-                                        inputuser = validUser
-                                    }
-                                    
-                                }
-                            }
-                        Spacer()
-                            .frame(height: geo_height * 0.03)
-                    }
-                    Text("E-mailアドレス")
-                        .font(.system(size: 20))
-                        .foregroundStyle(vm.backColor)
-                    TextField("", text: $email)
-                        .foregroundStyle(.black)
-                        .multilineTextAlignment(.center)
-                        .frame(width: geo_width * 0.6, height: geo_height * 0.05)
-                        .background(vm.backColor)
-                        .cornerRadius(10)
-                        .focused($focusedField, equals: .email)
-                        .submitLabel(.next)
-                        .textContentType(.emailAddress)
-                        .onSubmit {
-                            if let validEmail = isValidEmail(email) {
-                                inputemail = validEmail
+                                danger_email = false
                                 focusedField = .pass
-                            } else {
-                                return
+                            }
+                        if danger_email {
+                            HStack{
+                                Spacer()
+                                SpeechBubble()
+                                    .multilineTextAlignment(.center)
+                                    .frame(width: geo_width * 0.2, height: geo_height * 0.05)
                             }
                         }
-                        .onChange(of: focusedField) {
-                            if focusedField == .pass {
-                                if let validUser = isValidUsername(user) {
-                                    inputuser = validUser
-                                }
-                                
-                            }
-                        }
+                    }
                     Spacer()
                         .frame(height: geo_height * 0.03)
                     Text("パスワード(10~64文字）")
-                        .font(.system(size: 20))
+                        .font(.system(size: geo_height * 0.025))
                         .foregroundStyle(vm.backColor)
-                    SecureField("", text: $pass)
-                        .foregroundStyle(.black)
-                        .multilineTextAlignment(.center)
-                        .frame(width: geo_width * 0.6, height: geo_height * 0.05)
-                        .background(vm.backColor)
-                        .cornerRadius(10)
-                        .focused($focusedField, equals: .pass)
-                        .submitLabel(.done)
-                        .textContentType(.password)
-                        .onSubmit {
-                            print("🟡 onSubmit 発火したっピ")
-                            if selectedOption == "ログイン" {
-                                guard let validEmail = isValidEmail(email) else { return }
-                                guard let validPass = isValidPassword(pass) else { return }
-                                loginUser(email: validEmail, password: validPass)
-                            } else {
-                                guard let validUser = isValidUsername(inputuser) else { return }
-                                guard let validEmail = isValidEmail(inputemail) else { return }
-                                guard let validPass = isValidPassword(pass) else { return }
-                                addUser(email: validEmail, password: validPass, name: validUser)
+                    ZStack{
+                        SecureField("", text: $pass)
+                            .foregroundStyle(.black)
+                            .multilineTextAlignment(.center)
+                            .frame(width: geo_width * 0.6, height: geo_height * 0.05)
+                            .background(vm.backColor)
+                            .cornerRadius(10)
+                            .focused($focusedField, equals: .pass)
+                            .submitLabel(.done)
+                            .textContentType(.password)
+                            .onSubmit {
+                                print("🟡 onSubmit 発火したっピ")
+                                if selectedOption == "ログイン" {
+                                    guard isValidEmail(email) != nil else {
+                                        danger_email = true
+                                        focusedField = .email
+                                        return
+                                    }
+                                    danger_email = false
+
+                                    guard isValidPassword(pass) != nil else {
+                                        danger_pass = true
+                                        focusedField = .pass
+                                        return
+                                    }
+                                    danger_pass = false
+                                    loginUser(email: email, password: pass)
+                                } else {
+                                    guard isValidUsername(user) != nil else {
+                                        danger_user = true
+                                        focusedField = .user
+                                        return
+                                    }
+                                    danger_user = false
+
+                                    guard isValidEmail(email) != nil else {
+                                        danger_email = true
+                                        focusedField = .email
+                                        return
+                                    }
+                                    danger_email = false
+
+                                    guard isValidPassword(pass) != nil else {
+                                        danger_pass = true
+                                        focusedField = .pass
+                                        return
+                                    }
+                                    danger_pass = false
+                                    addUser(email: email, password: pass, name: user)
+                                }
+                            }
+                        if danger_pass {
+                            HStack{
+                                Spacer()
+                                SpeechBubble()
+                                    .multilineTextAlignment(.center)
+                                    .frame(width: geo_width * 0.2, height: geo_height * 0.05)
                             }
                         }
-                    Spacer()
+                    }
+                    if keyboard.keyboardHeight.isZero {
+                        Spacer()
+                    }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
