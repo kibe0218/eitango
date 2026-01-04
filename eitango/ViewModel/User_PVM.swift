@@ -51,9 +51,7 @@ extension PlayViewModel {
                 completion(.failure(.invalidResponse))
                 return
             }
-            
             print("🟡 statusCode =", httpResponse.statusCode)
-
             switch httpResponse.statusCode {
                 case 201:
                     guard
@@ -75,9 +73,9 @@ extension PlayViewModel {
             }.resume()
         }
     
-    //==========
-    //❌削除関数❌
-    //==========
+    //=======
+    //❌削除❌
+    //=======
     
     func deleteUserAPI(userId: String, completion: @escaping (Result<Void, AddUserError>) -> Void) {
         var components = URLComponents(string: urlsession + "users")

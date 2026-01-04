@@ -10,14 +10,21 @@ struct eitangoApp: App {
     init() {
         FirebaseApp.configure()
     }
-
     
     var body: some Scene {
         WindowGroup {
-            UserView()
-                .environment(\.managedObjectContext, PersistenceController.shared.container.viewContext)
-                .environmentObject(vm)
-                .environmentObject(keyboard)
+            if vm.userid == "" {
+                StartView()
+                    .environment(\.managedObjectContext, PersistenceController.shared.container.viewContext)
+                    .environmentObject(vm)
+                    .environmentObject(keyboard)
+            }
+            else {
+                SplashScreenView()
+                    .environment(\.managedObjectContext, PersistenceController.shared.container.viewContext)
+                    .environmentObject(vm)
+                    .environmentObject(keyboard)
+            }
         }
     }
 }

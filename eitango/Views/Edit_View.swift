@@ -8,7 +8,6 @@ struct EditView: View {
     @State private var showAlert = false
     @State private var title: String = ""
     @State private var navigateToCardList = false//画面遷移を監視
-    @State private var navigateToSettings = false
     
     @State private var CardListTitle: String = ""
     @State private var path = NavigationPath()
@@ -18,45 +17,39 @@ struct EditView: View {
         NavigationStack{
             GeometryReader { geo in
                 VStack{
-                    ZStack{
-                        HStack{
-                            Button(action: {
-                                navigateToSettings = true
-                            }) {
-                                Image(systemName: "gearshape.2.fill")
-                                    .font(.title)
-                                    .foregroundStyle(vm.customaccentColor)
-                            }
-                            Spacer()  // 左側のスペーサーでPickerを中央に寄せる
-                            Button(action: {
-                                showAlert = true
-                            }) {
-                                Image(systemName: "plus")
-                                    .font(.title)
-                                    .foregroundStyle(vm.customaccentColor)
-                            }
-                            .alert("新しい単語帳を作成", isPresented: $showAlert) {
-                                TextField("タイトル", text: $title)
-                                Button("キャンセル", role: .cancel) {
-                                    showAlert.toggle()
-                                }
-                                Button("OK") {
-                                    guard !title.trimmingCharacters(in: .whitespaces).isEmpty else { return }
-                                    vm.addListAPI(userId: vm.userid, title: title) { newId in
-                                        guard let newId else { return }
-                                        vm.selectedListId = newId
-                                        vm.noshuffleFlag = true
-                                        vm.updateView()
-                                        navigateToCardList = true
-                                    }
-                                }
-                                .disabled(title.trimmingCharacters(in: .whitespaces).isEmpty)
-                                //trimmingで先頭や末尾にある特定の文字を削除してくれる
-                                //isEmptyでから文字列をtrueにしてしまう->disabledでボタンを無効化
-                            }
+                    HStack{
+                        Spacer()
+                        Button(action: {
+                            showAlert = true
+                        }) {
+                            Image(systemName: "plus")
+                                .font(.title)
+                                .foregroundStyle(vm.customaccentColor)
                         }
-                        .padding(.horizontal, 50)
-                    }.frame(height: 70)
+                        .padding(.horizontal, 30)
+                        .frame(width: geo.size.height * 0.06,  height: geo.size.height * 0.06)
+                        .glassEffect(.clear.interactive())
+                        .alert("新しい単語帳を作成", isPresented: $showAlert) {
+                            TextField("タイトル", text: $title)
+                            Button("キャンセル", role: .cancel) {
+                                showAlert.toggle()
+                            }
+                            Button("OK") {
+                                guard !title.trimmingCharacters(in: .whitespaces).isEmpty else { return }
+                                vm.addListAPI(userId: vm.userid, title: title) { newId in
+                                    guard let newId else { return }
+                                    vm.selectedListId = newId
+                                    vm.noshuffleFlag = true
+                                    vm.updateView()
+                                    navigateToCardList = true
+                                }
+                            }
+                            .disabled(title.trimmingCharacters(in: .whitespaces).isEmpty)
+                            //trimmingで先頭や末尾にある特定の文字を削除してくれる
+                            //isEmptyでから文字列をtrueにしてしまう->disabledでボタンを無効化
+                        }
+                    }
+                    .padding(.horizontal, 30)
                     List{
                         ForEach(vm.Lists, id: \.objectID) { list in
                             HStack {
@@ -112,11 +105,6 @@ struct EditView: View {
                 .environmentObject(vm)
                 .environmentObject(keyboard)
         }
-        .navigationDestination(isPresented: $navigateToSettings) {
-            SettingsView()
-                .environmentObject(vm)
-        }
-        
     }
 }
 
