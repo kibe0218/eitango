@@ -5,7 +5,6 @@
         <attribute name="repeatFlag" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="selectedListId" optional="YES" attributeType="String"/>
         <attribute name="shuffleFlag" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
-        <attribute name="userid" optional="YES" attributeType="String"/>
         <attribute name="waittime" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
     </entity>
     <entity name="CardEntity" representedClassName="CardEntity" syncable="YES" codeGenerationType="class">

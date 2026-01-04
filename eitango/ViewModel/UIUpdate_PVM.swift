@@ -37,7 +37,6 @@ import CoreData
 extension PlayViewModel{
     
     func updateView() {
-        
         cancelFlag = true
         Thread.sleep(forTimeInterval: 0.07)
         yy = 0

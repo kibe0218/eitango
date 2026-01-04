@@ -56,6 +56,5 @@ struct AddUserResponse: Decodable {
 struct User_ST: Codable, Identifiable {
     let id: String
     let name: String
-    let createdAt: String
-    let warning: Bool
+    let createdAt: Date?
 }

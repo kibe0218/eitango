@@ -34,9 +34,9 @@ import CoreData
 
 extension PlayViewModel{
     
-    //===========
-    //👀同期関数👀
-    //===========
+    //========
+    //🔁同期🔁
+    //========
     
     func fetchCards(userId: String, listId: String) {
         guard let url = URL(string:

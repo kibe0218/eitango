@@ -35,8 +35,6 @@ import CoreData
 class KeyboardObserver: ObservableObject{
     @Published var keyboardHeight: CGFloat = 0
     private var cancellable: AnyCancellable?
-    //キーボード通知を監視するパイプラインを購読するときに必要
-    
     init() {
         cancellable = Publishers.Merge(
             //Mergeで二つの通知を一つに
@@ -62,14 +60,16 @@ class KeyboardObserver: ObservableObject{
 
 final class PlayViewModel: ObservableObject {
     
-    @Published var Enlist: [String] = []//画面表示用の一時的なリスト
+    // 画面表示用の一時的なリスト
+    @Published var Enlist: [String] = []
     @Published var Jplist: [String] = []
     @Published var isFlipped: [Bool] = [false, false, false, false]
     @Published var Finishlist: [Bool] = [false, false, false, false]
 
-    
-    @Published var Lists: [ListEntity] = []//保持用リスト
+    // 保持用リスト
+    @Published var Lists: [ListEntity] = []
     @Published var Cards: [CardEntity] = []
+    @Published var User: UserEntity?
     
     @Published var enbase: [String] = []
     @Published var jpbase: [String] = []
@@ -77,6 +77,7 @@ final class PlayViewModel: ObservableObject {
     
     @Published var selectedListId: String?
     @Published var userid: String = ""
+    @Published var userName: String = ""
     
     @Published var waittime = 2
     @Published var yy = 0
@@ -85,6 +86,7 @@ final class PlayViewModel: ObservableObject {
     
     @Published var title = ""
     
+    // フラグ系
     @Published var finish = false
     @Published var cancelFlag = false
     @Published var reverse = false
@@ -94,6 +96,7 @@ final class PlayViewModel: ObservableObject {
     @Published var showNotification: Bool = false
     @Published var showToast: Bool = false
     
+    // 色
     @Published var colorS: ColorScheme = .light
     @Published var cardColor: Color = Color(hex:"cc7a6b").opacity(0.4)
     @Published var backColor: Color = Color(hex:"f8e8d3")
@@ -106,6 +109,7 @@ final class PlayViewModel: ObservableObject {
     @Published var cardlistmobColor: Color = Color(hex: "cc7a6b").opacity(0.25)
     @Published var textColor: Color = .primary
     
+    // URL
     @Published var urlsession = "http://192.168.2.105:8080/"
     
     

@@ -37,25 +37,6 @@ struct StartView: View {
         case pass
     }
     
-    //=========
-    //画面遷移📺
-    //=========
-    
-    func moveToSplash() {
-        print("🟡 moveToSplash 呼ばれたっピ")
-        Task { @MainActor in
-            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-               let window = windowScene.windows.first {
-                window.rootViewController = UIHostingController(
-                    rootView: SplashScreenView()
-                        .environmentObject(vm)
-                        .environmentObject(keyboard)
-                )
-                window.makeKeyAndVisible()
-            }
-        }
-    }
-    
     
     //============
     //文字チェック📝
@@ -107,64 +88,6 @@ struct StartView: View {
         }
         return trimmed
     }
-    //============
-    //ログイン操作📲
-    //============
-    
-    func loginUser(
-        email: String,
-        password: String
-    ) {
-        print("🟡 loginUser 呼ばれたっピ")
-        print("🟡 email =", email)
-        Auth.auth().signIn(withEmail: email, password: password){ result, error in
-            if let error = error {
-                print("Authエラー",error)
-                return
-            }
-            guard let uid = result?.user.uid else {return}
-            print("🟡 Firebase Auth.uid =", uid)
-            print("uidは？",uid)
-            DispatchQueue.main.async {
-                vm.userid = uid
-                print("🟡 vm.userid にセット =", self.vm.userid)
-                vm.saveSettings()
-                moveToSplash()
-            }
-        }
-    }
-    
-    //=========
-    //新規作成➕
-    //=========
-    
-    func addUser(
-        email: String,
-        password: String,
-        name: String
-    ) {
-        print("🟡 addUser 呼ばれたっピ")
-        Auth.auth().createUser(withEmail: email, password: password) { result, error in
-            if let error = error {
-                print("Authエラー",error)
-                return
-            }
-            
-            guard let uid = result?.user.uid else {return}
-            vm.addUserAPI(name: name, id: uid) { result in
-                switch result {
-                case .success(_):
-                    DispatchQueue.main.async {
-                        vm.userid = uid
-                        vm.saveSettings()
-                        moveToSplash()
-                    }
-                case .failure(let error):
-                    print("API登録失敗:", error)
-                }
-            }
-        }
-    }
     
     //========
     //吹き出し💬
@@ -208,6 +131,10 @@ struct StartView: View {
             }
         }
     }
+    
+    //=========
+    //body部分📱
+    //=========
     
     var body: some View {
         GeometryReader { geo in
@@ -346,7 +273,7 @@ struct StartView: View {
                                         return
                                     }
                                     danger_pass = false
-                                    loginUser(email: email, password: pass)
+                                    vm.loginUser(email: email, password: pass)
                                 } else {
                                     guard isValidUsername(user) != nil else {
                                         danger_user = true
@@ -368,7 +295,7 @@ struct StartView: View {
                                         return
                                     }
                                     danger_pass = false
-                                    addUser(email: email, password: pass, name: user)
+                                    vm.addUser(email: email, password: pass, name: user)
                                 }
                             }
                         if danger_pass {

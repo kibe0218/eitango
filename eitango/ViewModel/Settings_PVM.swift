@@ -48,7 +48,6 @@ extension PlayViewModel{
                 self.repeatFlag = settings.repeatFlag
                 self.colortheme = Int(settings.colortheme)
                 self.waittime = Int(settings.waittime)
-                self.userid = settings.userid ?? ""
             } else {
                 // データが存在しない場合はデフォルト値を設定
                 self.selectedListId = nil
@@ -56,7 +55,6 @@ extension PlayViewModel{
                 self.repeatFlag = false
                 self.colortheme = 1
                 self.waittime = 2
-                self.userid = ""
             }
         } catch {
             // エラー発生時はデフォルト値を設定
@@ -66,7 +64,6 @@ extension PlayViewModel{
             self.repeatFlag = false
             self.colortheme = 1
             self.waittime = 2
-            self.userid = ""
         }
     }
     
@@ -89,7 +86,6 @@ extension PlayViewModel{
             settings.repeatFlag = repeatFlag
             settings.colortheme = Int16(colortheme)
             settings.waittime = Int16(waittime)
-            settings.userid = userid
             try context.save()
         } catch {
             print("saveSettingsError: \(error.localizedDescription)")
