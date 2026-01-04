@@ -34,9 +34,9 @@ extension PlayViewModel{
         }
     }
     
-    //============
-    //ログイン操作📲
-    //============
+    //========
+    //ログイン📲
+    //========
     
     func loginUser(
         email: String,
@@ -51,12 +51,27 @@ extension PlayViewModel{
             }
             guard let uid = result?.user.uid else {return}
             print("🟡 Firebase Auth.uid =", uid)
-            print("uidは？",uid)
             DispatchQueue.main.async {
                 print("🟡 vm.userid にセット =", self.userid)
                 self.fetchUser(userId: uid)
                 self.moveToSplash()
             }
+        }
+    }
+    
+    //==========
+    //ログアウト⛔️
+    //==========
+    
+    func logoutUser() {
+        do {
+            try Auth.auth().signOut()
+            self.User = nil
+            self.userid = ""
+            self.moveToStartView()
+            print("🟡ログアウト完了")
+        } catch let error {
+            print("🟡ログアウト失敗:", error)
         }
     }
     
@@ -72,6 +87,21 @@ extension PlayViewModel{
                 window.rootViewController = UIHostingController(
                     rootView: SplashScreenView()
                         .environmentObject(self)
+                )
+                window.makeKeyAndVisible()
+            }
+        }
+    }
+
+    func moveToStartView() {
+        print("🟡 moveToStartView 呼ばれたっピ")
+        Task { @MainActor in
+            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+               let window = windowScene.windows.first {
+                window.rootViewController = UIHostingController(
+                    rootView: StartView()
+                        .environmentObject(self)
+                        .environmentObject(self.keyboard)
                 )
                 window.makeKeyAndVisible()
             }

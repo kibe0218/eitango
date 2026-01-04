@@ -4,7 +4,6 @@ import PhotosUI
 struct UserView: View {
     @EnvironmentObject var vm: PlayViewModel
     @Environment(\.colorScheme) var colorScheme
-    @StateObject var keyboard = KeyboardObserver()
     
     @State private var geo_height: CGFloat = 0
     @State private var geo_width: CGFloat = 0

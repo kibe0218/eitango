@@ -138,10 +138,12 @@ extension PlayViewModel {
                     guard
                         let data,
                         let result = try? JSONDecoder().decode(AddUserResponse.self, from: data)
+
                     else {
                         completion(.failure(.decode))
                         return
                     }
+                    print("🟡 デコード結果:", result)
                     DispatchQueue.main.async {
                         self.fetchUser(userId: id)
                         completion(.success(id))

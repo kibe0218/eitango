@@ -60,6 +60,7 @@ class KeyboardObserver: ObservableObject{
 
 final class PlayViewModel: ObservableObject {
     
+    @Published var keyboard = KeyboardObserver()
     // 画面表示用の一時的なリスト
     @Published var Enlist: [String] = []
     @Published var Jplist: [String] = []
@@ -110,7 +111,7 @@ final class PlayViewModel: ObservableObject {
     @Published var textColor: Color = .primary
     
     // URL
-    @Published var urlsession = "http://192.168.2.105:8080/"
+    @Published var urlsession = "http://172.20.10.2:8080/"
     
     
     init() {
