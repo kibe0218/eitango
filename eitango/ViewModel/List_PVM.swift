@@ -117,6 +117,7 @@ extension PlayViewModel{
         title: String,
         completion: @escaping (String?) -> Void
     ) {
+        print("🟡addlist入る: \(userId)")
         guard let url = URL(string: urlsession + "lists?userId=\(userId)") else {
             print("URLエラー")
             completion(nil)
@@ -190,24 +191,39 @@ extension PlayViewModel{
     //==========
     
     func deleteListAPI(userId: String, listId: String) {
+        print("🟡 deleteListAPI 開始 userId = \(userId), listId = \(listId)")
         guard let url = URL(
-            string: urlsession + "(userId)&listId=\(listId)"
+            string: urlsession + "lists?userId=\(userId)&listId=\(listId)"
         ) else {
-            print("URLエラー")
+            print("🟡 URL生成失敗 userId = \(userId), listId = \(listId)")
             return
         }
+        print("🟡 DELETE URL = \(url.absoluteString)")
 
         var request = URLRequest(url: url)
         request.httpMethod = "DELETE"
+        print("🟡 DELETEリクエスト生成完了")
 
-        URLSession.shared.dataTask(with: request) { _, response, error in
+        URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
-                print("通信エラー: \(error)")
+                print("🟡 通信エラー: \(error)")
                 return
             }
 
+            if let httpResponse = response as? HTTPURLResponse {
+                print("🟡 statusCode = \(httpResponse.statusCode)")
+            } else {
+                print("🟡 HTTPレスポンス取得失敗")
+            }
+
+            if let data = data {
+                print("🟡 受信データ: \(String(data: data, encoding: .utf8) ?? "nil")")
+            } else {
+                print("🟡 レスポンスデータなし")
+            }
+
             DispatchQueue.main.async {
-                // 🔁 Firestore を正として CoreData を作り直す
+                print("🟡 delete後 fetchLists 呼び出し")
                 self.fetchLists(userId: userId)
             }
         }.resume()

@@ -73,6 +73,7 @@ struct UserView: View {
                         }
                         Spacer()
                     }
+                    Text(vm.userName)
                 }
                 .onAppear {
                     geo_height = geo.size.height

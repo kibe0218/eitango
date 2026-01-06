@@ -23,12 +23,9 @@ extension PlayViewModel{
             self.addUserAPI(name: name, id: uid) { result in
                 switch result {
                 case .success(_):
-                    DispatchQueue.main.async {
-                        self.fetchUser(userId: uid)
-                        self.moveToSplash()
-                    }
+                    print("🟡 API登録成功")
                 case .failure(let error):
-                    print("API登録失敗:", error)
+                    print("🟡 API登録失敗:", error)
                 }
             }
         }
@@ -43,18 +40,27 @@ extension PlayViewModel{
         password: String
     ) {
         print("🟡 loginUser 呼ばれたっピ")
-        print("🟡 email =", email)
+        print("🟡 入力 email =", email)
+        print("🟡 入力 password =", password)
         Auth.auth().signIn(withEmail: email, password: password){ result, error in
             if let error = error {
-                print("Authエラー",error)
+                print("🟡Authエラー", error)
+                if let errCode = (error as NSError?)?.code {
+                    print("🟡Authエラーコード:", errCode)
+                }
                 return
             }
-            guard let uid = result?.user.uid else {return}
-            print("🟡 Firebase Auth.uid =", uid)
+            guard let uid = result?.user.uid else {
+                print("🟡Firebase Auth.uid が nil だったっピ")
+                return
+            }
+            print("🟡 login内fetch前uid =", uid)
             DispatchQueue.main.async {
-                print("🟡 vm.userid にセット =", self.userid)
-                self.fetchUser(userId: uid)
-                self.moveToSplash()
+                self.fetchUser(userId: uid) { userEntity in
+                    print("🟡 ユーザー取得完了 id =", userEntity?.id ?? "nill")
+                    self.reinit()
+                    self.moveToSplash()
+                }
             }
         }
     }
@@ -64,15 +70,24 @@ extension PlayViewModel{
     //==========
     
     func logoutUser() {
-        do {
-            try Auth.auth().signOut()
-            self.User = nil
-            self.userid = ""
-            self.moveToStartView()
-            print("🟡ログアウト完了")
-        } catch let error {
-            print("🟡ログアウト失敗:", error)
-        }
+        Task { @MainActor in
+                do {
+                    try Auth.auth().signOut()
+                    self.User = nil
+                    self.userid = ""
+                    self.logoutDeleteUserFromCoreData()
+                    self.selectedListId = nil
+                    self.shuffleFlag = false
+                    self.repeatFlag = false
+                    self.colortheme = 1
+                    self.waittime = 2
+                    saveSettings()
+                    self.moveToStartView()
+                    print("🟡ログアウト完了")
+                } catch let error {
+                    print("🟡ログアウト失敗:", error)
+                }
+            }
     }
     
     //=========

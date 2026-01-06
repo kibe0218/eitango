@@ -60,7 +60,8 @@ class KeyboardObserver: ObservableObject{
 
 final class PlayViewModel: ObservableObject {
     
-    @Published var keyboard = KeyboardObserver()
+    @Published var keyboard = KeyboardObserver() // ← ここ追加
+
     // 画面表示用の一時的なリスト
     @Published var Enlist: [String] = []
     @Published var Jplist: [String] = []
@@ -117,6 +118,9 @@ final class PlayViewModel: ObservableObject {
     init() {
         ColorSetting()
         loadSettings()
+        self.User = self.fetchUserFromCoreData()
+        self.userid = self.User?.id ?? ""
+        self.userName = self.User?.name ?? ""
         fetchLists(userId: userid)
     }
 }

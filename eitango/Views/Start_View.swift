@@ -24,8 +24,9 @@ struct StartView: View {
     @State private var danger_user: Bool = false
     @State private var danger_email: Bool = false
     @State private var danger_pass: Bool = false
-
     
+    @State private var isSubmitting = false
+
             
     let options = ["新規作成", "ログイン"]
     
@@ -158,7 +159,7 @@ struct StartView: View {
                     }
                     if keyboard.keyboardHeight.isZero {
                         Spacer()
-                            .frame(height: max(0, geo_height * 0.18 - 30))
+                        .frame(height: max(0, (geo_height * 0.18) - 30))
                     }
                     Picker("", selection: $selectedOption){
                         ForEach(options, id: \.self) {
@@ -170,8 +171,11 @@ struct StartView: View {
                     }
                     .frame(width: geo_width * 0.6)
                     .pickerStyle(.segmented)
-                    Spacer()
-                        .frame(height: geo_height * 0.03)
+                    .foregroundStyle(vm.backColor)
+                    if keyboard.keyboardHeight.isZero {
+                        Spacer()
+                            .frame(height: geo_height * 0.03)
+                    }
                     if selectedOption == "新規作成" {
                         Text("アカウント名(1~4文字)")
                             .font(.system(size: geo_height * 0.025))
@@ -207,8 +211,10 @@ struct StartView: View {
                         }
                     }
                     if selectedOption == "新規作成" {
-                        Spacer()
-                            .frame(height: geo_height * 0.03)
+                        if keyboard.keyboardHeight.isZero {
+                            Spacer()
+                                .frame(height: geo_height * 0.03)
+                        }
                     }
                     Text("E-mailアドレス")
                         .font(.system(size: geo_height * 0.025))
@@ -242,8 +248,10 @@ struct StartView: View {
                             }
                         }
                     }
-                    Spacer()
-                        .frame(height: geo_height * 0.03)
+                    if keyboard.keyboardHeight.isZero {
+                        Spacer()
+                            .frame(height: geo_height * 0.03)
+                    }
                     Text("パスワード(10~64文字）")
                         .font(.system(size: geo_height * 0.025))
                         .foregroundStyle(vm.backColor)
@@ -259,10 +267,13 @@ struct StartView: View {
                             .textContentType(.password)
                             .onSubmit {
                                 print("🟡 onSubmit 発火したっピ")
+                                if isSubmitting { return }
+                                isSubmitting = true
                                 if selectedOption == "ログイン" {
                                     guard isValidEmail(email) != nil else {
                                         danger_email = true
                                         focusedField = .email
+                                        isSubmitting = false
                                         return
                                     }
                                     danger_email = false
@@ -270,14 +281,17 @@ struct StartView: View {
                                     guard isValidPassword(pass) != nil else {
                                         danger_pass = true
                                         focusedField = .pass
+                                        isSubmitting = false
                                         return
                                     }
                                     danger_pass = false
                                     vm.loginUser(email: email, password: pass)
+                                    isSubmitting = false
                                 } else {
                                     guard isValidUsername(user) != nil else {
                                         danger_user = true
                                         focusedField = .user
+                                        isSubmitting = false
                                         return
                                     }
                                     danger_user = false
@@ -285,6 +299,7 @@ struct StartView: View {
                                     guard isValidEmail(email) != nil else {
                                         danger_email = true
                                         focusedField = .email
+                                        isSubmitting = false
                                         return
                                     }
                                     danger_email = false
@@ -292,10 +307,12 @@ struct StartView: View {
                                     guard isValidPassword(pass) != nil else {
                                         danger_pass = true
                                         focusedField = .pass
+                                        isSubmitting = false
                                         return
                                     }
                                     danger_pass = false
                                     vm.addUser(email: email, password: pass, name: user)
+                                    isSubmitting = false
                                 }
                             }
                         if danger_pass {
@@ -309,9 +326,10 @@ struct StartView: View {
                     }
                     if keyboard.keyboardHeight.isZero {
                         Spacer()
+                            .frame(height: geo_height * 0.1)
                     }
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             }
             .onAppear {
                 geo_height = geo.size.height

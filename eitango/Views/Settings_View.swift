@@ -3,6 +3,7 @@ import SwiftUI
 struct SettingsView: View {
     @Environment(\.colorScheme) var colorScheme
     @EnvironmentObject var vm: PlayViewModel
+    @State private var showLogoutAlert = false
     
     var body: some View {
         NavigationView {
@@ -19,6 +20,21 @@ struct SettingsView: View {
                             )) {
                                 Text("シンプルモード")
                                     .foregroundColor(vm.textColor)
+                            }
+                        }
+                        .listRowBackground(vm.cardColor)
+                        Section(header: Text("ユーザー").foregroundColor(vm.textColor)) {
+                            Button(action: {
+                                showLogoutAlert = true
+                            }) {
+                                Text("ログアウト")
+                                    .foregroundColor(.red)
+                            }
+                            .alert("ログアウトしますか？", isPresented: $showLogoutAlert) {
+                                Button("キャンセル", role: .cancel) {}
+                                Button("ログアウト", role: .destructive) {
+                                    vm.logoutUser()
+                                }
                             }
                         }
                         .listRowBackground(vm.cardColor)
