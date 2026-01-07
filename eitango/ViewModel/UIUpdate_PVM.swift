@@ -50,19 +50,15 @@ extension PlayViewModel{
             print("🟡 selectedListId が有効: \(selectedId)")
         } else {
             selectedListId = Lists.first?.id
-            print("🟡 selectedListId が無効だったので初期化: \(String(describing: selectedListId))")
+            print("🟡 selectedListId無効だったので初期化:")
         }
 
         if let idString = selectedListId {
             Cards = fetchCardsFromCoreData(listid: idString)
-            print("🟡 Cards を取得: \(Cards.map { $0.id }) for listId: \(idString)")
         } else {
             Cards = []
             print("🟡 Cards は空配列に設定")
         }
-
-        print("🟡 現在の Lists: \(Lists.map { $0.id })")
-        print("🟡 現在の selectedListId: \(String(describing: selectedListId))")
         if !noshuffleFlag {shuffleCards(i: shuffleFlag)}
         if let listId = selectedListId,
            Lists.contains(where: { $0.id == listId }) {

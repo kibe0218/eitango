@@ -18,7 +18,7 @@ extension PlayViewModel {
     //========
     
     func fetchUser(userId: String, completion: @escaping (UserEntity?) -> Void) {
-        print("🟡 fetchUser 開始 userId = \(userId)")
+        print("🟡 fetchUser 開始 usedrId = \(userId)")
         guard let url = URL(string:
             urlsession + "users?userId=\(userId)"
         ) else {

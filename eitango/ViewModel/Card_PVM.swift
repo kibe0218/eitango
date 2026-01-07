@@ -127,7 +127,7 @@ extension PlayViewModel{
         guard let url = URL(
             string: urlsession + "cards?userId=\(self.userid)&listId=\(listId)"
         ) else {
-            print("URLエラーっピ")
+            print("🟡 URLエラーっピ")
             return
         }
 
@@ -143,16 +143,15 @@ extension PlayViewModel{
         do {
             request.httpBody = try JSONSerialization.data(withJSONObject: body)
         } catch {
-            print("JSON変換エラーっピ: \(error)")
+            print("🟡 JSON変換エラーっピ: \(error)")
             return
         }
 
         URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
-                print("通信エラーっピ: \(error)")
+                print("🟡 通信エラーっピ: \(error)")
                 return
             }
-
             DispatchQueue.main.async {
                 // 🔁 Firestore を正として CoreData を同期
                 self.fetchCards(listId: listId)
@@ -160,23 +159,32 @@ extension PlayViewModel{
         }.resume()
     }
     
-//    func addCard(to list: ListEntity, en: String, jp: String) {
-//        let context = PersistenceController.shared.container.viewContext
-//        let newCard = CardEntity(context: context)
-//
-//        newCard.id = String
-//        newCard.en = en
-//        newCard.jp = jp
-//        newCard.createdAt = Date()
-//        newCard.cardlist = list
-//        list.addToCards(newCard)
-//
-//        do {
-//            try context.save()
-//        } catch {
-//            print("addcarderror: \(error.localizedDescription)")
-//        }
-//    }
+    //=====
+    //翻訳
+    //=====
+    
+    func translateTextWithGAS(_ text: String, source: String = "en", target: String = "ja") async throws -> String {
+        // addingPercentEncodingで＋＋などの特殊文字を安全な文字列に変換
+        // withAllowedCharacters: .urlQueryAllowedは空白や？を%26などに変換
+        // withAllowedChaaractersはURLに安全にう目込むためのルールを指定するところ
+        let urlString = "https://script.google.com/macros/s/AKfycbxotVWEIFCz2YhhUZSdPJ7jkYlQKj2W2ya7QWRlFiGixeRaoFg7P9E75HfgQEN-GakP/exec?text=\(text.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")&source=\(source)&target=\(target)"
+        
+        guard let url = URL(string: urlString) else {
+            throw URLError(.badURL)
+        }
+        
+        let (data, _) = try await URLSession.shared.data(from: url)
+        
+        // レスポンスデータをJSONとしてデコードし、ステータスコードと翻訳結果を抽出する、辞書型
+        if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+            let code = json["code"] as? Int,
+            code == 200,
+            let translated = json["text"] as? String { // 翻訳テキストを取得
+            return translated.removingPercentEncoding ?? translated
+        } else {
+            throw NSError(domain: "TranslationAPI", code: 1, userInfo: [NSLocalizedDescriptionKey: "翻訳失敗"])
+        }
+    }
     
     //========
     //🔁更新🔁

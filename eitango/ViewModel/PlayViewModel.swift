@@ -112,12 +112,13 @@ final class PlayViewModel: ObservableObject {
     @Published var textColor: Color = .primary
     
     // URL
-    @Published var urlsession = "http://172.25.11.135:8080/"
+    @Published var urlsession = "http://"
     
     
     init() {
         ColorSetting()
         loadSettings()
+        urlsession = urlsession + "172.25.10.77" + ":8080/"
         self.User = self.fetchUserFromCoreData()
         self.userid = self.User?.id ?? ""
         self.userName = self.User?.name ?? ""

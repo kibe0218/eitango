@@ -15,26 +15,38 @@ struct CardsView: View {
     
     @State private var newWord: String = ""
     //デフォルトはen->ja
-    func translateTextWithGAS(_ text: String, source: String = "en", target: String = "ja") async throws -> String {
-        // addingPercentEncodingで＋＋などの特殊文字を安全な文字列に変換
-        // withAllowedCharacters: .urlQueryAllowedは空白や？を%26などに変換
-        // withAllowedChaaractersはURLに安全にう目込むためのルールを指定するところ
-        let urlString = "https://script.google.com/macros/s/AKfycbxotVWEIFCz2YhhUZSdPJ7jkYlQKj2W2ya7QWRlFiGixeRaoFg7P9E75HfgQEN-GakP/exec?text=\(text.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")&source=\(source)&target=\(target)"
-        
-        guard let url = URL(string: urlString) else {
-            throw URLError(.badURL)
+    
+    /// 🐙 新しい単語の送信入口
+    func submitNewWord(_ word: String) {
+        ing += 1
+        Task {
+            await translateAndAddCard(word)
         }
-        
-        let (data, _) = try await URLSession.shared.data(from: url)
-        
-        // レスポンスデータをJSONとしてデコードし、ステータスコードと翻訳結果を抽出する、辞書型
-        if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-            let code = json["code"] as? Int,
-            code == 200,
-            let translated = json["text"] as? String { // 翻訳テキストを取得
-            return translated.removingPercentEncoding ?? translated
-        } else {
-            throw NSError(domain: "TranslationAPI", code: 1, userInfo: [NSLocalizedDescriptionKey: "翻訳失敗"])
+    }
+
+    /// 🌍 翻訳してカードを追加する非同期処理
+    func translateAndAddCard(_ word: String) async {
+        guard let currentListId = vm.selectedListId else {
+            print("🟡 listIdが無効のためカード追加できません")
+            await MainActor.run {
+                ing -= 1
+            }
+            return
+        }
+
+        do {
+            let encodedWord = word.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+            let translated = try await vm.translateTextWithGAS(encodedWord, source: "en", target: "ja")
+
+            await MainActor.run {
+                vm.addCardAPI(listId: currentListId, en: word, jp: translated)
+                ing -= 1
+            }
+        } catch {
+            await MainActor.run {
+                ing -= 1
+                print("🟡 翻訳失敗: \(error)")
+            }
         }
     }
     
@@ -80,30 +92,11 @@ struct CardsView: View {
                         .onSubmit {
                             let trimmedWord = newWord.trimmingCharacters(in: .whitespacesAndNewlines)
                             guard !trimmedWord.isEmpty && trimmedWord != "-" else { return }
-                            ing += 1
+
                             newWord = ""
                             isTextFieldFocused = true
-                            Task { // submitごとにTask作成
-                                let currentListId = vm.selectedListId
-                                do {
-                                    if let encodedWord = trimmedWord.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
-                                        let translated = try await translateTextWithGAS(encodedWord, source: "en", target: "ja")
-                                        DispatchQueue.main.async {
-                                            if let listId = currentListId {//nil安全策
-                                                vm.addCardAPI(listId: listId, en: trimmedWord, jp: translated)
-                                                ing -= 1
-                                                vm.updateView()
-                                            } else {
-                                                print("🟡 listIdが無効のためカード追加できません")
-                                            }
-                                        }
-                                    } else {
-                                        print("Encoding failed for input word")
-                                    }
-                                } catch {
-                                    print("翻訳失敗: \(error)")
-                                }
-                            }
+
+                            submitNewWord(trimmedWord)
                         }
                         .frame(width: geo.size.width * 0.85, height: geo.size.height * 0.18, alignment: .center)
                         .foregroundStyle(vm.cardfrontColor)
