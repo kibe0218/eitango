@@ -9,50 +9,36 @@ struct CardsView: View {
     
     @State private var geo_height: CGFloat = 0
     @State private var ing: Int = 0
+    @State private var keeplistid: String = ""
+    
     @Binding var path: NavigationPath
     
     @State private var newWord: String = ""
     //デフォルトはen->ja
     func translateTextWithGAS(_ text: String, source: String = "en", target: String = "ja") async throws -> String {
-        let urlString = "https://script.google.com/macros/s/AKfycbxotVWEIFCz2YhhUZSdPJ7jkYlQKj2W2ya7QWRlFiGixeRaoFg7P9E75HfgQEN-GakP/exec?text=\(text.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")&source=\(source)&target=\(target)"
-        // 入力されたテキスト・言語情報をURLパラメータとしてGASのAPIエンドポイントに組み込む \()でURLに変数を組み込んでる
         // addingPercentEncodingで＋＋などの特殊文字を安全な文字列に変換
         // withAllowedCharacters: .urlQueryAllowedは空白や？を%26などに変換
         // withAllowedChaaractersはURLに安全にう目込むためのルールを指定するところ
-            
+        let urlString = "https://script.google.com/macros/s/AKfycbxotVWEIFCz2YhhUZSdPJ7jkYlQKj2W2ya7QWRlFiGixeRaoFg7P9E75HfgQEN-GakP/exec?text=\(text.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")&source=\(source)&target=\(target)"
         
-        guard let url = URL(string: urlString) else { // 文字列からURL型を生成し、失敗した場合はエラーを投げる
-            // guardはSwiftの条件をチェックして早期退出する文 // if文と違い、elseが必須
-            throw URLError(.badURL) // この後関数を終了
+        guard let url = URL(string: urlString) else {
+            throw URLError(.badURL)
         }
         
         let (data, _) = try await URLSession.shared.data(from: url)
-        // URLSessionで非同期リクエストを送り、レスポンスデータを取得する
-        //URLSeesio.shared->iOS標準のネットワーク通信を行うクラス
-        //.data(from: url)->指定したURLからデータを取得するメソッド
-        //dataだけ受け取り、responseは受け取らないから_
-        //簡単
         
+        // レスポンスデータをJSONとしてデコードし、ステータスコードと翻訳結果を抽出する、辞書型
         if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-            // レスポンスデータをJSONとしてデコードし、ステータスコードと翻訳結果を抽出する
-            //JSONserialization.jsonObject(with:)でサーバーから取得したバイト列のdataをswiftの型に変換する
-            //バイト型はサーバから受け取った生のデータのこといろんなデータをバイト単位で格納（swiftではData型で表現される）
-            //try?は失敗したらnilになる安全な書き方
-            //as? [String:A Any]はJSONオブジェクトを辞書型にキャスト
-            //Any型とは全ての型を受け取ることができる型
             let code = json["code"] as? Int,
-            // ステータスコードを取得
-            code == 200, // 成功かどうか判定
+            code == 200,
             let translated = json["text"] as? String { // 翻訳テキストを取得
             return translated.removingPercentEncoding ?? translated
-            // 翻訳結果を返す（デコード失敗時は元の文字列を返す）
         } else {
-            throw NSError(domain: "TranslationAPI", code: 1, userInfo: [NSLocalizedDescriptionKey: "翻訳失敗"]) // エラー時はエラーメッセージを含むNSErrorを投げる
+            throw NSError(domain: "TranslationAPI", code: 1, userInfo: [NSLocalizedDescriptionKey: "翻訳失敗"])
         }
     }
     
     var body: some View {
-        // NavigationStackで画面を積んでいく
         NavigationStack(path: $path) {
             GeometryReader { geo in
                 VStack{
@@ -69,7 +55,7 @@ struct CardsView: View {
                             }
                             .listRowBackground(vm.backColor)
                             .listRowSeparator(.hidden)
-                            .scrollContentBackground(.hidden) // ← これ大事！
+                            .scrollContentBackground(.hidden)
                         }
                         ForEach(vm.Cards, id: \.objectID) { card in
                             ItemView(card: card, width: geo.size.width, height: geo_height, title: vm.fetchListsFromCoreData().first(where: { $0.id == vm.selectedListId })?.title ?? "")                                .environmentObject(vm)
@@ -82,7 +68,7 @@ struct CardsView: View {
                                 }
                         }
                         .listRowSeparator(.hidden)
-                        .scrollContentBackground(.hidden) // ← これ大事！
+                        .scrollContentBackground(.hidden)
                         .listRowBackground(Color.clear)
                         .padding(.bottom, 10)
                     }
@@ -92,23 +78,24 @@ struct CardsView: View {
                         .focused($isTextFieldFocused)
                         .padding(.all,40)
                         .onSubmit {
-                            ing += 1
-                            //空白と改行を先頭と末尾から削除
                             let trimmedWord = newWord.trimmingCharacters(in: .whitespacesAndNewlines)
                             guard !trimmedWord.isEmpty && trimmedWord != "-" else { return }
+                            ing += 1
                             newWord = ""
                             isTextFieldFocused = true
-                            Task {
+                            Task { // submitごとにTask作成
+                                let currentListId = vm.selectedListId
                                 do {
                                     if let encodedWord = trimmedWord.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
-                                        //%18とかにするのがaddingPercentEncding
-                                        //urlQueryAllowedはURLのクエリ部分で使える文字ののみということを定義している
                                         let translated = try await translateTextWithGAS(encodedWord, source: "en", target: "ja")
-                                        ing -= 1
                                         DispatchQueue.main.async {
-                                        //DispatchQueue.mainとはSwiftのメインスレッドを示す
-                                            vm.addCardAPI(userId: vm.userid, listId: vm.selectedListId ?? "", en: trimmedWord, jp: translated)
-                                            vm.updateView()
+                                            if let listId = currentListId {//nil安全策
+                                                vm.addCardAPI(listId: listId, en: trimmedWord, jp: translated)
+                                                ing -= 1
+                                                vm.updateView()
+                                            } else {
+                                                print("🟡 listIdが無効のためカード追加できません")
+                                            }
                                         }
                                     } else {
                                         print("Encoding failed for input word")
@@ -174,7 +161,6 @@ struct ItemView: View{
                     guard let listId = vm.selectedListId,
                           let cardId = card.id else { return }
                     vm.updateCardAPI(
-                        userId: vm.userid,
                         listId: listId,
                         cardId: cardId,
                         en: pasten,

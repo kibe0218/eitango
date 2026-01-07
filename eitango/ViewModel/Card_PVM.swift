@@ -38,9 +38,8 @@ extension PlayViewModel{
     //🔁同期🔁
     //========
     
-    func fetchCards(userId: String, listId: String) {
-        guard let url = URL(string:
-            urlsession + "cards?userId=\(userId)&listId=\(listId)"
+    func fetchCards(listId: String) {
+        guard let url = URL(string: urlsession + "cards?userId=\(self.userid)&listId=\(listId)"
         ) else {
             print("URLエラー")
             return
@@ -121,13 +120,12 @@ extension PlayViewModel{
     //========
     
     func addCardAPI(
-        userId: String,
         listId: String,
         en: String,
         jp: String
     ) {
         guard let url = URL(
-            string: urlsession + "cards?userId=\(userId)&listId=\(listId)"
+            string: urlsession + "cards?userId=\(self.userid)&listId=\(listId)"
         ) else {
             print("URLエラーっピ")
             return
@@ -157,7 +155,7 @@ extension PlayViewModel{
 
             DispatchQueue.main.async {
                 // 🔁 Firestore を正として CoreData を同期
-                self.fetchCards(userId: userId, listId: listId)
+                self.fetchCards(listId: listId)
             }
         }.resume()
     }
@@ -185,7 +183,6 @@ extension PlayViewModel{
     //========
     
     func updateCardAPI(
-        userId: String,
         listId: String,
         cardId: String,
         en: String,
@@ -193,7 +190,7 @@ extension PlayViewModel{
         createdAt: Date
     ) {
         guard let url = URL(
-            string: urlsession + "cards?userId=\(userId)&listId=\(listId)&cardId=\(cardId)"
+            string: urlsession + "cards?userId=\(self.userid)&listId=\(listId)&cardId=\(cardId)"
         ) else {
             print("URLエラーっピ")
             return
@@ -204,6 +201,8 @@ extension PlayViewModel{
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         //Content-Typeでapplication/jsonを指定している
         let body: [String: Any] = [
+            "id": cardId,
+            "listid": listId,
             "en": en,
             "jp": jp,
             "createdAt": ISO8601DateFormatter().string(from: createdAt)
@@ -224,7 +223,7 @@ extension PlayViewModel{
 
             DispatchQueue.main.async {
                 // 🔁 更新後は一覧を再取得
-                self.fetchCards(userId: userId, listId: listId)
+                self.fetchCards(listId: listId)
             }
         }.resume()
     }
@@ -256,7 +255,7 @@ extension PlayViewModel{
 
             DispatchQueue.main.async {
                 // 🔁 削除後は Firestore を正として再取得
-                self.fetchCards(userId: userId, listId: listId)
+                self.fetchCards(listId: listId)
             }
         }.resume()
     }

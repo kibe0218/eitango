@@ -47,24 +47,32 @@ extension PlayViewModel{
         Lists = fetchListsFromCoreData()
         if let selectedId = selectedListId,
            Lists.contains(where: { $0.id == selectedId }) {
+            print("🟡 selectedListId が有効: \(selectedId)")
         } else {
             selectedListId = Lists.first?.id
+            print("🟡 selectedListId が無効だったので初期化: \(String(describing: selectedListId))")
         }
+
         if let idString = selectedListId {
             Cards = fetchCardsFromCoreData(listid: idString)
+            print("🟡 Cards を取得: \(Cards.map { $0.id }) for listId: \(idString)")
         } else {
             Cards = []
+            print("🟡 Cards は空配列に設定")
         }
+
+        print("🟡 現在の Lists: \(Lists.map { $0.id })")
+        print("🟡 現在の selectedListId: \(String(describing: selectedListId))")
         if !noshuffleFlag {shuffleCards(i: shuffleFlag)}
         if let listId = selectedListId,
            Lists.contains(where: { $0.id == listId }) {
-            self.enbase = Array(Cards.prefix(4)).compactMap { $0.en ?? "-" }
-            self.jpbase = Array(Cards.prefix(4)).compactMap { $0.jp ?? "-" }
+            self.enbase = Array(Cards.prefix(4)).compactMap { $0.en ?? "✔︎" }
+            self.jpbase = Array(Cards.prefix(4)).compactMap { $0.jp ?? "✔︎" }
             Enlist = self.enbase + Array(repeating: "✔︎", count: max(0, 4 - self.enbase.count))
             Jplist = self.jpbase + Array(repeating: "✔︎", count: max(0, 4 - self.jpbase.count))
         } else {
-            Enlist = Array(repeating: "", count: 4)
-            Jplist = Array(repeating: "", count: 4)
+            Enlist = Array(repeating: "✔︎", count: 4)
+            Jplist = Array(repeating: "✔︎", count: 4)
             Finishlist = Array(repeating: true, count: 4)
             isFlipped = Array(repeating: false, count: 4)
         }

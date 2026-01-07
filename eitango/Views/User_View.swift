@@ -74,6 +74,9 @@ struct UserView: View {
                         Spacer()
                     }
                     Text(vm.userName)
+                        .foregroundColor(vm.customaccentColor)
+                        .font(.system(size: 30))
+                        .bold()
                 }
                 .onAppear {
                     geo_height = geo.size.height
