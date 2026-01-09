@@ -335,6 +335,18 @@ struct StartView: View {
                 geo_height = geo.size.height
                 geo_width = geo.size.width
             }
-        }
+            .alert("エラー", isPresented: Binding(//isPresented:で表示管理
+                get: { vm.error_User != nil || vm.error_Auth != nil },
+                //alertが閉じた時の処理
+                set: { _ in
+                    vm.error_User = nil
+                    vm.error_Auth = nil
+                }
+            )) {
+                Button("OK") {}
+                    .background(self.vm.customaccentColor)
+            } message: {
+                Text(vm.error_User?.message ?? vm.error_Auth?.message ?? "")
+            }        }
     }
 }

@@ -34,6 +34,19 @@ import CoreData
 
 extension PlayViewModel{
     
+    //==========================
+    //🌱 初回同期（全カード取得）🌱
+    //==========================
+    func initialSyncAllCards() {
+        print("🟡 初回同期開始: list数 = \(self.Lists.count)")
+
+        for list in self.Lists {
+            guard let listId = list.id else { continue }
+            print("🟡 初回同期 fetchCards 実行: listId = \(listId)")
+            self.fetchCards(listId: listId)
+        }
+    }
+    
     //========
     //🔁同期🔁
     //========

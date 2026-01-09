@@ -4,7 +4,7 @@ import FirebaseAuth
 
 extension PlayViewModel {
     
-    enum AddUserError: Error {
+    enum UserAppError: Error {
         case duplicatedUsername
         case invalidURL
         case network
@@ -23,16 +23,19 @@ extension PlayViewModel {
             urlsession + "users?userId=\(userId)"
         ) else {
             print("🟡 URLエラー")
+            self.error_User = .invalidURL
             return
         }
         print("🟡 fetchUser リクエスト送信 URL = \(url.absoluteString)")
         URLSession.shared.dataTask(with: url) { data, response, error in
             if let error = error {
                 print("🟡 通信エラー: \(error)")
+                self.error_User = .network
                 return
             }
             guard let data = data else {
                 print("🟡 データなしっピ")
+                self.error_User = .unknown
                 return
             }
             if let str = String(data: data, encoding: .utf8) {
@@ -58,8 +61,10 @@ extension PlayViewModel {
                     do {
                         try context.save()
                         print("🟡 CoreData 保存成功")
+                        self.error_User = nil
                     } catch {
                         print("🟡 保存エラー: \(error)")
+                        self.error_User = .unknown
                     }
                     let userEntity = self.fetchUserFromCoreData()
                     self.User = userEntity
@@ -71,6 +76,7 @@ extension PlayViewModel {
                     print("🟡 update後: \(self.userid)")
                 } catch {
                     print("🟡 decode/saveエラー:", error)
+                    self.error_User = .decode
                 }
             }
 
@@ -92,9 +98,11 @@ extension PlayViewModel {
         do {
             let user = try context.fetch(request).first
             print("🟡 fetchUserFromCoreData 成功 user = \(String(describing: user))")
+            self.error_User = nil
             return user
         } catch {
             print("🟡 fetchUserFromCoreData error: \(error.localizedDescription)")
+            self.error_User = .unknown
             return nil
         }
     }
@@ -106,12 +114,11 @@ extension PlayViewModel {
     func addUserAPI(
         name: String,
         id: String,
-        completion: @escaping (Result<String, AddUserError>) -> Void//Result<成功の型,失敗の型>
     ) {
         print("🟡 addUserAPI 開始 id = \(id), name = \(name)")
         guard let url = URL(string: urlsession + "users") else {
             print("🟡 URLエラー")
-            completion(.failure(.invalidURL))
+            self.error_User = .invalidURL
             return
         }
 
@@ -126,17 +133,16 @@ extension PlayViewModel {
 
         request.httpBody = try? JSONSerialization.data(withJSONObject: body)
         print("🟡 API送信直前 id =", id)
-        print("🟡 リクエストURL =", request.url?.absoluteString ?? "nil")
         print("🟡 addUserAPI リクエスト送信 URL = \(request.url?.absoluteString ?? "nil")")
         URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
-                completion(.failure(.network))
+                self.error_User = .network
                 print("🟡 URLSession error =", error)
                 return
             }
             
             guard let httpResponse = response as? HTTPURLResponse else {
-                completion(.failure(.invalidResponse))
+                self.error_User = .invalidResponse
                 return
             }
             print("🟡 statusCode =", httpResponse.statusCode)
@@ -147,23 +153,23 @@ extension PlayViewModel {
                         let result = try? JSONDecoder().decode(AddUserResponse.self, from: data)
 
                     else {
-                        completion(.failure(.decode))
+                        self.error_User = .decode
                         return
                     }
                     print("🟡 デコード結果:", result)
                     DispatchQueue.main.async {
+                        self.error_User = nil
                         self.fetchUser(userId: id) { userEntity in
                             print("🟡 ユーザー取得完了 id =", userEntity?.id ?? "nill")
                             self.reinit()
                             self.moveToSplash()
                         }
-                        completion(.success(id))
                     }
                 case 409:
-                    completion(.failure(.duplicatedUsername))
+                    self.error_User = .duplicatedUsername
 
                 default:
-                    completion(.failure(.unknown))
+                    self.error_User = .unknown
                 }
 
             }.resume()
@@ -173,7 +179,7 @@ extension PlayViewModel {
     //❌削除❌
     //=======
     
-    func deleteUserAPI(userId: String, completion: @escaping (Result<Void, AddUserError>) -> Void) {
+    func deleteUserAPI(userId: String) {
         print("🟡 deleteUserAPI 開始 userId = \(userId)")
         var components = URLComponents(string: urlsession + "users")
         components?.queryItems = [
@@ -181,7 +187,7 @@ extension PlayViewModel {
         ]
         
         guard let url = components?.url else {
-            completion(.failure(.invalidURL))
+            self.error_User = .invalidURL
             return
         }
         
@@ -190,24 +196,24 @@ extension PlayViewModel {
         
         URLSession.shared.dataTask(with: request) { _, response, error in
             if let _ = error {
-                completion(.failure(.network))
+                self.error_User = .network
                 return
             }
             
             guard let httpResponse = response as? HTTPURLResponse else {
-                completion(.failure(.invalidResponse))
+                self.error_User = .invalidResponse
                 return
             }
             
             switch httpResponse.statusCode {
             case 200, 204:
                 print("🟡 deleteUserAPI 成功ステータス受信")
+                self.error_User = nil
                 Task { @MainActor in
                     self.fetchLists(userId: userId)
-                    completion(.success(()))
                 }
             default:
-                completion(.failure(.unknown))
+                self.error_User = .unknown
             }
         }.resume()
     }
@@ -223,11 +229,12 @@ extension PlayViewModel {
         self.userid = self.User?.id ?? ""
         self.userName = self.User?.name ?? ""
         fetchLists(userId: userid)
+        initialSyncAllCards()
     }
     
-    //===========================
-    //ログアウト専用coredataだけ消す💨
-    //===========================
+    //================================
+    //ログアウト,削除専用coredataだけ消す💨
+    //================================
     
     func logoutDeleteUserFromCoreData() {
         let context = PersistenceController.shared.container.viewContext
@@ -243,15 +250,38 @@ extension PlayViewModel {
             print("🟡 全削除完了")
         } catch {
             print("🟡 CoreData fetchCards error: \(error.localizedDescription)")
+            self.error_User = .unknown
+            return
         }
             
         do {
             try context.save()
+            self.error_User = nil
             let request: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
             let allUsers = try context.fetch(request)
             print("🟡 CoreData User 残数 =", allUsers.count)
         } catch {
             print("🟡 CoreData 保存失敗:", error)
+            self.error_User = .unknown
+        }
+    }
+}
+
+extension PlayViewModel.UserAppError {
+    var message: String {
+        switch self {
+        case .duplicatedUsername:
+            return "このユーザー名は既に使用されています"
+        case .invalidURL:
+            return "通信先URLが不正です"
+        case .network:
+            return "ネットワークエラーが発生しました"
+        case .invalidResponse:
+            return "サーバーからの応答が不正です"
+        case .decode:
+            return "データの読み込みに失敗しました"
+        case .unknown:
+            return "保存に失敗しました"
         }
     }
 }

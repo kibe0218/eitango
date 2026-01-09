@@ -36,6 +36,19 @@ struct SettingsView: View {
                                     vm.logoutUser()
                                 }
                             }
+                            Button(action: {
+                                showLogoutAlert = true
+                            }) {
+                                Text("ユーザー削除")
+                                    .foregroundColor(.red)
+                            }
+                            .alert("本当にユーザー削除しますか？", isPresented: $showLogoutAlert) {
+                                Button("キャンセル", role: .cancel) {}
+                                Button("削除", role: .destructive) {
+                                    vm.deleteUser()
+                                    vm.logoutUser()
+                                }
+                            }
                         }
                         .listRowBackground(vm.cardColor)
                         Section(header: Text("機能").foregroundColor(vm.textColor)) {
