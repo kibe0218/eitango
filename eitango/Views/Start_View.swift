@@ -26,8 +26,8 @@ struct StartView: View {
     @State private var danger_pass: Bool = false
     
     @State private var isSubmitting = false
-
-            
+    
+    
     let options = ["新規作成", "ログイン"]
     
     @FocusState private var focusedField: Field?
@@ -45,13 +45,13 @@ struct StartView: View {
     
     private func isValidUsername(_ name: String) -> String? {
         let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
-
+        
         guard !trimmed.isEmpty,
               trimmed.count <= 4
         else {
             return nil
         }
-
+        
         for ch in trimmed {
             if ch.isEmoji {
                 continue // 絵文字OK
@@ -61,16 +61,16 @@ struct StartView: View {
             }
             return nil // 記号だけNG
         }
-
+        
         return trimmed
     }
     
     private func isValidEmail(_ email: String) -> String? {
         let trimmed = email.trimmingCharacters(in: .whitespacesAndNewlines)
-
+        
         let pattern =
         #"^[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$"#
-
+        
         guard !trimmed.isEmpty,
               trimmed.range(of: pattern, options: .regularExpression) != nil
         else {
@@ -159,7 +159,7 @@ struct StartView: View {
                     }
                     if keyboard.keyboardHeight.isZero {
                         Spacer()
-                        .frame(height: max(0, (geo_height * 0.18) - 30))
+                            .frame(height: max(0, (geo_height * 0.18) - 30))
                     }
                     Picker("", selection: $selectedOption){
                         ForEach(options, id: \.self) {
@@ -277,7 +277,7 @@ struct StartView: View {
                                         return
                                     }
                                     danger_email = false
-
+                                    
                                     guard isValidPassword(pass) != nil else {
                                         danger_pass = true
                                         focusedField = .pass
@@ -285,7 +285,7 @@ struct StartView: View {
                                         return
                                     }
                                     danger_pass = false
-                                    vm.loginUser(email: email, password: pass)
+                                    vm.loginUserAuth(email: email, password: pass)
                                     isSubmitting = false
                                 } else {
                                     guard isValidUsername(user) != nil else {
@@ -295,7 +295,7 @@ struct StartView: View {
                                         return
                                     }
                                     danger_user = false
-
+                                    
                                     guard isValidEmail(email) != nil else {
                                         danger_email = true
                                         focusedField = .email
@@ -303,7 +303,7 @@ struct StartView: View {
                                         return
                                     }
                                     danger_email = false
-
+                                    
                                     guard isValidPassword(pass) != nil else {
                                         danger_pass = true
                                         focusedField = .pass
@@ -311,7 +311,7 @@ struct StartView: View {
                                         return
                                     }
                                     danger_pass = false
-                                    vm.addUser(email: email, password: pass, name: user)
+                                    vm.addUserFrow(email: email, password: pass, name: user)
                                     isSubmitting = false
                                 }
                             }
@@ -330,23 +330,44 @@ struct StartView: View {
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                ErrorAlertView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             }
             .onAppear {
                 geo_height = geo.size.height
                 geo_width = geo.size.width
             }
-            .alert("エラー", isPresented: Binding(//isPresented:で表示管理
-                get: { vm.error_User != nil || vm.error_Auth != nil },
-                //alertが閉じた時の処理
-                set: { _ in
-                    vm.error_User = nil
-                    vm.error_Auth = nil
+        }
+        .onReceive(vm.$userState) { state in
+            switch state {
+            case .failed(.addUserAPI, _):
+                vm.deleteUserAuth() { bool in
+                    if bool {
+                        print("🟡整合性のための削除成功")
+                    } else {
+                        print("🟡整合性のための削除失敗")
+                    }
                 }
-            )) {
-                Button("OK") {}
-                    .background(self.vm.customaccentColor)
-            } message: {
-                Text(vm.error_User?.message ?? vm.error_Auth?.message ?? "")
-            }        }
+                
+            case .success(.addUserAPI):
+                vm.reinit()
+                vm.moveToSplash()
+            default:
+                break
+            }
+        }
+        .onReceive(vm.$authState) { state in
+            switch state {
+            case .failed:
+                break
+            case .successWithUID(_, let uid):
+                vm.fetchUser(userId: uid) { userEntity in
+                    vm.reinit()
+                    vm.moveToSplash()
+                }
+            default:
+                break
+            }
+        }
     }
 }

@@ -280,15 +280,4 @@ extension PlayViewModel{
             }
         }.resume()
     }
-    
-//    func deleteCard(_ card: CardEntity) {
-//        let context = PersistenceController.shared.container.viewContext
-//        context.delete(card)
-//        do {
-//            try context.save()
-//        } catch {
-//            print("deleteCardError: \(error.localizedDescription)")
-//        }
-//    }
-    
 }

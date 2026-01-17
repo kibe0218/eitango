@@ -50,34 +50,24 @@ extension PlayViewModel{
                 self.waittime = Int(settings.waittime)
             } else {
                 // データが存在しない場合はデフォルト値を設定
-                self.selectedListId = nil
-                self.shuffleFlag = false
-                self.repeatFlag = false
-                self.colortheme = 1
-                self.waittime = 2
+                self.defaultSettings()
             }
         } catch {
             // エラー発生時はデフォルト値を設定
-            print("loadSettingsError: \(error.localizedDescription)")
-            self.selectedListId = nil
-            self.shuffleFlag = false
-            self.repeatFlag = false
-            self.colortheme = 1
-            self.waittime = 2
+            print("🟡 [loadSettings]loadSettingsError: \(error.localizedDescription)")
+            self.defaultSettings()
         }
     }
     
     func saveSettings() {
-        // Core Dataのコンテキストを取得
         let context = PersistenceController.shared.container.viewContext
-        // AppSettingsエンティティのフェッチリクエストを作成
         let request: NSFetchRequest<AppSettings> = AppSettings.fetchRequest()
         do {
-            // 既存のAppSettingsを取得、なければ新規作成
             let settings: AppSettings
             if let existing = try context.fetch(request).first {
                 settings = existing
             } else {
+                //なければ新規作成
                 settings = AppSettings(context: context)
             }
             // 値を更新
@@ -90,5 +80,14 @@ extension PlayViewModel{
         } catch {
             print("saveSettingsError: \(error.localizedDescription)")
         }
+    }
+    
+    func defaultSettings () {
+        self.selectedListId = nil
+        self.shuffleFlag = false
+        self.repeatFlag = false
+        self.colortheme = 1
+        self.waittime = 2
+        saveSettings()
     }
 }

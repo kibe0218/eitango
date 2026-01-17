@@ -4,6 +4,7 @@ struct SettingsView: View {
     @Environment(\.colorScheme) var colorScheme
     @EnvironmentObject var vm: PlayViewModel
     @State private var showLogoutAlert = false
+    @State private var showDeleteAlert = false
     
     var body: some View {
         NavigationView {
@@ -33,20 +34,19 @@ struct SettingsView: View {
                             .alert("ログアウトしますか？", isPresented: $showLogoutAlert) {
                                 Button("キャンセル", role: .cancel) {}
                                 Button("ログアウト", role: .destructive) {
-                                    vm.logoutUser()
+                                    vm.logoutUserAuth()
                                 }
                             }
                             Button(action: {
-                                showLogoutAlert = true
+                                showDeleteAlert = true
                             }) {
                                 Text("ユーザー削除")
                                     .foregroundColor(.red)
                             }
-                            .alert("本当にユーザー削除しますか？", isPresented: $showLogoutAlert) {
+                            .alert("本当にユーザー削除しますか？", isPresented: $showDeleteAlert) {
                                 Button("キャンセル", role: .cancel) {}
                                 Button("削除", role: .destructive) {
-                                    vm.deleteUser()
-                                    vm.logoutUser()
+                                    vm.deleteUserFrow()
                                 }
                             }
                         }
@@ -68,6 +68,28 @@ struct SettingsView: View {
                     .scrollContentBackground(.hidden)
                     .background(vm.backColor)
                 }
+            }
+        }
+        .onReceive(vm.$authState) { state in
+            switch state {
+            case .success(.logoutUserAuth):
+                vm.backToDefaultCoreData()
+                vm.reinit()
+                vm.moveToStartView()
+            default:
+                break
+            }
+        }
+        .onReceive(vm.$userState) { state in
+            switch state {
+            case .failed:
+                break
+            case .success(.deleteUserAPI):
+                vm.backToDefaultCoreData()
+                vm.reinit()
+                vm.moveToStartView()
+            default:
+                break
             }
         }
     }

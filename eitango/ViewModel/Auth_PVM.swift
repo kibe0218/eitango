@@ -9,7 +9,23 @@ extension PlayViewModel{
         case invalidEmail
         case emailAlreadyInUse
         case requiresRecentLogin
+        case network
         case unknown
+    }
+    
+    enum AuthState {
+        case idle
+        case loading(AuthFunc)
+        case success(AuthFunc)
+        case successWithUID(AuthFunc, uid: String)
+        case failed(AuthFunc, AuthAppError)
+    }
+    
+    enum AuthFunc {
+        case addUserAuth
+        case loginUserAuth
+        case logoutUserAuth
+        case deleteUserAuth
     }
     
     
@@ -17,22 +33,29 @@ extension PlayViewModel{
     //新規作成➕
     //=========
     
-    func addUser(
+    func addUserAuth(
         email: String,
         password: String,
-        name: String
+        name: String,
+        completion: @escaping (String?) -> Void
     ) {
+        self.authState = .loading(.addUserAuth)
         print("🟡 addUser 呼ばれたっピ")
         Auth.auth().createUser(withEmail: email, password: password) { result, error in
             if let error = error as NSError? {
                 let appError = AuthAppError(error: error)
-                print("🟡Authエラー:", appError)
-                self.error_Auth = appError
+                self.authState = .failed(.addUserAuth, appError)
+                print("🟡 Authエラー:", error)
+                completion(nil)
                 return
             }
             
-            guard let uid = result?.user.uid else {return}
-            self.addUserAPI(name: name, id: uid)
+            guard let uid = result?.user.uid else {
+                completion(nil)
+                return
+            }
+            self.authState = .successWithUID(.addUserAuth, uid: uid)
+            completion(uid)
         }
     }
     
@@ -40,35 +63,26 @@ extension PlayViewModel{
     //ログイン📲
     //========
     
-
-    func loginUser(
+    func loginUserAuth(
         email: String,
         password: String
     ) {
+        self.authState = .loading(.loginUserAuth)
         print("🟡 loginUser 呼ばれたっピ")
-        print("🟡 入力 email =", email)
-        print("🟡 入力 password =", password)
         Auth.auth().signIn(withEmail: email, password: password){ result, error in
             if let error = error as NSError? {
                 let appError = AuthAppError(error: error)
                 print("🟡Authエラー:", appError)
-                print("🟡表示用メッセージ:", appError.message)
-                self.error_Auth = AuthAppError(error: error)
+                self.authState = .failed(.loginUserAuth, appError)
                 return
             }
             guard let uid = result?.user.uid else {
                 print("🟡Firebase Auth.uid が nil だったっピ")
-                self.error_Auth = .unknown
+                self.authState = .failed(.loginUserAuth, .unknown)
                 return
             }
-            print("🟡 login内fetch前uid =", uid)
-            DispatchQueue.main.async {
-                self.fetchUser(userId: uid) { userEntity in
-                    print("🟡 ユーザー取得完了 id =", userEntity?.id ?? "nill")
-                    self.reinit()
-                    self.moveToSplash()
-                }
-            }
+            self.authState = .successWithUID(.loginUserAuth, uid: uid)
+            print("🟡 login success uid =", uid)
         }
     }
     
@@ -76,15 +90,16 @@ extension PlayViewModel{
     //ログアウト⛔️
     //==========
     
-    func logoutUser() {
+    func logoutUserAuth () {
         Task { @MainActor in
+            self.authState = .loading(.logoutUserAuth)
                 do {
                     try Auth.auth().signOut()
-                    self.backToDefault()
+                    self.authState = .success(.logoutUserAuth)
                     print("🟡ログアウト完了")
                 } catch let error {
                     print("🟡ログアウト失敗:", error)
-                    self.error_Auth = .unknown
+                    self.authState = .failed(.logoutUserAuth, .unknown)
                 }
             }
     }
@@ -93,86 +108,31 @@ extension PlayViewModel{
     //削除❌
     //======
     
-    func deleteUser() {
+    func deleteUserAuth(
+        completion: @escaping (Bool) -> Void
+    ) {
         print("🟡 delteteUser開始")
         guard let user = Auth.auth().currentUser else {
             print("🟡 deleteUser: currentUser が nil")
+            completion(false)
             return
         }
+        self.authState = .loading(.deleteUserAuth)
         Task { @MainActor in
             user.delete { error in
                 if let error = error as NSError? {
                     let appError = AuthAppError(error: error)
                     print("🟡 FirebaseAuth ユーザー削除失敗:", appError)
-                    self.error_Auth = appError
+                    self.authState = .failed(.deleteUserAuth, appError)
+                    completion(false)
                     return
                 }
                 print("🟡 FirebaseAuth ユーザー削除成功")
-                self.backToDefault()
+                self.authState = .success(.deleteUserAuth)
+                completion(true)
             }
         }
     }
-    
-    //=================
-    //coredataリセット🔁
-    //=================
-    
-    func backToDefault() {
-        print("🟡 backToDefault 呼ばれたっピ")
-        Task { @MainActor in
-            self.User = nil
-            self.userid = ""
-            self.logoutDeleteUserFromCoreData()
-            self.selectedListId = nil
-            self.shuffleFlag = false
-            self.repeatFlag = false
-            self.colortheme = 1
-            self.waittime = 2
-            saveSettings()
-            self.moveToStartView()
-           
-        }
-    }
-    
-    //=========
-    //画面遷移📺
-    //=========
-    
-    func moveToSplash() {
-        print("🟡 moveToSplash 呼ばれたっピ")
-        Task { @MainActor in
-            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-               let window = windowScene.windows.first {
-                window.rootViewController = UIHostingController(
-                    rootView: SplashScreenView()
-                        .environmentObject(self)
-                )
-                window.makeKeyAndVisible()
-            }
-            else {
-                self.error_Auth = .unknown
-            }
-        }
-    }
-
-    func moveToStartView() {
-        print("🟡 moveToStartView 呼ばれたっピ")
-        Task { @MainActor in
-            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-               let window = windowScene.windows.first {
-                window.rootViewController = UIHostingController(
-                    rootView: StartView()
-                        .environmentObject(self)
-                        .environmentObject(self.keyboard)
-                )
-                window.makeKeyAndVisible()
-            }
-            else {
-                self.error_Auth = .unknown
-            }
-        }
-    }
-
 }
 
 extension PlayViewModel.AuthAppError {
@@ -188,6 +148,11 @@ extension PlayViewModel.AuthAppError {
             self = .invalidEmail
         case AuthErrorCode.requiresRecentLogin.rawValue:
             self = .requiresRecentLogin
+        case NSURLErrorNotConnectedToInternet,
+             NSURLErrorTimedOut,
+             NSURLErrorCannotFindHost,
+             NSURLErrorCannotConnectToHost:
+            self = .network
         default:
             self = .unknown
         }
@@ -198,16 +163,25 @@ extension PlayViewModel.AuthAppError {
     var message: String {
         switch self {
         case .wrongPassword:
+            print("🟡 message case: wrongPassword")
             return "パスワードが間違っています"
         case .userNotFound:
+            print("🟡 message case: userNotFound")
             return "ユーザーが見つかりません"
         case .invalidEmail:
+            print("🟡 message case: invalidEmail")
             return "メールアドレスの形式が正しくありません"
         case .emailAlreadyInUse:
+            print("🟡 message case: emailAlreadyInUse")
             return "そのメールアドレスは既に使用されています"
         case .requiresRecentLogin:
+            print("🟡 message case: requiresRecentLogin")
             return "もう一度ログインしてください"
+        case .network:
+            print("🟡 message case: network")
+            return "ネットワークエラーです"
         case .unknown:
+            print("🟡 message case: unknown")
             return "ログインに失敗しました"
         }
     }

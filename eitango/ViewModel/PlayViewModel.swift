@@ -112,18 +112,18 @@ final class PlayViewModel: ObservableObject {
     @Published var textColor: Color = .primary
     
     // URL
-    @Published var urlsession = "172.20.10.3"
+    @Published var urlsession = "http://"+"172.20.10.4"+":8080/"
     
     //エラー管理
-    @Published var error_Auth: AuthAppError?
-    @Published var error_User: UserAppError?
+    @Published var authState: AuthState = .idle
+    @Published var userState: UserState = .idle
+
     
     
     //初期処理
     init() {
         ColorSetting()
         loadSettings()
-        urlsession = "http://" + urlsession + ":8080/"
         self.User = self.fetchUserFromCoreData()
         self.userid = self.User?.id ?? ""
         self.userName = self.User?.name ?? ""
