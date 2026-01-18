@@ -6,10 +6,12 @@ extension PlayViewModel {
         addUserAuth(email: email, password: password, name: name) { [weak self] uid in
             guard let self else { return }
             if let uid {
-                print("🟡Auth登録成功 uid =", uid)
-                self.addUserAPI(name: name, id: uid)
+                print("🟡addAuth登録成功 uid =", uid)
+                Task {
+                    await self.addUserAPI(name: name, id: uid)
+                }
             } else {
-                print("🟡Auth失敗")
+                print("🟡addAuth失敗")
             }
         }
     }
@@ -27,5 +29,24 @@ extension PlayViewModel {
         }
     }
     
+    func loginUserFrow(email: String, password: String) {
+        loginUserAuth(email: email, password: password) { [weak self] uid in
+            guard let self else { return }
+            if let uid {
+                print("🟡loginAuth登録成功 uid =", uid)
+                Task {
+                    await self.fetchUser(userId: uid)
+                    self.fetchAllToCoreData()
+                }
+            } else {
+                print("🟡loginAuth失敗")
+            }
+        }
+            
+    }
+    
+    func logoutUserFrow() {
+        logoutUserAuth()
+    }
     
 }

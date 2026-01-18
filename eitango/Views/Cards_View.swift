@@ -37,9 +37,8 @@ struct CardsView: View {
         do {
             let encodedWord = word.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
             let translated = try await vm.translateTextWithGAS(encodedWord, source: "en", target: "ja")
-
+            await vm.addCardAPI(listId: currentListId, en: word, jp: translated)
             await MainActor.run {
-                vm.addCardAPI(listId: currentListId, en: word, jp: translated)
                 ing -= 1
             }
         } catch {
@@ -76,7 +75,9 @@ struct CardsView: View {
                             indexSet
                                 .map { vm.Cards[$0] }
                                 .forEach { card in
-                                    vm.deleteCardAPI(userId: vm.userid, listId: vm.selectedListId ?? "", cardId: card.id ?? "")
+                                    Task {
+                                        await vm.deleteCardAPI(userId: vm.userid, listId: vm.selectedListId ?? "", cardId: card.id ?? "")
+                                    }
                                 }
                         }
                         .listRowSeparator(.hidden)
@@ -153,14 +154,16 @@ struct ItemView: View{
                     let pasten = card.en ?? ""
                     guard let listId = vm.selectedListId,
                           let cardId = card.id else { return }
-                    vm.updateCardAPI(
-                        listId: listId,
-                        cardId: cardId,
-                        en: pasten,
-                        jp: trimmedWord,
-                        createdAt: card.createdAt ?? Date()
-                    )
-                    vm.updateView()
+                    Task {
+                        await vm.updateCardAPI(
+                            listId: listId,
+                            cardId: cardId,
+                            en: pasten,
+                            jp: trimmedWord,
+                            createdAt: card.createdAt ?? Date()
+                        )
+                        vm.updateView()
+                    }
                 }
                 .multilineTextAlignment(.center)
                 .frame(height: height * 0.02)

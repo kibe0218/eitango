@@ -73,6 +73,7 @@ struct SettingsView: View {
         .onReceive(vm.$authState) { state in
             switch state {
             case .success(.logoutUserAuth):
+                print("🟡 authState set:", vm.authState)
                 vm.backToDefaultCoreData()
                 vm.reinit()
                 vm.moveToStartView()
@@ -84,8 +85,7 @@ struct SettingsView: View {
             switch state {
             case .failed:
                 break
-            case .success(.deleteUserAPI):
-                vm.backToDefaultCoreData()
+            case .success(.deleteUserAPI):                vm.backToDefaultCoreData()
                 vm.reinit()
                 vm.moveToStartView()
             default:

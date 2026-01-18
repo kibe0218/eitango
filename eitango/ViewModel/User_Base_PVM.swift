@@ -54,70 +54,50 @@ extension PlayViewModel {
     //🔁同期🔁
     //========
     
-    func fetchUser(userId: String, completion: @escaping (UserEntity?) -> Void) {
-        print("🟡 fetchUser 開始 usedrId = \(userId)")
-        guard let url = URL(string:
-            urlsession + "users?userId=\(userId)"
-        ) else {
+    func fetchUser(userId: String) async {
+        print("🟡 fetchUser 開始 userId = \(userId)")
+        guard let url = URL(string: urlsession + "users?userId=\(userId)") else {
             print("🟡 URLエラー")
             self.updateUserState(.failed(.fetchUser, .invalidURL))
             return
         }
-        print("🟡 fetchUser リクエスト送信 URL = \(url.absoluteString)")
-        URLSession.shared.dataTask(with: url) { data, response, error in
-            if let error = error {
-                print("🟡 通信エラー: \(error)")
-                self.updateUserState(.failed(.fetchUser, .network))
-                return
-            }
-            guard let data = data else {
-                print("🟡 データなしっピ")
-                self.updateUserState(.failed(.fetchUser, .unknown))
-                return
-            }
+
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
             if let str = String(data: data, encoding: .utf8) {
                 print("🟡 受信データ:", str)
             }
             let decoder = JSONDecoder()
             decoder.dateDecodingStrategy = .iso8601
-            Task { @MainActor in
-                do {
-                    let result = try decoder.decode(User_ST.self, from: data)
-                    print("🟡 fetchUser デコード成功 → メインスレッドへ")
-                    let context = PersistenceController.shared.container.viewContext
-                    if let oldUser = self.fetchUserFromCoreData() {
-                        context.delete(oldUser)
-                        print("🟡 既存 UserEntity を1件削除")
-                    }
-                    // ② Firestore のカードを CoreData に保存
-                    let entity = UserEntity(context: context)
-                    entity.id = result.id
-                    entity.name = result.name
-                    entity.createdAt = result.createdAt
-                    
-                    do {
-                        try context.save()
-                        print("🟡 CoreData 保存成功")
-                        self.userState = .idle
-                    } catch {
-                        print("🟡 保存エラー: \(error)")
-                        self.updateUserState(.failed(.fetchUser, .unknown))
-                    }
-                    let userEntity = self.fetchUserFromCoreData()
-                    self.User = userEntity
-                    self.userid = userEntity?.id ?? ""
-                    self.userName = userEntity?.name ?? ""
-                    completion(userEntity)
-                    print("🟡 代入後: \(self.userid)")
-                    self.updateView()
-                    print("🟡 update後: \(self.userid)")
-                } catch {
-                    print("🟡 decode/saveエラー:", error)
-                    self.updateUserState(.failed(.fetchUser, .decode))
-                }
-            }
+            let result = try decoder.decode(User_ST.self, from: data)
+            print("🟡 fetchUser デコード成功 → メインスレッドへ")
 
-        }.resume()//通信を開始する命令
+            let context = PersistenceController.shared.container.viewContext
+            if let oldUser = self.fetchUserFromCoreData() {
+                context.delete(oldUser)
+                print("🟡 既存 UserEntity を1件削除")
+            }
+            let entity = UserEntity(context: context)
+            entity.id = result.id
+            entity.name = result.name
+            entity.createdAt = result.createdAt
+
+            try context.save()
+            print("🟡 CoreData 保存成功")
+            self.userState = .idle
+
+            let userEntity = self.fetchUserFromCoreData()
+            self.User = userEntity
+            self.userid = userEntity?.id ?? ""
+            self.userName = userEntity?.name ?? ""
+            print("🟡 代入後: \(self.userid)")
+            self.updateView()
+            print("🟡 update後: \(self.userid)")
+
+        } catch {
+            print("🟡 fetchUser エラー:", error)
+            self.updateUserState(.failed(.fetchUser, .network))
+        }
     }
     
     //============
@@ -146,10 +126,10 @@ extension PlayViewModel {
     //📝追加📝
     //========
     
-    func addUserAPI(
+    func addUserAPI (
         name: String,
         id: String,
-    ) {
+    ) async {
         print("🟡 addUserAPI 開始 id = \(id), name = \(name)")
         self.userState = .loading(.addUserAPI)
         guard let url = URL(string: urlsession + "users") else {
@@ -157,7 +137,7 @@ extension PlayViewModel {
             self.updateUserState(.failed(.addUserAPI, .invalidURL))
             return
         }
-
+        
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -167,50 +147,42 @@ extension PlayViewModel {
         ]
         request.httpBody = try? JSONSerialization.data(withJSONObject: body)
         print("🟡 API送信直前 id =", id)
-        print("🟡 addUserAPI リクエスト送信 URL = \(request.url?.absoluteString ?? "nil")")
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            if let error = error {
-                self.updateUserState(.failed(.addUserAPI, .network))
-                print("🟡 URLSession error =", error)
-                return
-            }
-            
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
             guard let httpResponse = response as? HTTPURLResponse else {
                 self.updateUserState(.failed(.addUserAPI, .invalidResponse))
                 return
             }
-            print("🟡 statusCode =", httpResponse.statusCode)
             switch httpResponse.statusCode {
-                case 201:
+            case 201:
                 self.updateUserState(.success(.addUserAPI))
-                    guard
-                        let data,
-                        let result = try? JSONDecoder().decode(AddUserResponse.self, from: data)
-
-                    else {
-                        self.updateUserState(.failed(.addUserAPI, .decode))
-                        return
-                    }
-                    print("🟡 デコード結果:", result)
-                case 409:
-                self.updateUserState(.failed(.addUserAPI,.duplicatedUsername))
-                default:
-                self.updateUserState(.failed(.addUserAPI, .unknown))
+                guard
+                    let result = try? JSONDecoder().decode(AddUserResponse.self, from: data)
+                else {
+                    self.updateUserState(.failed(.addUserAPI, .decode))
+                    return
                 }
-
-            }.resume()
+                print("🟡 デコード結果:", result)
+            case 409:
+                self.updateUserState(.failed(.addUserAPI,.duplicatedUsername))
+            default:
+                self.updateUserState(.failed(.addUserAPI, .unknown))
+            }
+        } catch {
+            self.updateUserState(.failed(.addUserAPI, .network))
         }
+    }
     
     //=======
     //❌削除❌
     //=======
     
-    func deleteUserAPI(userId: String) {
+    func deleteUserAPI(userId: String) async {
         print("🟡 deleteUserAPI 開始 userId = \(userId)")
+        self.updateUserState(.loading(.deleteUserAPI))
+        
         var components = URLComponents(string: urlsession + "users")
-        components?.queryItems = [
-            URLQueryItem(name: "userId", value: userId)
-        ]
+        components?.queryItems = [ URLQueryItem(name: "userId", value: userId) ]
         
         guard let url = components?.url else {
             self.updateUserState(.failed(.deleteUserAPI, .invalidURL))
@@ -220,12 +192,8 @@ extension PlayViewModel {
         var request = URLRequest(url: url)
         request.httpMethod = "DELETE"
         
-        URLSession.shared.dataTask(with: request) { _, response, error in
-            if let _ = error {
-                self.updateUserState(.failed(.deleteUserAPI, .network))
-                return
-            }
-            
+        do {
+            let (_, response) = try await URLSession.shared.data(for: request)
             guard let httpResponse = response as? HTTPURLResponse else {
                 self.updateUserState(.failed(.deleteUserAPI, .invalidResponse))
                 return
@@ -235,13 +203,14 @@ extension PlayViewModel {
             case 200, 204:
                 print("🟡 deleteUserAPI 成功ステータス受信")
                 self.updateUserState(.success(.deleteUserAPI))
-                Task { @MainActor in
-                    self.fetchLists(userId: userId)
-                }
+                // 削除後のリスト更新もメインスレッドで安全に
+                await fetchLists(userId: userId)
             default:
                 self.updateUserState(.failed(.deleteUserAPI, .unknown))
             }
-        }.resume()
+        } catch {
+            self.updateUserState(.failed(.deleteUserAPI, .network))
+        }
     }
     
     //🟡 UserState 更新用 汎用関数

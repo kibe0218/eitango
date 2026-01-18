@@ -37,78 +37,63 @@ extension PlayViewModel{
     //==========================
     //🌱 初回同期（全カード取得）🌱
     //==========================
-    func initialSyncAllCards() {
+    func initialSyncAllCards() async {
         print("🟡 初回同期開始: list数 = \(self.Lists.count)")
 
         for list in self.Lists {
             guard let listId = list.id else { continue }
             print("🟡 初回同期 fetchCards 実行: listId = \(listId)")
-            self.fetchCards(listId: listId)
+            await self.fetchCards(listId: listId)
         }
     }
     
     //========
     //🔁同期🔁
     //========
-    
-    func fetchCards(listId: String) {
+    func fetchCards(listId: String) async {
         guard let url = URL(string: urlsession + "cards?userId=\(self.userid)&listId=\(listId)"
         ) else {
             print("URLエラー")
             return
         }
-        //Getを読んでいる
-        URLSession.shared.dataTask(with: url) { data, response, error in
-            if let error = error {
-                print("通信エラー: \(error)")
-                return
-            }
-            guard let data = data else {
-                print("データなしっピ")
-                return
-            }
-            do {
-                let decoder = JSONDecoder()
-                decoder.dateDecodingStrategy = .iso8601
-                let result = try decoder.decode([Card_ST].self, from: data)
-                //JSONをCard型に変換
-                DispatchQueue.main.async {
-                    let context = PersistenceController.shared.container.viewContext
-                    //全てのcoredataに入ってるリストを取得その中からidが同じものを探すなかったらnilになるのでifがfalseになり中断
-                    if let targetList = self.fetchListsFromCoreData()
-                        .first(where: { $0.id == listId }) {
-                        guard let listid = targetList.id else {
-                            print("listIdがnilっピ")
-                            return
-                        }
-                        let oldCards = self.fetchCardsFromCoreData(listid: listid)
-                        //oldCardsの中身を全て消すoldcardsはcoredataの実物への参照だからcoredataにも影響を与える
-                        oldCards.forEach { context.delete($0) }
-                        // ② Firestore のカードを CoreData に保存
-                        for c in result {
-                            let entity = CardEntity(context: context)
-                            entity.id = c.id
-                            entity.listid = listid
-                            entity.en = c.en
-                            entity.jp = c.jp
-                            entity.createdAt = c.createdAt
-                        }
-
-                        do {
-                            try context.save()
-                        } catch {
-                            print("保存エラー: \(error)")
-                        }
-
-                        // ③ loadCards で表示データ更新
-                        self.Cards = self.fetchCardsFromCoreData(listid: listid)
-                    }
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            let decoder = JSONDecoder()
+            decoder.dateDecodingStrategy = .iso8601
+            let result = try decoder.decode([Card_ST].self, from: data)
+            //JSONをCard型に変換
+            let context = PersistenceController.shared.container.viewContext
+            if let targetList = self.fetchListsFromCoreData()
+                .first(where: { $0.id == listId }) {
+                guard let listid = targetList.id else {
+                    print("listIdがnilっピ")
+                    return
                 }
-            } catch {
-                print("デコード失敗: \(error)")
-            }
+                let oldCards = self.fetchCardsFromCoreData(listid: listid)
+                oldCards.forEach { context.delete($0) }
+                // ② Firestore のカードを CoreData に保存
+                for c in result {
+                    let entity = CardEntity(context: context)
+                    entity.id = c.id
+                    entity.listid = listid
+                    entity.en = c.en
+                    entity.jp = c.jp
+                    entity.createdAt = c.createdAt
+                }
 
-        }.resume()//通信を開始する命令
+                do {
+                    try context.save()
+                } catch {
+                    print("保存エラー: \(error)")
+                }
+
+                await MainActor.run {
+                    self.Cards = self.fetchCardsFromCoreData(listid: listid)
+                }
+            }
+        } catch {
+            print("通信またはデコード失敗: \(error)")
+        }
     }
     
     //======================
@@ -136,7 +121,7 @@ extension PlayViewModel{
         listId: String,
         en: String,
         jp: String
-    ) {
+    ) async {
         guard let url = URL(
             string: urlsession + "cards?userId=\(self.userid)&listId=\(listId)"
         ) else {
@@ -160,16 +145,13 @@ extension PlayViewModel{
             return
         }
 
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            if let error = error {
-                print("🟡 通信エラーっピ: \(error)")
-                return
-            }
-            DispatchQueue.main.async {
-                // 🔁 Firestore を正として CoreData を同期
-                self.fetchCards(listId: listId)
-            }
-        }.resume()
+        do {
+            _ = try await URLSession.shared.data(for: request)
+            // 🔁 Firestore を正として CoreData を同期
+            await fetchCards(listId: listId)
+        } catch {
+            print("🟡 通信エラーっピ: \(error)")
+        }
     }
     
     //=====
@@ -209,7 +191,7 @@ extension PlayViewModel{
         en: String,
         jp: String,
         createdAt: Date
-    ) {
+    ) async {
         guard let url = URL(
             string: urlsession + "cards?userId=\(self.userid)&listId=\(listId)&cardId=\(cardId)"
         ) else {
@@ -236,17 +218,13 @@ extension PlayViewModel{
             return
         }
 
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            if let error = error {
-                print("通信エラーっピ: \(error)")
-                return
-            }
-
-            DispatchQueue.main.async {
-                // 🔁 更新後は一覧を再取得
-                self.fetchCards(listId: listId)
-            }
-        }.resume()
+        do {
+            _ = try await URLSession.shared.data(for: request)
+            // 🔁 更新後は一覧を再取得
+            await fetchCards(listId: listId)
+        } catch {
+            print("通信エラーっピ: \(error)")
+        }
     }
     
     //==========
@@ -257,7 +235,7 @@ extension PlayViewModel{
         userId: String,
         listId: String,
         cardId: String
-    ) {
+    ) async {
         guard let url = URL(
             string: urlsession + "cards?userId=\(userId)&listId=\(listId)&cardId=\(cardId)"
         ) else {
@@ -268,16 +246,12 @@ extension PlayViewModel{
         var request = URLRequest(url: url)
         request.httpMethod = "DELETE"
 
-        URLSession.shared.dataTask(with: request) { _, _, error in
-            if let error = error {
-                print("通信エラーっピ: \(error)")
-                return
-            }
-
-            DispatchQueue.main.async {
-                // 🔁 削除後は Firestore を正として再取得
-                self.fetchCards(listId: listId)
-            }
-        }.resume()
+        do {
+            _ = try await URLSession.shared.data(for: request)
+            // 🔁 削除後は Firestore を正として再取得
+            await fetchCards(listId: listId)
+        } catch {
+            print("通信エラーっピ: \(error)")
+        }
     }
 }

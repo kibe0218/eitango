@@ -36,12 +36,14 @@ struct EditView: View {
                             }
                             Button("OK") {
                                 guard !title.trimmingCharacters(in: .whitespaces).isEmpty else { return }
-                                vm.addListAPI(userId: vm.userid, title: title) { newId in
-                                    guard let newId else { return }
-                                    vm.selectedListId = newId
+                                Task {
+                                    if let id = await vm.addListAPI(userId: vm.userid, title: title){
+                                        vm.selectedListId = id
+                                    }
                                     vm.noshuffleFlag = true
                                     vm.updateView()
                                     navigateToCardList = true
+                                    
                                 }
                             }
                             .disabled(title.trimmingCharacters(in: .whitespaces).isEmpty)
@@ -86,7 +88,9 @@ struct EditView: View {
                             let lists = vm.Lists
                             for index in indices {
                                 let list = lists[index]
-                                vm.deleteListAPI(userId: vm.userid, listId: list.id ?? "")
+                                Task {
+                                    await vm.deleteListAPI(userId: vm.userid, listId: list.id ?? "")
+                                }
                             }
                         }
                         //indicesは削除される要素の位置を示している

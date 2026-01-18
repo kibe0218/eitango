@@ -7,13 +7,15 @@ extension PlayViewModel {
     //==========
     
     func reinit() {
-        ColorSetting()
-        loadSettings()
-        self.User = self.fetchUserFromCoreData()
-        self.userid = self.User?.id ?? ""
-        self.userName = self.User?.name ?? ""
-        fetchLists(userId: userid)
-        initialSyncAllCards()
+        Task {
+            ColorSetting()
+            loadSettings()
+            self.User = self.fetchUserFromCoreData()
+            self.userid = self.User?.id ?? ""
+            self.userName = self.User?.name ?? ""
+            await self.fetchLists(userId: userid)
+            await initialSyncAllCards()
+        }
     }
     
     //=====================
@@ -59,9 +61,10 @@ extension PlayViewModel {
     //============
     
     func fetchAllToCoreData() {
-        fetchLists(userId: self.User?.id ?? "")
-        
-        
+        Task {
+            await self.fetchLists(userId: self.User?.id ?? "")
+            
+        }
     }
     
 }

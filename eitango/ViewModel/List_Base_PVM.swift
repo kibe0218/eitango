@@ -32,58 +32,42 @@ extension PlayViewModel{
     //🔁同期🔁
     //========
     
-    func fetchLists(userId: String) {
+    func fetchLists(userId: String) async {
         guard let url = URL(string: urlsession + "lists?userId=\(userId)") else {
             print("URLエラー")
             return
         }
 
-        URLSession.shared.dataTask(with: url) { data, response, error in
-            if let error = error {
-                print("通信エラー: \(error)")
-                return
-            }
-            guard let data = data else {
-                print("データなしっピ")
-                return
-            }
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            print("🟡 raw response:", String(data: data, encoding: .utf8) ?? "nil")
+            let decoder = JSONDecoder()
+            decoder.dateDecodingStrategy = .iso8601
+            let result = try decoder.decode([List_ST].self, from: data)
+            print("Decoded result: \(result)")
 
-            do {
-                print("Raw data: \(String(data: data, encoding: .utf8) ?? "nil")")
-                let decoder = JSONDecoder()
-                decoder.dateDecodingStrategy = .iso8601
-                let result = try decoder.decode([List_ST].self, from: data)
-                print("Decoded result: \(result)")
+            // CoreData 全削除して保存
+            let context = PersistenceController.shared.container.viewContext
+            let oldLists = fetchListsFromCoreData()
+            oldLists.forEach { context.delete($0) }
 
-                DispatchQueue.main.async {
-                    let context = PersistenceController.shared.container.viewContext
-
-                    // CoreData の既存リストを全削除
-                    let oldLists = self.fetchListsFromCoreData()
-                    oldLists.forEach { context.delete($0) }
-
-                    // Firestore の内容を CoreData に保存
-                    for l in result {
-                        let entity = ListEntity(context: context)
-                        entity.id = l.id
-                        entity.title = l.title
-                        entity.createdAt = l.createdAt
-                    }
-
-                    do {
-                        try context.save()
-                    } catch {
-                        print("保存エラー: \(error)")
-                    }
-                    self.Lists = self.fetchListsFromCoreData()
-                    self.updateView()
-                }
-
-            } catch {
-                print("デコード失敗: \(error), raw data: \(String(data: data, encoding: .utf8) ?? "nil")")
+            for l in result {
+                let entity = ListEntity(context: context)
+                entity.id = l.id
+                entity.title = l.title
+                entity.createdAt = l.createdAt
             }
 
-        }.resume() // 通信を開始
+            try context.save()
+
+            await MainActor.run {
+                Lists = fetchListsFromCoreData()
+                updateView()
+            }
+
+        } catch {
+            print("fetchLists エラー: \(error)")
+        }
     }
     
     //==============================================
@@ -112,131 +96,59 @@ extension PlayViewModel{
     //📝追加📝
     //========
     
-    func addListAPI(
-        userId: String,
-        title: String,
-        completion: @escaping (String?) -> Void
-    ) {
-        print("🟡addlist入る: \(userId)")
+    func addListAPI(userId: String, title: String) async -> String? {
         guard let url = URL(string: urlsession + "lists?userId=\(userId)") else {
             print("URLエラー")
-            completion(nil)
-            return
+            return nil
         }
 
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try? JSONSerialization.data(withJSONObject: ["title": title])
 
-        let body: [String: Any] = [
-            "title": title
-        ]
-
-        request.httpBody = try? JSONSerialization.data(withJSONObject: body)
-
-        URLSession.shared.dataTask(with: request) { data, _, error in
-            if let error = error {
-                print("通信エラー: \(error)")
-                completion(nil)
-                return
+        do {
+            let (data, _) = try await URLSession.shared.data(for: request)
+            if let jsonObject = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+               let id = jsonObject["id"] as? String {
+                // Firestore を正として同期
+                await fetchLists(userId: userId)
+                return id
+            } else {
+                print("addListAPI: id not found in response")
+                return nil
             }
 
-            guard let data else {
-                print("レスポンスなし")
-                completion(nil)
-                return
-            }
-
-            do {
-                let result = try JSONDecoder().decode(CreateListResponse.self, from: data)
-                DispatchQueue.main.async {
-                    // 🔁 Firestore を正として同期
-                    self.fetchLists(userId: userId)
-                    completion(result.id)
-                }
-            } catch {
-                print("デコード失敗: \(error)")
-                completion(nil)
-            }
-
-        }.resume()
+        } catch {
+            print("addListAPI エラー: \(error)")
+            return nil
+        }
     }
-    
-//    func addCardList(title: String) -> ListEntity? {
-//        // 新しい単語リストを追加するためのコンテキストを取得します。
-//        let context = PersistenceController.shared.container.viewContext
-//
-//        // CardlistEntity（単語リスト）の新規インスタンスをコンテキスト内に作成。
-//        let newList = ListEntity(context: context)
-//
-//        // リストの各プロパティに値をセットします。
-//        newList.id = UUID()          // 一意な識別子
-//        newList.title = title        // タイトル名
-//        newList.createdAt = Date()   // 作成日時
-//
-//        do {
-//            // 変更内容を永続化します。成功すれば新規リストを返却。
-//            try context.save()
-//            return newList
-//            //新しいカードリストを作らないといけないのでreturn必要あり
-//        } catch {
-//            // 保存失敗時はエラー内容を表示し、nilを返します。
-//            print("addcardlisterror: \(error.localizedDescription)")
-//            return nil
-//        }
-//    }
     
     //==========
     //❌削除関数❌
     //==========
     
-    func deleteListAPI(userId: String, listId: String) {
-        print("🟡 deleteListAPI 開始 userId = \(userId), listId = \(listId)")
-        guard let url = URL(
-            string: urlsession + "lists?userId=\(userId)&listId=\(listId)"
-        ) else {
-            print("🟡 URL生成失敗 userId = \(userId), listId = \(listId)")
+    func deleteListAPI(userId: String, listId: String) async {
+        guard let url = URL(string: urlsession + "lists?userId=\(userId)&listId=\(listId)") else {
+            print("URL生成失敗")
             return
         }
-        print("🟡 DELETE URL = \(url.absoluteString)")
 
         var request = URLRequest(url: url)
         request.httpMethod = "DELETE"
-        print("🟡 DELETEリクエスト生成完了")
 
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            if let error = error {
-                print("🟡 通信エラー: \(error)")
-                return
-            }
-
+        do {
+            let (_, response) = try await URLSession.shared.data(for: request)
             if let httpResponse = response as? HTTPURLResponse {
-                print("🟡 statusCode = \(httpResponse.statusCode)")
-            } else {
-                print("🟡 HTTPレスポンス取得失敗")
+                print("statusCode = \(httpResponse.statusCode)")
             }
 
-            if let data = data {
-                print("🟡 受信データ: \(String(data: data, encoding: .utf8) ?? "nil")")
-            } else {
-                print("🟡 レスポンスデータなし")
-            }
+            // 削除後に fetch
+            await fetchLists(userId: userId)
 
-            DispatchQueue.main.async {
-                print("🟡 delete後 fetchLists 呼び出し")
-                self.fetchLists(userId: userId)
-            }
-        }.resume()
+        } catch {
+            print("deleteListAPI エラー: \(error)")
+        }
     }
-    
-//    func deleteCardList(_ list: ListEntity) {
-//        let context = PersistenceController.shared.container.viewContext
-//        context.delete(list)
-//        do {
-//            try context.save()
-//        } catch {
-//            print("deleteCardListError: \(error.localizedDescription)")
-//        }
-//    }
-    
 }

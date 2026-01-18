@@ -65,7 +65,8 @@ extension PlayViewModel{
     
     func loginUserAuth(
         email: String,
-        password: String
+        password: String,
+        completion: @escaping (String?) -> Void
     ) {
         self.authState = .loading(.loginUserAuth)
         print("🟡 loginUser 呼ばれたっピ")
@@ -74,14 +75,17 @@ extension PlayViewModel{
                 let appError = AuthAppError(error: error)
                 print("🟡Authエラー:", appError)
                 self.authState = .failed(.loginUserAuth, appError)
+                completion(nil)
                 return
             }
             guard let uid = result?.user.uid else {
                 print("🟡Firebase Auth.uid が nil だったっピ")
                 self.authState = .failed(.loginUserAuth, .unknown)
+                completion(nil)
                 return
             }
             self.authState = .successWithUID(.loginUserAuth, uid: uid)
+            completion(uid)
             print("🟡 login success uid =", uid)
         }
     }

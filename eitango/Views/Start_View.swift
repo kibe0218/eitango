@@ -285,7 +285,7 @@ struct StartView: View {
                                         return
                                     }
                                     danger_pass = false
-                                    vm.loginUserAuth(email: email, password: pass)
+                                    vm.loginUserFrow(email: email, password: pass)
                                     isSubmitting = false
                                 } else {
                                     guard isValidUsername(user) != nil else {
@@ -361,7 +361,8 @@ struct StartView: View {
             case .failed:
                 break
             case .successWithUID(_, let uid):
-                vm.fetchUser(userId: uid) { userEntity in
+                Task {
+                    await vm.fetchUser(userId: uid)
                     vm.reinit()
                     vm.moveToSplash()
                 }
