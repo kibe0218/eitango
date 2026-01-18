@@ -127,5 +127,6 @@ final class PlayViewModel: ObservableObject {
         self.User = self.fetchUserFromCoreData()
         self.userid = self.User?.id ?? ""
         self.userName = self.User?.name ?? ""
+        
     }
 }

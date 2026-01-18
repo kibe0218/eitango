@@ -35,8 +35,7 @@ extension PlayViewModel {
             if let uid {
                 print("🟡loginAuth登録成功 uid =", uid)
                 Task {
-                    await self.fetchUser(userId: uid)
-                    self.fetchAllToCoreData()
+                    self.reinit()
                 }
             } else {
                 print("🟡loginAuth失敗")

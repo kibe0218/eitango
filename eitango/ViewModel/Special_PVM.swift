@@ -14,7 +14,7 @@ extension PlayViewModel {
             self.userid = self.User?.id ?? ""
             self.userName = self.User?.name ?? ""
             await self.fetchLists(userId: userid)
-            await initialSyncAllCards()
+            await fetchAllToCoreData()
         }
     }
     
@@ -60,11 +60,14 @@ extension PlayViewModel {
     //全てを同期♻️♻️
     //============
     
-    func fetchAllToCoreData() {
-        Task {
-            await self.fetchLists(userId: self.User?.id ?? "")
-            
+    func fetchAllToCoreData() async {
+        await self.fetchLists(userId: self.User?.id ?? "")
+        print("🟡 初回同期開始: list数 = \(self.Lists.count)")
+
+        for list in self.Lists {
+            guard let listId = list.id else { continue }
+            print("🟡 初回同期 fetchCards 実行: listId = \(listId)")
+            await self.fetchCards(listId: listId)
         }
     }
-    
 }
