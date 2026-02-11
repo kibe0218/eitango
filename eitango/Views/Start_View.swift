@@ -285,7 +285,7 @@ struct StartView: View {
                                         return
                                     }
                                     danger_pass = false
-                                    vm.loginUserFrow(email: email, password: pass)
+                                    vm.Login(email: email, password: pass)
                                     isSubmitting = false
                                 } else {
                                     guard isValidUsername(user) != nil else {
@@ -311,7 +311,7 @@ struct StartView: View {
                                         return
                                     }
                                     danger_pass = false
-                                    vm.addUserFrow(email: email, password: pass, name: user)
+                                    vm.Add(email: email, password: pass, name: user)
                                     isSubmitting = false
                                 }
                             }
@@ -348,7 +348,6 @@ struct StartView: View {
                         print("🟡整合性のための削除失敗")
                     }
                 }
-                
             case .success(.addUserAPI):
                 vm.reinit()
                 vm.moveToSplash()
@@ -360,12 +359,6 @@ struct StartView: View {
             switch state {
             case .failed:
                 break
-            case .successWithUID(_, let uid):
-                Task {
-                    await vm.fetchUser(userId: uid)
-                    vm.reinit()
-                    vm.moveToSplash()
-                }
             default:
                 break
             }

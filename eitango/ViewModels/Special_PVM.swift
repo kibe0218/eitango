@@ -2,6 +2,7 @@ import SwiftUI
 import CoreData
 
 extension PlayViewModel {
+    
     //==========
     //最初の処理🈁
     //==========

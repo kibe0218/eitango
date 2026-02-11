@@ -158,7 +158,7 @@ struct CardItemView: View{
             }
         }
         .onTapGesture(count: 2) {
-            if vm.isFlipped[i] {
+            if vm.isFlipped[i], !vm.Finishlist[i] {
                 vm.MistakeTask(i: i)
             }
         }

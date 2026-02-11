@@ -4,7 +4,7 @@ struct ErrorAlertView: View {
     @EnvironmentObject var vm: PlayViewModel
 
     var body: some View {
-        if let message = vm.currentErrorMessage {
+        if case .error(let message)  = vm.appState {
             GeometryReader() { geo in
                 VStack {
                     Spacer()
@@ -21,8 +21,7 @@ struct ErrorAlertView: View {
                                 .multilineTextAlignment(.center)
                             Spacer()
                             Button("OK") {
-                                vm.authState = .idle
-                                vm.userState = .idle
+                                //検討中
                             }
                             .foregroundColor(.white)
                             .padding()
@@ -45,14 +44,3 @@ struct ErrorAlertView: View {
     }
 }
 
-extension PlayViewModel {
-    var currentErrorMessage: String? {
-        if case .failed(_, let error) = userState {
-            return error.message
-        } else if case .failed(_, let error) = authState {
-            return error.message
-        } else {
-            return nil
-        }
-    }
-}

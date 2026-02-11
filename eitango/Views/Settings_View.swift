@@ -46,7 +46,7 @@ struct SettingsView: View {
                             .alert("本当にユーザー削除しますか？", isPresented: $showDeleteAlert) {
                                 Button("キャンセル", role: .cancel) {}
                                 Button("削除", role: .destructive) {
-                                    vm.deleteUserFrow()
+                                    vm.Delete()
                                 }
                             }
                         }

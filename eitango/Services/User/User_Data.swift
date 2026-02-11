@@ -2,56 +2,10 @@ import SwiftUI
 import CoreData
 import FirebaseAuth
 
-extension PlayViewModel.UserAppError {
-    var message: String {
-        switch self {
-        case .duplicatedUsername:
-            return "このユーザー名は既に使用されています"
-        case .invalidURL:
-            return "通信先URLが不正です"
-        case .network:
-            return "ネットワークエラーが発生しました"
-        case .invalidResponse:
-            return "サーバーからの応答が不正です"
-        case .decode:
-            return "データの読み込みに失敗しました"
-        case .authFailed:
-            return "認証に失敗しました"
-        case .unknown:
-            return "保存に失敗しました"
-        }
-    }
-}
-
-
 extension PlayViewModel {
     
-    enum UserAppError: Error {
-        case duplicatedUsername
-        case invalidURL
-        case network
-        case invalidResponse
-        case decode
-        case authFailed
-        case unknown
-    }
-    
-    enum UserState {
-        case idle
-        case loading(UserFunc)
-        case success(UserFunc)
-        case failed(UserFunc, UserAppError)
-    }
-    
-    enum UserFunc {
-        case fetchUser
-        case fetchUserFromCoreData
-        case addUserAPI
-        case deleteUserAPI
-    }
-    
     //========
-    //🔁同期🔁
+    //🔁同期🔁(firebaseからcoreへ）
     //========
     
     func fetchUser(userId: String) async {
@@ -75,7 +29,7 @@ extension PlayViewModel {
             let context = PersistenceController.shared.container.viewContext
             if let oldUser = self.fetchUserFromCoreData() {
                 context.delete(oldUser)
-                print("🟡 既存 UserEntity を1件削除")
+                print("🟡  UserEntity を1件削除")
             }
             let entity = UserEntity(context: context)
             entity.id = result.id
@@ -84,16 +38,7 @@ extension PlayViewModel {
 
             try context.save()
             print("🟡 CoreData 保存成功")
-            self.userState = .idle
-
-            let userEntity = self.fetchUserFromCoreData()
-            self.User = userEntity
-            self.userid = userEntity?.id ?? ""
-            self.userName = userEntity?.name ?? ""
             print("🟡 代入後: \(self.userid)")
-            self.updateView()
-            print("🟡 update後: \(self.userid)")
-
         } catch {
             print("🟡 fetchUser エラー:", error)
             self.updateUserState(.failed(.fetchUser, .network))

@@ -115,11 +115,20 @@ final class PlayViewModel: ObservableObject {
     @Published var urlsession = "http://"+"172.20.10.4"+":8080/"
     
     //エラー管理
-    @Published var authState: AuthState = .idle
-    @Published var userState: UserState = .idle
+    @Published var authState: AuthState = .idle {
+        didSet {
+            updateAppState()
+        }
+    }
+    @Published var userState: UserState = .idle {
+        didSet {
+            updateAppState()
+        }
+    }
+    @Published var appState: AppState = .none
+    @Published var currentFlow: AppFlow = .none
+    fileprivate var previousStableState : AppState = .loggedOut
 
-    
-    
     //初期処理
     init() {
         ColorSetting()
@@ -127,6 +136,5 @@ final class PlayViewModel: ObservableObject {
         self.User = self.fetchUserFromCoreData()
         self.userid = self.User?.id ?? ""
         self.userName = self.User?.name ?? ""
-        
     }
 }

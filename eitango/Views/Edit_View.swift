@@ -40,6 +40,7 @@ struct EditView: View {
                                     if let id = await vm.addListAPI(userId: vm.userid, title: title){
                                         vm.selectedListId = id
                                     }
+                                    title = ""
                                     vm.noshuffleFlag = true
                                     vm.updateView()
                                     navigateToCardList = true
@@ -47,7 +48,6 @@ struct EditView: View {
                                 }
                             }
                             .disabled(title.trimmingCharacters(in: .whitespaces).isEmpty)
-                            //trimmingで先頭や末尾にある特定の文字を削除してくれる
                             //isEmptyでから文字列をtrueにしてしまう->disabledでボタンを無効化
                         }
                     }
