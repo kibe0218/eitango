@@ -8,7 +8,7 @@ extension PlayViewModel {
     //🔁同期🔁(firebaseからcoreへ）
     //========
     
-    func fetchUser(userId: String) async {
+    func fetchUser(userId: String) async throws -> Void{
         print("🟡 fetchUser 開始 userId = \(userId)")
         guard let url = URL(string: urlsession + "users?userId=\(userId)") else {
             print("🟡 URLエラー")

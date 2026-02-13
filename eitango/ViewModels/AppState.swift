@@ -88,16 +88,6 @@ extension PlayViewModel {
         case failed(UserFunc, UserError)
     }
     
-    enum UserError: Error {
-        case duplicatedUsername
-        case invalidURL
-        case network
-        case invalidResponse
-        case decode
-        case authFailed
-        case unknown
-    }
-    
     enum UserFunc {
         case fetchUser
         case fetchUserFromCoreData
@@ -105,15 +95,7 @@ extension PlayViewModel {
         case deleteUserAPI
     }
     
-    enum AuthAppError: Error {
-        case wrongPassword
-        case userNotFound
-        case invalidEmail
-        case emailAlreadyInUse
-        case requiresRecentLogin
-        case network
-        case unknown
-    }
+    
     
     enum AuthState {
         case idle
@@ -197,6 +179,8 @@ extension PlayViewModel.AuthAppError {
         case .network:
             print("🟡 message case: network")
             return "ネットワークエラーです"
+        case .noCurrentUser:
+            return "現在ログインしていません"
         case .unknown:
             print("🟡 message case: unknown")
             return "ログインに失敗しました"

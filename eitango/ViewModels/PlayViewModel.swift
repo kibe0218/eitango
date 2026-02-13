@@ -128,6 +128,10 @@ final class PlayViewModel: ObservableObject {
     @Published var appState: AppState = .none
     @Published var currentFlow: AppFlow = .none
     fileprivate var previousStableState : AppState = .loggedOut
+    
+    private let repository = UserRepository(
+        baseURL: "http://172.20.10.4:8080/"
+    )
 
     //初期処理
     init() {

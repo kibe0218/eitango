@@ -4,6 +4,11 @@ import SwiftUI
 extension PlayViewModel {
     
     func Add(email: String, password: String, name: String) {
+        Task {
+            do {
+                let result = try await addUserAuth(email: email, password, name: name)
+            }
+        }
         currentFlow = .addingUser
         addUserAuth(email: email, password: password, name: name) { [weak self] uid in
             guard let self else {
@@ -58,9 +63,4 @@ extension PlayViewModel {
         
         
     }
-    
-    func logoutUserFrow() {
-        logoutUserAuth()
-    }
-    
 }
