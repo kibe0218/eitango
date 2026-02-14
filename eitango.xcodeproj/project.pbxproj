@@ -16,9 +16,35 @@
 		189175AF2F0698A00066AC02 /* memoRise-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "memoRise-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		1849202C2F4139660069FF22 /* Exceptions for "eitango" folder in "memoRise" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Trash/AppState.txt,
+				Trash/User_DB.txt,
+			);
+			target = 1821FF672E98E2100021BAF9 /* memoRise */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+		1849202D2F4139660069FF22 /* Exceptions for "eitango" folder in "Compile Sources" phase from "memoRise" target */ = {
+			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
+			buildPhase = 1821FF642E98E2100021BAF9 /* Sources */;
+			membershipExceptions = (
+				Trash/AppState.txt,
+				Trash/User_DB.txt,
+			);
+		};
+/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		1821FF6A2E98E2100021BAF9 /* eitango */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				1849202C2F4139660069FF22 /* Exceptions for "eitango" folder in "memoRise" target */,
+				1849202D2F4139660069FF22 /* Exceptions for "eitango" folder in "Compile Sources" phase from "memoRise" target */,
+			);
 			path = eitango;
 			sourceTree = "<group>";
 		};

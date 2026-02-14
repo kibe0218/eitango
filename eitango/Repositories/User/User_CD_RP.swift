@@ -42,7 +42,6 @@ class CoreDataRepository: CoreDataRepositoryProtocol {
             return nil
         }
         return try checkEntity(entity: entity)
-        
     }
     
     //追加

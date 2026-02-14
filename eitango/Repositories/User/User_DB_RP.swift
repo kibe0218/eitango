@@ -34,20 +34,23 @@ final class DataBaseRepository: DataBaseRepositoryProtocol {
         method: String,
         body: Data? = nil
     ) async throws -> Data {
-        var request = URLRequest(url: url)
-        request.httpMethod = method
-        if let body = body {
-            request.httpBody = body
-            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        do {
+            var request = URLRequest(url: url)
+            request.httpMethod = method
+            if let body = body {
+                request.httpBody = body
+                request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            }
+            let (data, response) = try await URLSession.shared.data(for: request)
+            
+            guard let httpResponse = response as? HTTPURLResponse,
+                  200..<300 ~= httpResponse.statusCode else {
+                throw DBError.invalidResponse
+            }
+            return data
+        } catch {
+            throw DBError.network
         }
-        let (data, response) = try await URLSession.shared.data(for: request)
-
-        guard let httpResponse = response as? HTTPURLResponse,
-              200..<300 ~= httpResponse.statusCode else {
-            throw DBError.invalidResponse
-        }
-
-        return data
     }
     
     //同期

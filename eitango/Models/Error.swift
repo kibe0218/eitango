@@ -1,4 +1,5 @@
 import Foundation
+import FirebaseAuth
 
 enum DBError: Error {
     case duplicatedUsername
@@ -19,6 +20,29 @@ enum AuthError: Error {
     case network
     case noCurrentUser
     case unknown
+}
+
+extension AuthError {
+    init(error: NSError) {
+        switch AuthErrorCode(rawValue: error.code) {
+        case .wrongPassword:
+            self = .wrongPassword
+        case .userNotFound:
+            self = .userNotFound
+        case .emailAlreadyInUse:
+            self = .emailAlreadyInUse
+        case .invalidEmail:
+            self = .invalidEmail
+        case .requiresRecentLogin:
+            self = .requiresRecentLogin
+        case .networkError:
+            self = .network
+        case .none:
+            self = .unknown
+        case .some(_):
+            self = .unknown
+        }
+    }
 }
 
 enum CDError: Error {
