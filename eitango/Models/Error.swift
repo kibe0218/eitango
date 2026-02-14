@@ -1,6 +1,6 @@
 import Foundation
 
-enum UserError: Error {
+enum DBError: Error {
     case duplicatedUsername
     case invalidURL
     case network
@@ -19,4 +19,10 @@ enum AuthError: Error {
     case network
     case noCurrentUser
     case unknown
+}
+
+enum CDError: Error {
+    case inconsistentUserData
+    case saveFailed
+    case deleteFailed
 }

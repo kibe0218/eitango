@@ -1,9 +1,9 @@
 import Foundation
 
 protocol DataBaseRepositoryProtocol {
-    func fetchUser(userId: String) async throws -> User_ST
-    func addUser(name: String, id: String) async throws -> User_ST
-    func deleteUser(userId: String) async throws
+    func fetch_User_DB(userId: String) async throws -> User_ST
+    func add_User_DB(name: String, id: String) async throws -> User_ST
+    func delete_User_DB(userId: String) async throws
 }
 
 final class DataBaseRepository: DataBaseRepositoryProtocol {
@@ -14,14 +14,14 @@ final class DataBaseRepository: DataBaseRepositoryProtocol {
         self.urlBuilder = URLBuilder(baseURL: baseURL)
     }
 
-    //デコード
+    //デコード(Json->Swift)
     private let decoder: JSONDecoder = {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
         return decoder
     }()
     
-    //エンコード
+    //エンコード(Swift->Json)
     private let encoder: JSONEncoder = {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
@@ -44,14 +44,14 @@ final class DataBaseRepository: DataBaseRepositoryProtocol {
 
         guard let httpResponse = response as? HTTPURLResponse,
               200..<300 ~= httpResponse.statusCode else {
-            throw UserError.invalidResponse
+            throw DBError.invalidResponse
         }
 
         return data
     }
     
     //同期
-    func fetchUser(userId: String) async throws -> User_ST {
+    func fetch_User_DB(userId: String) async throws -> User_ST {
         let url = try urlBuilder.makeURL(
             path: "users",
             queryItems: [URLQueryItem(name: "userId", value: userId)]
@@ -61,7 +61,7 @@ final class DataBaseRepository: DataBaseRepositoryProtocol {
     }
     
     //追加
-    func addUser(name: String, id: String) async throws -> User_ST {
+    func add_User_DB(name: String, id: String) async throws -> User_ST {
         let url = try urlBuilder.makeURL(path: "users")
         let body = try encoder.encode(AddUserRequest(id: id, name: name))
         let data = try await sendRequest(url: url, method: "POST", body: body)
@@ -69,7 +69,7 @@ final class DataBaseRepository: DataBaseRepositoryProtocol {
     }
     
     //削除
-    func deleteUser(userId: String) async throws {
+    func delete_User_DB(userId: String) async throws {
         let url = try urlBuilder.makeURL(
             path: "users",
             queryItems: [URLQueryItem(name: "userId", value: userId)]
