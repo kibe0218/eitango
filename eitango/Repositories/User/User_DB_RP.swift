@@ -1,9 +1,9 @@
 import Foundation
 
 protocol DataBaseRepositoryProtocol {
-    func fetch_User_DB(userId: String) async throws -> User_ST
-    func add_User_DB(name: String, id: String) async throws -> User_ST
-    func delete_User_DB(userId: String) async throws
+    func fetch(userId: String) async throws -> User_ST
+    func add(name: String, id: String) async throws -> User_ST
+    func delete(userId: String) async throws
 }
 
 final class DataBaseRepository: DataBaseRepositoryProtocol {
@@ -54,7 +54,7 @@ final class DataBaseRepository: DataBaseRepositoryProtocol {
     }
     
     //同期
-    func fetch_User_DB(userId: String) async throws -> User_ST {
+    func fetch(userId: String) async throws -> User_ST {
         let url = try urlBuilder.makeURL(
             path: "users",
             queryItems: [URLQueryItem(name: "userId", value: userId)]
@@ -64,7 +64,7 @@ final class DataBaseRepository: DataBaseRepositoryProtocol {
     }
     
     //追加
-    func add_User_DB(name: String, id: String) async throws -> User_ST {
+    func add(name: String, id: String) async throws -> User_ST {
         let url = try urlBuilder.makeURL(path: "users")
         let body = try encoder.encode(AddUserRequest(id: id, name: name))
         let data = try await sendRequest(url: url, method: "POST", body: body)
@@ -72,7 +72,7 @@ final class DataBaseRepository: DataBaseRepositoryProtocol {
     }
     
     //削除
-    func delete_User_DB(userId: String) async throws {
+    func delete(userId: String) async throws {
         let url = try urlBuilder.makeURL(
             path: "users",
             queryItems: [URLQueryItem(name: "userId", value: userId)]

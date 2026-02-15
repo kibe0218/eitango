@@ -21,6 +21,8 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Trash/AppState.txt,
+				Trash/Flow.txt,
+				Trash/Settings_PVM.txt,
 				Trash/User_DB.txt,
 			);
 			target = 1821FF672E98E2100021BAF9 /* memoRise */;
@@ -33,6 +35,8 @@
 			buildPhase = 1821FF642E98E2100021BAF9 /* Sources */;
 			membershipExceptions = (
 				Trash/AppState.txt,
+				Trash/Flow.txt,
+				Trash/Settings_PVM.txt,
 				Trash/User_DB.txt,
 			);
 		};

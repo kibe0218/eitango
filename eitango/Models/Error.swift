@@ -1,6 +1,7 @@
 import Foundation
 import FirebaseAuth
 
+//DataBase
 enum DBError: Error {
     case duplicatedUsername
     case invalidURL
@@ -11,6 +12,7 @@ enum DBError: Error {
     case unknown
 }
 
+//Auth
 enum AuthError: Error {
     case wrongPassword
     case userNotFound
@@ -45,8 +47,14 @@ extension AuthError {
     }
 }
 
+//CoreData
 enum CDError: Error {
     case inconsistentUserData
     case saveFailed
     case deleteFailed
+}
+
+//URLBuilder
+enum UBError: Error {
+    case invalidURL
 }

@@ -2,30 +2,21 @@ import Foundation
 import CoreData
 
 protocol CoreDataRepositoryProtocol {
-    func fetch_User_CD() throws -> User_ST?
-    func add_User_CD(user: User_ST) throws
-    func delete_User_CD() throws
+    func fetch() throws -> User_ST?
+    func add(user: User_ST) throws
+    func delete() throws
 }
 
 class CoreDataRepository: CoreDataRepositoryProtocol {
     
-    //コンテキストを定義
-    private var context: NSManagedObjectContext {
-        PersistenceController.shared.container.viewContext
+    //コアデータ読み込みStructを読み込み
+    private func currentEntity() throws -> UserEntity? {
+        let request = CoreDataRequest()
+        return try request.fetchOne(ofType: UserEntity.self)
     }
     
-    //取得作業
-    private func currentUserEntity() throws -> UserEntity? {
-        let request: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
-        let entity = try context.fetch(request)
-        if entity.count > 1 {
-            throw CDError.inconsistentUserData
-        }
-        return entity.first
-    }
-    
-    //チェック作業
-    private func checkEntity(entity: UserEntity) throws -> User_ST {
+    //チェックと変換作業
+    private func checkConvertEntity(entity: UserEntity) throws -> User_ST {
         guard
             let id = entity.id,
             let name = entity.name,
@@ -37,17 +28,15 @@ class CoreDataRepository: CoreDataRepositoryProtocol {
     }
     
     //同期
-    func fetch_User_CD() throws -> User_ST? {
-        guard let entity = try currentUserEntity() else {
-            return nil
-        }
-        return try checkEntity(entity: entity)
+    func fetch() throws -> User_ST? {
+        guard let entity = try currentEntity() else { return nil }
+        return try checkConvertEntity(entity: entity)
     }
     
     //追加
-    func add_User_CD(user: User_ST) throws {
+    func add(user: User_ST) throws {
         do {
-            if let olduser = try currentUserEntity() {
+            if let olduser = try currentEntity() {
                 context.delete(olduser)
             }
             let entity = UserEntity(context: context)
@@ -63,9 +52,9 @@ class CoreDataRepository: CoreDataRepositoryProtocol {
     }
     
     //削除
-    func delete_User_CD() throws {
+    func delete() throws {
         do {
-            if let olduser = try currentUserEntity() {
+            if let olduser = try currentEntity() {
                 context.delete(olduser)
             }
             try context.save()

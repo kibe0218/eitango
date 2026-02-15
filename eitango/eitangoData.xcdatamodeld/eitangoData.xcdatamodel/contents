@@ -1,12 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="24512" systemVersion="24G419" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
-    <entity name="AppSettings" representedClassName="AppSettings" syncable="YES" codeGenerationType="class">
-        <attribute name="colortheme" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="repeatFlag" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
-        <attribute name="selectedListId" optional="YES" attributeType="String"/>
-        <attribute name="shuffleFlag" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
-        <attribute name="waittime" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-    </entity>
     <entity name="CardEntity" representedClassName="CardEntity" syncable="YES" codeGenerationType="class">
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="en" optional="YES" attributeType="String"/>
@@ -20,6 +13,13 @@
         <attribute name="id" optional="YES" attributeType="String"/>
         <attribute name="title" optional="YES" attributeType="String"/>
         <relationship name="cards" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CardEntity" inverseName="cardlist" inverseEntity="CardEntity"/>
+    </entity>
+    <entity name="SettingEntity" representedClassName="SettingEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="colortheme" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="repeatFlag" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="selectedListId" optional="YES" attributeType="String"/>
+        <attribute name="shuffleFlag" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="waitTime" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
     </entity>
     <entity name="UserEntity" representedClassName="UserEntity" syncable="YES" codeGenerationType="class">
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>

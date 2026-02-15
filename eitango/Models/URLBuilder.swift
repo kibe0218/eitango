@@ -10,7 +10,7 @@ struct URLBuilder {
         var components = URLComponents(string: baseURL + path)
         components?.queryItems = queryItems
         guard let url = components?.url else {
-            throw UserError.invalidURL
+            throw UBError.invalidURL
         }
         return url
     }

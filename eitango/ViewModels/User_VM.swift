@@ -24,7 +24,7 @@ final class AuthViewModel: ObservableObject  {
                 provider: .email(email: email, password: password)
             )
             guard !uid.isEmpty else { throw AuthError.unknown }
-            _ = try await dbRepository.add_User_DB(name: name, id: uid)
+            _ = try await dbRepository.add(name: name, id: uid)
         } catch {
             try await authRepository.delete()
         }
@@ -40,11 +40,11 @@ final class AuthViewModel: ObservableObject  {
     
     //削除
     func delete() async throws {
-        guard let uid = try cdRepository.fetch_User_CD()?.id else {
+        guard let uid = try cdRepository.fetch()?.id else {
             throw CDError.inconsistentUserData
         }
-        try await dbRepository.delete_User_DB(userId: uid)
-        try cdRepository.delete_User_CD()
+        try await dbRepository.delete(userId: uid)
+        try cdRepository.delete()
         try await authRepository.delete()
     }
 }
