@@ -77,7 +77,6 @@ extension PlayViewModel{
     // - 書き込み・削除・API 呼び出し禁止
     // - ViewModel の @Published を更新するためだけの関数
     //===============================================
-
     
     func fetchListsFromCoreData() -> [ListEntity] {
         let context = PersistenceController.shared.container.viewContext

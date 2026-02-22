@@ -13,5 +13,9 @@ struct CoreDataRequest {
         }
         return entities.first
     }
-
+    
+    func fetchAll<T: NSManagedObject>(ofType type: T.Type) throws -> [T] {
+        let request: NSFetchRequest<T> = T.fetchRequest() as! NSFetchRequest<T>
+        return try context.fetch(request)
+    }
 }

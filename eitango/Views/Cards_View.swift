@@ -2,11 +2,13 @@ import SwiftUI
 import Combine
 
 struct CardsView: View {
-    @Environment(\.colorScheme) var colorScheme
-    @EnvironmentObject var vm: PlayViewModel
+    @Environment(\.colorScheme) var scheme
+    @EnvironmentObject var vm: RootViewModel
     @StateObject var keyboard = KeyboardObserver()
     @FocusState private var isTextFieldFocused: Bool
     
+    var palette: Color_ST { vm.setting.colortheme.palette(for: scheme) }
+
     @State private var geo_height: CGFloat = 0
     @State private var ing: Int = 0
     @State private var keeplistid: String = ""
@@ -16,7 +18,7 @@ struct CardsView: View {
     @State private var newWord: String = ""
     //デフォルトはen->ja
     
-    /// 🐙 新しい単語の送信入口
+    // 🐙 新しい単語の送信入口
     func submitNewWord(_ word: String) {
         ing += 1
         Task {
@@ -24,7 +26,7 @@ struct CardsView: View {
         }
     }
 
-    /// 🌍 翻訳してカードを追加する非同期処理
+    // 🌍 翻訳してカードを追加する非同期処理
     func translateAndAddCard(_ word: String) async {
         guard let currentListId = vm.selectedListId else {
             print("🟡 listIdが無効のためカード追加できません")
@@ -59,12 +61,12 @@ struct CardsView: View {
                                 Spacer()
                                 Text("翻訳中: \(ing)件...")
                                     .font(.system(size: CGFloat(20)))
-                                    .foregroundStyle(vm.customaccentColor)
+                                    .foregroundStyle(palette.customaccentColor)
                                     .frame(height: geo_height * 0.05, alignment: .center)
-                                    .background(vm.backColor)
+                                    .background(palette.backColor)
                                 Spacer()
                             }
-                            .listRowBackground(vm.backColor)
+                            .listRowBackground(palette.backColor)
                             .listRowSeparator(.hidden)
                             .scrollContentBackground(.hidden)
                         }
@@ -122,7 +124,7 @@ struct CardsView: View {
                 vm.noshuffleFlag = false
             }
         }
-        .background(vm.backColor.ignoresSafeArea())
+        .background(palette.backColor.ignoresSafeArea())
     }
 }
 
@@ -140,14 +142,14 @@ struct ItemView: View{
         VStack{
             Text(card.en ?? "")
                 .font(.system(size: CGFloat(vm.EnfontSize(i: card.en ?? ""))))
-                .foregroundStyle(vm.cardfrontColor)
+                .foregroundStyle(palette.cardfrontColor)
             TextField(
                 "",
                 text: $inputText,
-                prompt: Text(card.jp ?? "").foregroundColor(vm.cardbackColor)
+                prompt: Text(card.jp ?? "").foregroundColor(palette.cardbackColor)
             )
             .font(.system(size: 30))
-            .foregroundStyle(vm.cardbackColor)
+            .foregroundStyle(palette.cardbackColor)
                 .onSubmit{
                     let trimmedWord = inputText.trimmingCharacters(in: .whitespacesAndNewlines)
                     guard !trimmedWord.isEmpty && trimmedWord != "-" else { return }
@@ -169,7 +171,7 @@ struct ItemView: View{
                 .frame(height: height * 0.02)
         }
         .frame(width: width * 0.85, height: height * 0.18, alignment: .center)
-        .background(vm.cardColor)
+        .background(palette.cardColor)
         .cornerRadius(20)
         .frame(maxWidth: .infinity, alignment: .center)
     }

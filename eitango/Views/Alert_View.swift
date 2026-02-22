@@ -1,10 +1,13 @@
 import SwiftUI
 
 struct ErrorAlertView: View {
-    @EnvironmentObject var vm: PlayViewModel
+    @EnvironmentObject var vm: RootViewModel
+    @Environment(\.colorScheme) var scheme
+    
+    var palette: Color_ST { vm.setting.colortheme.palette(for: scheme) }
 
     var body: some View {
-        if case .error(let message)  = vm.appState {
+        if vm.showErrorAlert {
             GeometryReader() { geo in
                 VStack {
                     Spacer()
@@ -13,26 +16,26 @@ struct ErrorAlertView: View {
                         VStack {
                             Text("エラー")
                                 .font(.title)
-                                .foregroundStyle(vm.customaccentColor)
+                                .foregroundStyle(palette.customaccentColor)
                                 .multilineTextAlignment(.center)
                             Spacer()
                             Text(message)
-                                .foregroundColor(vm.cardfrontColor)
+                                .foregroundColor(palette.cardfrontColor)
                                 .multilineTextAlignment(.center)
                             Spacer()
                             Button("OK") {
-                                //検討中
+                                vm.appState = .none
                             }
                             .foregroundColor(.white)
                             .padding()
                             .frame(width: geo.size.width * 0.3)
                             .cornerRadius(20)
-                            .glassEffect(.regular.tint(vm.customaccentColor).interactive())
+                            .glassEffect(.regular.tint(palette.customaccentColor).interactive())
 
                         }
                         .padding()
                         .frame(width: geo.size.width * 0.7, height: geo.size.height * 0.25, alignment: .top)
-                        .background(vm.backColor)
+                        .background(palette.backColor)
                         .cornerRadius(50)
                         .shadow(radius: 5)
                         Spacer()

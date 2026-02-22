@@ -1,6 +1,6 @@
 import SwiftUI
 
-extension PlayViewModel {
+extension RootViewModel {
     
     func moveToSplash() {
         print("🟡 moveToSplash 呼ばれたっピ")

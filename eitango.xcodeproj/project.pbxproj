@@ -22,6 +22,7 @@
 			membershipExceptions = (
 				Trash/AppState.txt,
 				Trash/Flow.txt,
+				Trash/List_PVM.txt,
 				Trash/Settings_PVM.txt,
 				Trash/User_DB.txt,
 			);
@@ -36,6 +37,7 @@
 			membershipExceptions = (
 				Trash/AppState.txt,
 				Trash/Flow.txt,
+				Trash/List_PVM.txt,
 				Trash/Settings_PVM.txt,
 				Trash/User_DB.txt,
 			);
@@ -71,8 +73,8 @@
 			isa = PBXGroup;
 			children = (
 				189175AF2F0698A00066AC02 /* memoRise-Info.plist */,
-				1821FF6A2E98E2100021BAF9 /* eitango */,
 				1862C2C62EF0BF3C00077808 /* memoRise.app */,
+				1821FF6A2E98E2100021BAF9 /* eitango */,
 			);
 			sourceTree = "<group>";
 		};

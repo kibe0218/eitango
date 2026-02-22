@@ -1,13 +1,13 @@
 import Foundation
 import CoreData
 
-protocol CoreDataRepositoryProtocol {
+protocol User_CoreDataRepositoryProtocol {
     func fetch() throws -> User_ST?
     func add(user: User_ST) throws
     func delete() throws
 }
 
-class CoreDataRepository: CoreDataRepositoryProtocol {
+class User_CoreDataRepository: User_CoreDataRepositoryProtocol {
     
     //コアデータ読み込みStructを読み込み
     private func currentEntity() throws -> UserEntity? {

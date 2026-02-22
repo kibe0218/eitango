@@ -43,7 +43,7 @@ extension PlayViewModel{
         Task {
             let sleepInterval: UInt64 = 50_000_000 // 0.05 second
             var waited: UInt64 = 0
-            let totalWait: UInt64 = UInt64(1_000_000_000 * UInt64(waittime))
+            let totalWait: UInt64 = UInt64(1_000_000_000 * UInt64(self.setting?.waitTime))
             while waited < totalWait && !self.cancelFlag {
                 try? await Task.sleep(nanoseconds: sleepInterval)
                 waited += sleepInterval
@@ -85,7 +85,7 @@ extension PlayViewModel{
         
     func MistakeTask(i: Int) {
         mistakecardlist.append((en: Enlist[i], jp: Jplist[i]))
-        print("間違えたやつ",mistakecardlist)
+        print("🟡間違えたやつ",mistakecardlist)
         showNotification = true
     }
     

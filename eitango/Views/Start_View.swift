@@ -38,20 +38,14 @@ struct StartView: View {
         case pass
     }
     
-    
-    //============
-    //文字チェック📝
-    //============
-    
+    //ユーザーネームをチェック
     private func isValidUsername(_ name: String) -> String? {
         let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
-        
         guard !trimmed.isEmpty,
               trimmed.count <= 4
         else {
             return nil
         }
-        
         for ch in trimmed {
             if ch.isEmoji {
                 continue // 絵文字OK
@@ -65,6 +59,7 @@ struct StartView: View {
         return trimmed
     }
     
+    //メアドをチェック
     private func isValidEmail(_ email: String) -> String? {
         let trimmed = email.trimmingCharacters(in: .whitespacesAndNewlines)
         
@@ -79,6 +74,7 @@ struct StartView: View {
         return trimmed
     }
     
+    //パスワードをチェック
     private func isValidPassword(_ password: String) -> String? {
         let trimmed = password.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty,
@@ -90,10 +86,40 @@ struct StartView: View {
         return trimmed
     }
     
-    //========
-    //吹き出し💬
-    //========
+    //最終判定
+    private func validateInputs() -> Bool {
+        var valid = true
+        
+        if selectedOption == "新規作成" {
+            if isValidUsername(user) == nil {
+                danger_user = true
+                focusedField = .user
+                valid = false
+            } else {
+                danger_user = false
+            }
+        }
+        
+        if isValidEmail(email) == nil {
+            danger_email = true
+            focusedField = .email
+            valid = false
+        } else {
+            danger_email = false
+        }
+        
+        if isValidPassword(pass) == nil {
+            danger_pass = true
+            focusedField = .pass
+            valid = false
+        } else {
+            danger_pass = false
+        }
+        
+        return valid
+    }
     
+    //吹き出し💬
     struct Triangle: Shape {
         func path(in rect: CGRect) -> Path {//rectは描画可能領域
             var path = Path()
@@ -106,7 +132,7 @@ struct StartView: View {
     }
     
     struct SpeechBubble: View {
-        @EnvironmentObject var vm: PlayViewModel
+        @EnvironmentObject var vm: RootViewModel
         let text = "😢"
         var body: some View {
             GeometryReader { geo in
@@ -266,53 +292,15 @@ struct StartView: View {
                             .submitLabel(.done)
                             .textContentType(.password)
                             .onSubmit {
-                                print("🟡 onSubmit 発火したっピ")
-                                if isSubmitting { return }
-                                isSubmitting = true
-                                if selectedOption == "ログイン" {
-                                    guard isValidEmail(email) != nil else {
-                                        danger_email = true
-                                        focusedField = .email
-                                        isSubmitting = false
-                                        return
+                                Task {
+                                    guard validateInputs() else { return }
+                                    isSubmitting = true
+                                    defer { isSubmitting = false }
+                                    if selectedOption == "ログイン" {
+                                        try await vm.login(email: email, password: pass)
+                                    } else {
+                                        try await vm.signUp(email: email, password: pass, name: user)
                                     }
-                                    danger_email = false
-                                    
-                                    guard isValidPassword(pass) != nil else {
-                                        danger_pass = true
-                                        focusedField = .pass
-                                        isSubmitting = false
-                                        return
-                                    }
-                                    danger_pass = false
-                                    vm.Login(email: email, password: pass)
-                                    isSubmitting = false
-                                } else {
-                                    guard isValidUsername(user) != nil else {
-                                        danger_user = true
-                                        focusedField = .user
-                                        isSubmitting = false
-                                        return
-                                    }
-                                    danger_user = false
-                                    
-                                    guard isValidEmail(email) != nil else {
-                                        danger_email = true
-                                        focusedField = .email
-                                        isSubmitting = false
-                                        return
-                                    }
-                                    danger_email = false
-                                    
-                                    guard isValidPassword(pass) != nil else {
-                                        danger_pass = true
-                                        focusedField = .pass
-                                        isSubmitting = false
-                                        return
-                                    }
-                                    danger_pass = false
-                                    vm.Add(email: email, password: pass, name: user)
-                                    isSubmitting = false
                                 }
                             }
                         if danger_pass {
@@ -336,31 +324,6 @@ struct StartView: View {
             .onAppear {
                 geo_height = geo.size.height
                 geo_width = geo.size.width
-            }
-        }
-        .onReceive(vm.$userState) { state in
-            switch state {
-            case .failed(.addUserAPI, _):
-                vm.deleteUserAuth() { bool in
-                    if bool {
-                        print("🟡整合性のための削除成功")
-                    } else {
-                        print("🟡整合性のための削除失敗")
-                    }
-                }
-            case .success(.addUserAPI):
-                vm.reinit()
-                vm.moveToSplash()
-            default:
-                break
-            }
-        }
-        .onReceive(vm.$authState) { state in
-            switch state {
-            case .failed:
-                break
-            default:
-                break
             }
         }
     }

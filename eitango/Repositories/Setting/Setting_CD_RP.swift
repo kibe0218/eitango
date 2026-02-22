@@ -2,7 +2,7 @@ import SwiftUI
 import CoreData
 
 protocol SettingRepositoryProtocol {
-    func fetch() throws -> Setting_ST?
+    func fetch() throws -> Setting_ST
     func save(setting: Setting_ST) throws
 }
 
@@ -20,7 +20,7 @@ class SettingRepository: SettingRepositoryProtocol {
         let repeatFlag = entity.repeatFlag
         let shuffleFlag = entity.shuffleFlag
         let selectedListId = entity.selectedListId
-        let waitTime = entity.waittime
+        let waitTime = entity.waitTime
         return Setting_ST (
             colortheme: Int(colortheme),
             repeatFlag: repeatFlag,
@@ -40,8 +40,8 @@ class SettingRepository: SettingRepositoryProtocol {
     )
     
     //同期
-    func fetch() throws -> Setting_ST? {
-        guard let entity = try currentEntity() else { return nil }
+    func fetch() throws -> Setting_ST {
+        guard let entity = try currentEntity() else { return defaultSetting }
         return try checkConvertEntity(entity: entity)
     }
     
