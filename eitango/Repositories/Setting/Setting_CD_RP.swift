@@ -16,18 +16,25 @@ class SettingRepository: SettingRepositoryProtocol {
     
     //チェックと変換作業
     private func checkConvertEntity(entity: SettingEntity) throws -> Setting_ST {
-        let colortheme = entity.colortheme
+        let colorTheme = entity.colorTheme
         let repeatFlag = entity.repeatFlag
         let shuffleFlag = entity.shuffleFlag
         let selectedListId = entity.selectedListId
         let waitTime = entity.waitTime
         return Setting_ST (
-            colortheme: Int(colortheme),
+            colorTheme: colorTheme,
             repeatFlag: repeatFlag,
             shuffleFlag: shuffleFlag,
             selectedListId: selectedListId,
             waitTime: Int(waitTime)
         )
+    }
+    
+    private func convertToEntity(lists: [List_ST]) throws {
+        for list in lists {
+            let entity = ListEntity(context: context)
+            entity.id = list.id
+            entity.title = list.title
     }
     
     //デフォルト値

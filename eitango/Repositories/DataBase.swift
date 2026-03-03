@@ -43,9 +43,7 @@ func sendRequest(
 
 //URL作成
 struct URLBuilder {
-    
     private let baseURL = "http://172.20.10.4:8080/"
-    
     func makeURL(
         path: String,
         queryItems: [URLQueryItem]? = nil

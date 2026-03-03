@@ -38,3 +38,17 @@ enum ColorTheme: Int, Codable {
     }
 
 }
+
+struct Color_ST {
+    let cardColor: Color
+    let backColor: Color
+    let customaccentColor: Color
+    let noaccentColor: Color
+    let cardfrontColor: Color
+    let cardbackColor: Color
+    let toggleColor: Color
+    let cardlistColor: Color
+    let cardlistmobColor: Color
+    let textColor: Color
+}
+

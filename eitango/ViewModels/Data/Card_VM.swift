@@ -9,15 +9,27 @@ class CardViewModel: ObservableObject {
         self.cardRepository = cardRepository
     }
     
-    func signUp(email: String, password: String, name: String) async throws {
-        try await cardRepository.signUp(email: email, password: password, name: name)
+    func fetchAll() throws -> [Card_ST] {
+        return try cardRepository.fetchAll()
     }
     
-    func login(email: String, password: String) async throws {
-        try await cardRepository.login(email: email, password: password)
+    func fetchAllBy(listId: String) throws -> [Card_ST] {
+        return try cardRepository.fetchAllBy(listId: listId)
     }
     
-    func delete() async throws {
-        try await cardRepository.delete()
+    func reload(cards: [Card_ST]) async throws -> [Card_ST]{
+        return try await cardRepository.reload()
+    }
+    
+    func update(listId: String, card: UpdateCardRequest) async throws -> Card_ST{
+        return try await cardRepository.update(listId: listId, card: card)
+    }
+    
+    func add(listId: String, card: AddCardRequest) async throws -> Card_ST {
+        return try await cardRepository.add(listId: listId, card: card)
+    }
+    
+    func delete(listId: String, id: String) async throws {
+        return try await cardRepository.delete(listId: listId, id: id)
     }
 }

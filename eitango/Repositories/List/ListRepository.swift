@@ -3,9 +3,10 @@ import Combine
 import SwiftUI
 
 protocol ListRepositoryProtocol {
+    func fetchAll() async throws -> [List_ST]
+    func reload() async throws-> [List_ST]
     func add(list: AddListRequest) async throws -> List_ST
     func delete(id: String) async throws
-    func reload() async throws-> [List_ST]
 }
 
 class ListRepository: ListRepositoryProtocol {
@@ -20,6 +21,17 @@ class ListRepository: ListRepositoryProtocol {
         self.cdRepository = list_cdRepository
     }
     
+    //CoreDataから全て読み込み
+    func fetchAll() async throws -> [List_ST] {
+        return try cdRepository.fetchAll()
+    }
+    
+    //DB基準で再読み込み
+    func reload() async throws -> [List_ST] {
+        try cdRepository.saveAll(lists: try await dbRepository.fetch())
+        return try cdRepository.fetchAll()
+    }
+    
     //追加
     func add(list: AddListRequest) async throws -> List_ST {
         let list = try await dbRepository.add(list: list)
@@ -32,12 +44,5 @@ class ListRepository: ListRepositoryProtocol {
     func delete(id: String) async throws {
         try await dbRepository.delete(id: id)
         try cdRepository.delete(id: id)
-    }
-    
-    //再読み込み
-    func reload() async throws -> [List_ST] {
-        try cdRepository.saveAll(lists: try await dbRepository.fetch())
-        return try cdRepository.fetch()
-    
     }
 }

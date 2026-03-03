@@ -184,7 +184,6 @@ extension PlayViewModel{
             await fetchCards(listId: listId)
         } catch {
             print("通信エラーっピ: \(error)")
-        }
     }
     
     //==========

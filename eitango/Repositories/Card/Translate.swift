@@ -1,4 +1,5 @@
 import SwiftUI
+import Combine
 
 enum TranslateError: Error {
     case invalidURL
@@ -6,7 +7,7 @@ enum TranslateError: Error {
     case network(Error)
 }
 
-extension PlayViewModel{
+class Card_GoogleAppScriptTranslate: ObservableObject{
     
     func translateTextWithGAS(
         _ text: String,

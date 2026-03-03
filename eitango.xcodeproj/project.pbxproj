@@ -21,6 +21,8 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Trash/AppState.txt,
+				Trash/Card_PVM.txt,
+				Trash/Flip_PVM.txt,
 				Trash/Flow.txt,
 				Trash/List_PVM.txt,
 				Trash/Settings_PVM.txt,
@@ -36,6 +38,8 @@
 			buildPhase = 1821FF642E98E2100021BAF9 /* Sources */;
 			membershipExceptions = (
 				Trash/AppState.txt,
+				Trash/Card_PVM.txt,
+				Trash/Flip_PVM.txt,
 				Trash/Flow.txt,
 				Trash/List_PVM.txt,
 				Trash/Settings_PVM.txt,
