@@ -38,9 +38,7 @@ extension PlayViewModel{
     
     func updateView() {
         cancelFlag = true
-        Thread.sleep(forTimeInterval: 0.07)
-        yy = 0
-        jj = 0
+        DelayController.wait(seconds: 0.07)
         finish = false
         ColorSetting()
         isFlipped = Array(repeating: false, count:4)

@@ -17,7 +17,7 @@ class CardViewModel: ObservableObject {
         return try cardRepository.fetchAllBy(listId: listId)
     }
     
-    func reload(cards: [Card_ST]) async throws -> [Card_ST]{
+    func reload() async throws -> [Card_ST]{
         return try await cardRepository.reload()
     }
     

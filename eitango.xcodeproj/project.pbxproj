@@ -27,6 +27,7 @@
 				Trash/List_PVM.txt,
 				Trash/Settings_PVM.txt,
 				Trash/User_DB.txt,
+				ViewModels/State/readme.txt,
 			);
 			target = 1821FF672E98E2100021BAF9 /* memoRise */;
 		};
@@ -44,6 +45,7 @@
 				Trash/List_PVM.txt,
 				Trash/Settings_PVM.txt,
 				Trash/User_DB.txt,
+				ViewModels/State/readme.txt,
 			);
 		};
 /* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */

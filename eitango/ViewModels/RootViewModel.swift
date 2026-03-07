@@ -31,27 +31,6 @@ class KeyboardObserver: ObservableObject{
 final class RootViewModel: ObservableObject {
     
     @Published var keyboard = KeyboardObserver()
-
-    // 画面表示用の一時的なリスト
-    @Published var Enlist: [String] = []
-    @Published var Jplist: [String] = []
-    @Published var isFlipped: [Bool] = [false, false, false, false]
-    @Published var Finishlist: [Bool] = [false, false, false, false]
-
-    // 保持用リスト
-    @Published var Lists: [ListEntity] = []
-    @Published var Cards: [CardEntity] = []
-    @Published var User: User_ST?
-    
-    @Published var enbase: [String] = []
-    @Published var jpbase: [String] = []
-    @Published var mistakecardlist: [(en: String, jp: String)] = []
-        
-    @Published var yy = 0
-    @Published var jj = 0
-    
-    @Published var title = ""
-    
     // フラグ系
     @Published var finish = false
     @Published var cancelFlag = false

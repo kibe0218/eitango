@@ -1,6 +1,6 @@
 import Foundation
 
-struct Card_ST: Codable, Identifiable {
+struct Card_ST: Codable, Identifiable, Equatable {
     var id: String
     var listId: String
     var en: String
