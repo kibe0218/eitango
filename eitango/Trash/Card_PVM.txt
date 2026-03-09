@@ -47,7 +47,7 @@ extension PlayViewModel{
             let (data, _) = try await URLSession.shared.data(from: url)
             let decoder = JSONDecoder()
             decoder.dateDecodingStrategy = .iso8601
-            let result = try decoder.decode([Card_ST].self, from: data)
+            let result = try decoder.decode([Card].self, from: data)
             //JSONをCard型に変換
             let context = PersistenceController.shared.container.viewContext
             if let targetList = self.fetchListsFromCoreData()

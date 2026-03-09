@@ -9,23 +9,23 @@ class CardViewModel: ObservableObject {
         self.cardRepository = cardRepository
     }
     
-    func fetchAll() throws -> [Card_ST] {
+    func fetchAll() throws -> [Card] {
         return try cardRepository.fetchAll()
     }
     
-    func fetchAllBy(listId: String) throws -> [Card_ST] {
+    func fetchAllBy(listId: String) throws -> [Card] {
         return try cardRepository.fetchAllBy(listId: listId)
     }
     
-    func reload() async throws -> [Card_ST]{
+    func reload() async throws -> [Card]{
         return try await cardRepository.reload()
     }
     
-    func update(listId: String, card: UpdateCardRequest) async throws -> Card_ST{
+    func update(listId: String, card: UpdateCardRequest) async throws -> Card{
         return try await cardRepository.update(listId: listId, card: card)
     }
     
-    func add(listId: String, card: AddCardRequest) async throws -> Card_ST {
+    func add(listId: String, card: AddCardRequest) async throws -> Card {
         return try await cardRepository.add(listId: listId, card: card)
     }
     
