@@ -9,14 +9,16 @@ protocol List_CoreDataRepositoryProtocol {
 }
 
 class List_CoreDataRepository: List_CoreDataRepositoryProtocol {
+     
+    // MARK: - Private Helpers
     
-    //コアデータ読み込みStructを読み込み
+    // コアデータ読み込みStructを読み込み
     private func currentEntities() throws -> [ListEntity] {
         let request = CoreDataRequest()
         return try request.fetchAll(ofType: ListEntity.self)
     }
     
-    //Structに変換
+    // Structに変換
     private func convertEntitiesToStructs(entities: [ListEntity]) throws -> [List] {
         var lists: [List] = []
         for entity in entities {
@@ -33,7 +35,7 @@ class List_CoreDataRepository: List_CoreDataRepositoryProtocol {
         return lists
     }
     
-    //Entityに変換
+    // Entityに変換
     private func convertStructsToEntities(lists: [List]) throws {
         for list in lists {
             let entity = ListEntity(context: context)
@@ -44,13 +46,15 @@ class List_CoreDataRepository: List_CoreDataRepositoryProtocol {
         }
     }
         
-    //同期
+    // MARK: - Public CRUD Functions
+    
+    // 同期
     func fetchAll() throws -> [List] {
         let entities = try currentEntities()
         return try convertEntitiesToStructs(entities: entities)
     }
     
-    //保存
+    // 保存
     func saveAll(lists: [List]) throws {
         do {
             let oldEntities = try currentEntities()
@@ -63,7 +67,7 @@ class List_CoreDataRepository: List_CoreDataRepositoryProtocol {
         }
     }
     
-    //追加
+    // 追加
     func add(list: List) throws {
         do {
             try convertStructsToEntities(lists: [list])
@@ -75,7 +79,7 @@ class List_CoreDataRepository: List_CoreDataRepositoryProtocol {
         
     }
     
-    //削除
+    // 削除
     func delete(id: String) throws {
         do {
             let entities = try currentEntities()

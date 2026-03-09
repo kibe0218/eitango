@@ -9,13 +9,15 @@ protocol User_CoreDataRepositoryProtocol {
 
 class User_CoreDataRepository: User_CoreDataRepositoryProtocol {
     
-    //コアデータ読み込みStructを読み込み
+    // MARK: - Private Helpers
+    
+    // コアデータ読み込みStructを読み込み
     private func currentEntity() throws -> UserEntity? {
         let request = CoreDataRequest()
         return try request.fetchSingle(ofType: UserEntity.self)
     }
     
-    //Structに変換
+    // Structに変換
     private func convertToStruct(entity: UserEntity) throws -> User {
         guard
             let id = entity.id,
@@ -27,7 +29,7 @@ class User_CoreDataRepository: User_CoreDataRepositoryProtocol {
         return User(id: id, name: name, createdAt: createdAt)
     }
     
-    //Entityに変換
+    // Entityに変換
     private func convertToEntity(user: User) throws {
         let entity = UserEntity(context: context)
         entity.id = user.id
@@ -35,13 +37,15 @@ class User_CoreDataRepository: User_CoreDataRepositoryProtocol {
         entity.createdAt = user.createdAt
     }
     
-    //同期
+    // MARK: - Public CRUD Functions
+
+    // 同期
     func fetch() throws -> User? {
         guard let entity = try currentEntity() else { return nil }
         return try convertToStruct(entity: entity)
     }
     
-    //追加
+    // 追加
     func add(user: User) throws {
         do {
             if let olduser = try currentEntity() {
@@ -55,7 +59,7 @@ class User_CoreDataRepository: User_CoreDataRepositoryProtocol {
         }
     }
     
-    //削除
+    // 削除
     func delete() throws {
         do {
             if let olduser = try currentEntity() {

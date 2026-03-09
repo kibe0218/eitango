@@ -1,7 +1,7 @@
 import SwiftUI
 import FirebaseAuth
 
-//全体
+// 全体
 enum AppState {
     case none
     case loggedIn
@@ -20,7 +20,7 @@ enum AppFlow {
     case deletingUser
 }
 
-//状態管理プロトコル
+// 状態管理プロトコル
 protocol StateProtocol {
     associatedtype Func
     associatedtype Err: Error
@@ -35,7 +35,7 @@ enum StateCase<F, E: Error> {
     case failed(F?, E)
 }
 
-//データベース
+// データベース
 struct DBStateStruct: StateProtocol {
     typealias Func = DBFunc
     typealias Err = DBError
@@ -50,7 +50,7 @@ enum DBFunc {
     case deleteUserAPI
 }
 
-//認証
+// 認証
 struct AuthStateStruct: StateProtocol {
     typealias Func = AuthFunc
     typealias Err = AuthError

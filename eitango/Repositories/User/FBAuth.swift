@@ -14,7 +14,9 @@ protocol AuthRepositoryProtocol {
 
 class AuthRepository: AuthRepositoryProtocol {
     
-    //NSErrorをAuthErrorに変換してthrowする
+    // MARK: - Private Helpers
+    
+    // NSErrorをAuthErrorに変換してthrowする
     func wrapAuthError<T>(_ body: () async throws -> T) async throws -> T {
         do {
             return try await body()
@@ -23,7 +25,9 @@ class AuthRepository: AuthRepositoryProtocol {
         }
     }
     
-    //新規登録
+    // MARK: - User Authentication / Account Operations
+    
+    // 新規登録
     func signUp(provider: AuthProvider) async throws -> String {
         switch provider {
         case .email(let email, let password):
@@ -33,8 +37,8 @@ class AuthRepository: AuthRepositoryProtocol {
             }
         }
     }
-    
-    //ログイン
+
+    // ログイン
     func login(provider: AuthProvider) async throws -> String {
         switch provider {
         case .email(let email, let password):
@@ -45,14 +49,14 @@ class AuthRepository: AuthRepositoryProtocol {
         }
     }
     
-    //ログアウト
+    // ログアウト
     func logout() async throws {
         try await wrapAuthError {
             try Auth.auth().signOut()
         }
     }
     
-    //削除
+    // 削除
     func delete() async throws {
         try await wrapAuthError {
             guard let user = Auth.auth().currentUser else {
@@ -61,5 +65,4 @@ class AuthRepository: AuthRepositoryProtocol {
             try await user.delete()
         }
     }
-    
 }

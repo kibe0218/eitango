@@ -1,6 +1,6 @@
 import SwiftUI
 
-//順番だけ保証
+// 順番だけ保証
 extension PlayViewModel {
     
     func Add(email: String, password: String, name: String) {

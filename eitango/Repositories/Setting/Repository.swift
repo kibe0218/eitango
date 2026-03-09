@@ -4,7 +4,7 @@ import SwiftUI
 
 protocol SettingRepositoryProtocol {
     func fetch() throws -> Setting
-    func save(setting: Setting) throws -> Setting
+    func save(setting: Setting) throws
 }
 
 class SettingRepository: SettingRepositoryProtocol {
@@ -16,13 +16,15 @@ class SettingRepository: SettingRepositoryProtocol {
         self.cdRepository = Setting_cdRepository
     }
     
-    //CoreDataから全て読み込み
+    // MARK: - Public CRUD Functions
+    
+    // CoreDataから全て読み込み
     func fetch() throws -> Setting {
         return try cdRepository.fetch()
     }
 
-    //CoreDataに全て保存
-    func save(setting: Setting) throws -> Setting {
-        _ = try cdRepository.save(setting: setting)
+    // CoreDataに全て保存
+    func save(setting: Setting) throws {
+        return try cdRepository.save(setting: setting)
     }
 }

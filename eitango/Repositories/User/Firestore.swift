@@ -8,14 +8,18 @@ protocol User_DataBaseRepositoryProtocol {
 
 final class User_DataBaseRepository: User_DataBaseRepositoryProtocol {
     
-    //URL定義
+    // MARK: - Private Helpers
+    
+    // URL定義
     private let session: UserSession
     let urlBuilder = URLBuilder()
     init(session: UserSession) {
         self.session = session
     }
     
-    //同期
+    // MARK: - Public CRUD Functions
+    
+    // 同期
     func fetch() async throws -> User {
         let url = try urlBuilder.makeURL(
             path: "users",
@@ -25,7 +29,7 @@ final class User_DataBaseRepository: User_DataBaseRepositoryProtocol {
         return try decoder.decode(User.self, from: data)
     }
     
-    //追加
+    // 追加
     func add(user: AddUserRequest) async throws -> User {
         let url = try urlBuilder.makeURL(path: "users")
         let body = try encoder.encode(user)
@@ -33,7 +37,7 @@ final class User_DataBaseRepository: User_DataBaseRepositoryProtocol {
         return try decoder.decode(User.self, from: data)
     }
     
-    //削除
+    // 削除
     func delete() async throws {
         let url = try urlBuilder.makeURL(
             path: "users",

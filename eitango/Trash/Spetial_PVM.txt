@@ -3,9 +3,9 @@ import CoreData
 
 extension PlayViewModel {
     
-    //==========
-    //最初の処理🈁
-    //==========
+    // ==========
+    // 最初の処理🈁
+    // ==========
     
     func reinit() {
         Task {
@@ -19,35 +19,35 @@ extension PlayViewModel {
         }
     }
     
-    //=====================
-    //coredataだけ消す💨
-    //=====================
+    // =====================
+    // coredataだけ消す💨
+    // =====================
     
     func backToDefaultCoreData() {
         let context = PersistenceController.shared.container.viewContext
         do {
-            // 👤 User 削除
+            //  👤 User 削除
             if let oldUser = self.fetchUserFromCoreData() {
                 context.delete(oldUser)
             }
-            // 📋 List 削除
+            //  📋 List 削除
             let oldLists = self.fetchListsFromCoreData()
             oldLists.forEach { context.delete($0) }
             
-            // 🃏 Card 全削除
+            //  🃏 Card 全削除
             let allCardsRequest: NSFetchRequest<CardEntity> = CardEntity.fetchRequest()
             let allCards = try context.fetch(allCardsRequest)
             allCards.forEach { context.delete($0) }
             
             
-            // ⚙️ 設定をデフォルトに
+            //  ⚙️ 設定をデフォルトに
             self.defaultSettings()
             
-            // 💾 一括保存
+            //  💾 一括保存
             try context.save()
             saveSettings()
             
-            // 🔍 確認ログ
+            //  🔍 確認ログ
             let request: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
             let allUsers = try context.fetch(request)
             print("🟡 backToDefaultCoreData 完了 / User残数 =", allUsers.count)
@@ -57,9 +57,9 @@ extension PlayViewModel {
         }
     }
     
-    //============
-    //全てを同期♻️♻️
-    //============
+    // ============
+    // 全てを同期♻️♻️
+    // ============
     
     func fetchAllToCoreData() async {
         await self.fetchLists(userId: self.User?.id ?? "")

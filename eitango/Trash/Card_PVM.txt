@@ -1,42 +1,42 @@
-//================================================
-// 🃏【Card_PVM / カード管理ロジック】
-//================================================
-//
-// 【役割】
-// ・🔥 Firestore …… 唯一の正（真実のデータ）
-// ・💾 CoreData …… キャッシュ／オフライン用コピー
-// ・🖥 UI ………… CoreData のみを監視して描画
-//
-// 【基本フロー】
-// ① API で Firestore を操作（追加・更新・削除）
-// ② 操作後は必ず fetchCards を呼ぶ
-// ③ fetchCards が Firestore → CoreData を完全同期
-// ④ UI は CoreData の変更を自動反映
-//
-// 【重要ルール】
-// ・⚠️ CoreData を直接操作しても最終的な正は Firestore
-// ・⚠️ fetchCards 内では CoreData を一度全削除して入れ直す
-// ・⚠️ 差分更新は行わず「ズレを残さない」ことを最優先
-//
-// 【設計意図】
-// ・CoreData は View のための読み取り専用キャッシュ
-// ・状態不整合を防ぐため「同期は一方向のみ」
-// ・fetchCards は「掃除＋再配置」を行う同期職人
-//
-// 【注意】
-// ❗ fetchCards の全削除は仕様
-// ❗ 最適化（差分更新）を入れる場合は設計を再検討すること
-//
-//================================================
+// ================================================
+//  🃏【Card_PVM / カード管理ロジック】
+// ================================================
+// 
+//  【役割】
+//  ・🔥 Firestore …… 唯一の正（真実のデータ）
+//  ・💾 CoreData …… キャッシュ／オフライン用コピー
+//  ・🖥 UI ………… CoreData のみを監視して描画
+// 
+//  【基本フロー】
+//  ① API で Firestore を操作（追加・更新・削除）
+//  ② 操作後は必ず fetchCards を呼ぶ
+//  ③ fetchCards が Firestore → CoreData を完全同期
+//  ④ UI は CoreData の変更を自動反映
+// 
+//  【重要ルール】
+//  ・⚠️ CoreData を直接操作しても最終的な正は Firestore
+//  ・⚠️ fetchCards 内では CoreData を一度全削除して入れ直す
+//  ・⚠️ 差分更新は行わず「ズレを残さない」ことを最優先
+// 
+//  【設計意図】
+//  ・CoreData は View のための読み取り専用キャッシュ
+//  ・状態不整合を防ぐため「同期は一方向のみ」
+//  ・fetchCards は「掃除＋再配置」を行う同期職人
+// 
+//  【注意】
+//  ❗ fetchCards の全削除は仕様
+//  ❗ 最適化（差分更新）を入れる場合は設計を再検討すること
+// 
+// ================================================
 
 import SwiftUI
 import CoreData
 
 extension PlayViewModel{
     
-    //========
-    //🔁同期🔁
-    //========
+    // ========
+    // 🔁同期🔁
+    // ========
     func fetchCards(listId: String) async {
         guard let url = URL(string: urlsession + "cards?userId=\(self.userid)&listId=\(listId)"
         ) else {
@@ -48,7 +48,7 @@ extension PlayViewModel{
             let decoder = JSONDecoder()
             decoder.dateDecodingStrategy = .iso8601
             let result = try decoder.decode([Card].self, from: data)
-            //JSONをCard型に変換
+            // JSONをCard型に変換
             let context = PersistenceController.shared.container.viewContext
             if let targetList = self.fetchListsFromCoreData()
                 .first(where: { $0.id == listId }) {
@@ -58,7 +58,7 @@ extension PlayViewModel{
                 }
                 let oldCards = self.fetchCardsFromCoreData(listid: listid)
                 oldCards.forEach { context.delete($0) }
-                // ② Firestore のカードを CoreData に保存
+                //  ② Firestore のカードを CoreData に保存
                 for c in result {
                     let entity = CardEntity(context: context)
                     entity.id = c.id
@@ -83,9 +83,9 @@ extension PlayViewModel{
         }
     }
     
-    //======================
-    //📩Coredataから読み込む📩
-    //======================
+    // ======================
+    // 📩Coredataから読み込む📩
+    // ======================
     
     func fetchCardsFromCoreData(listid: String) -> [CardEntity] {
         let context = PersistenceController.shared.container.viewContext
@@ -100,9 +100,9 @@ extension PlayViewModel{
         }
     }
     
-    //=======
-    //📝追加📝
-    //========
+    // =======
+    // 📝追加📝
+    // ========
     
     func addCardAPI(
         listId: String,
@@ -134,16 +134,16 @@ extension PlayViewModel{
 
         do {
             _ = try await URLSession.shared.data(for: request)
-            // 🔁 Firestore を正として CoreData を同期
+            //  🔁 Firestore を正として CoreData を同期
             await fetchCards(listId: listId)
         } catch {
             print("🟡 通信エラーっピ: \(error)")
         }
     }
     
-    //========
-    //🔁更新🔁
-    //========
+    // ========
+    // 🔁更新🔁
+    // ========
     
     func updateCardAPI(
         listId: String,
@@ -162,7 +162,7 @@ extension PlayViewModel{
         var request = URLRequest(url: url)
         request.httpMethod = "PUT"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        //Content-Typeでapplication/jsonを指定している
+        // Content-Typeでapplication/jsonを指定している
         let body: [String: Any] = [
             "id": cardId,
             "listid": listId,
@@ -180,15 +180,15 @@ extension PlayViewModel{
 
         do {
             _ = try await URLSession.shared.data(for: request)
-            // 🔁 更新後は一覧を再取得
+            //  🔁 更新後は一覧を再取得
             await fetchCards(listId: listId)
         } catch {
             print("通信エラーっピ: \(error)")
     }
     
-    //==========
-    //❌削除関数❌
-    //==========
+    // ==========
+    // ❌削除関数❌
+    // ==========
     
     func deleteCardAPI(
         userId: String,
@@ -207,7 +207,7 @@ extension PlayViewModel{
 
         do {
             _ = try await URLSession.shared.data(for: request)
-            // 🔁 削除後は Firestore を正として再取得
+            //  🔁 削除後は Firestore を正として再取得
             await fetchCards(listId: listId)
         } catch {
             print("通信エラーっピ: \(error)")

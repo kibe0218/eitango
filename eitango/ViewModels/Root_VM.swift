@@ -7,7 +7,7 @@ import CoreData
 final class RootViewModel: ObservableObject {
     
     @Published var keyboard = KeyboardObserver()
-    // フラグ系
+    //  フラグ系
     @Published var finish = false
     @Published var cancelFlag = false
     @Published var reverse = false
@@ -18,7 +18,7 @@ final class RootViewModel: ObservableObject {
     @Published var showToast: Bool = false
     @Published var showErrorAlert: Bool = false
     
-    //設定
+    // 設定
     @Published var setting: setting
     @Published var appState: AppState = .none
     
@@ -27,7 +27,7 @@ final class RootViewModel: ObservableObject {
     
     let settingRepository: SettingRepositoryProtocol
 
-    //初期処理
+    // 初期処理
     init (
         settingRepository: SettingRepositoryProtocol = SettingRepository()
     ) throws {

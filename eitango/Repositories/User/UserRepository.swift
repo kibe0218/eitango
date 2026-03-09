@@ -22,7 +22,9 @@ class UserRepository: UserRepositoryProtocol {
         self.cdRepository = user_cdRepository
     }
     
-    //追加
+    // MARK: - Account Operations
+
+    // 追加
     func signUp(email: String, password: String, name: String) async throws {
         do {
             let uid = try await authRepository.signUp(
@@ -37,14 +39,14 @@ class UserRepository: UserRepositoryProtocol {
         
     }
 
-    //ログイン
+    // ログイン
     func login(email: String, password: String) async throws {
         _ = try await authRepository.login(
             provider: .email(email: email, password: password)
         )
     }
     
-    //削除
+    // 削除
     func delete() async throws {
         try await dbRepository.delete()
         try cdRepository.delete()

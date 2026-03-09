@@ -10,7 +10,7 @@ protocol ListRepositoryProtocol {
 }
 
 class ListRepository: ListRepositoryProtocol {
-    
+        
     let dbRepository: List_DataBaseRepositoryProtocol
     let cdRepository: List_CoreDataRepositoryProtocol
     init (
@@ -21,18 +21,20 @@ class ListRepository: ListRepositoryProtocol {
         self.cdRepository = list_cdRepository
     }
     
-    //CoreDataから全て読み込み
+    // MARK: - Public CRUD Functions
+    
+    // CoreDataから全て読み込み
     func fetchAll() throws -> [List] {
         return try cdRepository.fetchAll()
     }
     
-    //DB基準で再読み込み
+    // DB基準で再読み込み
     func reload() async throws -> [List] {
         try cdRepository.saveAll(lists: try await dbRepository.fetch())
         return try cdRepository.fetchAll()
     }
 
-    //追加
+    // 追加
     func add(list: AddListRequest) async throws -> List {
         let list = try await dbRepository.add(list: list)
         guard !list.id.isEmpty else { throw AuthError.unknown }
@@ -40,7 +42,7 @@ class ListRepository: ListRepositoryProtocol {
         return list
     }
 
-    //削除
+    // 削除
     func delete(id: String) async throws {
         try await dbRepository.delete(id: id)
         try cdRepository.delete(id: id)

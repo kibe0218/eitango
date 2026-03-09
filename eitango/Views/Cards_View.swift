@@ -16,9 +16,9 @@ struct CardsView: View {
     @Binding var path: NavigationPath
     
     @State private var newWord: String = ""
-    //デフォルトはen->ja
+    // デフォルトはen->ja
     
-    // 🐙 新しい単語の送信入口
+    //  🐙 新しい単語の送信入口
     func submitNewWord(_ word: String) {
         ing += 1
         Task {
@@ -26,7 +26,7 @@ struct CardsView: View {
         }
     }
 
-    // 🌍 翻訳してカードを追加する非同期処理
+    //  🌍 翻訳してカードを追加する非同期処理
     func translateAndAddCard(_ word: String) async {
         guard let currentListId = vm.selectedListId else {
             print("🟡 listIdが無効のためカード追加できません")
@@ -89,7 +89,7 @@ struct CardsView: View {
                     }
                     .listStyle(PlainListStyle())
                     TextField("add a new card...", text: $newWord)
-                        .keyboardType(.asciiCapable)//英語キーボードを表示
+                        .keyboardType(.asciiCapable)// 英語キーボードを表示
                         .focused($isTextFieldFocused)
                         .padding(.all,40)
                         .onSubmit {

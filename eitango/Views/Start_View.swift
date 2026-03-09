@@ -38,7 +38,7 @@ struct StartView: View {
         case pass
     }
     
-    //ユーザーネームをチェック
+    // ユーザーネームをチェック
     private func isValidUsername(_ name: String) -> String? {
         let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty,
@@ -48,18 +48,18 @@ struct StartView: View {
         }
         for ch in trimmed {
             if ch.isEmoji {
-                continue // 絵文字OK
+                continue //  絵文字OK
             }
             if ch.isLetter || ch.isNumber {
-                continue // 漢字・ひらがな・英数字OK
+                continue //  漢字・ひらがな・英数字OK
             }
-            return nil // 記号だけNG
+            return nil //  記号だけNG
         }
         
         return trimmed
     }
     
-    //メアドをチェック
+    // メアドをチェック
     private func isValidEmail(_ email: String) -> String? {
         let trimmed = email.trimmingCharacters(in: .whitespacesAndNewlines)
         
@@ -74,7 +74,7 @@ struct StartView: View {
         return trimmed
     }
     
-    //パスワードをチェック
+    // パスワードをチェック
     private func isValidPassword(_ password: String) -> String? {
         let trimmed = password.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty,
@@ -86,7 +86,7 @@ struct StartView: View {
         return trimmed
     }
     
-    //最終判定
+    // 最終判定
     private func validateInputs() -> Bool {
         var valid = true
         
@@ -119,9 +119,9 @@ struct StartView: View {
         return valid
     }
     
-    //吹き出し💬
+    // 吹き出し💬
     struct Triangle: Shape {
-        func path(in rect: CGRect) -> Path {//rectは描画可能領域
+        func path(in rect: CGRect) -> Path {// rectは描画可能領域
             var path = Path()
             path.move(to: CGPoint(x: rect.minX, y: rect.midY))
             path.addLine(to: CGPoint(x: rect.maxX, y: rect.minY))
@@ -159,9 +159,9 @@ struct StartView: View {
         }
     }
     
-    //=========
-    //body部分📱
-    //=========
+    // =========
+    // body部分📱
+    // =========
     
     var body: some View {
         GeometryReader { geo in

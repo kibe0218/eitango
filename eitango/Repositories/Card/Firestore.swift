@@ -10,14 +10,19 @@ protocol Card_DataBaseRepositoryProtocol {
 
 final class Card_DataBaseRepository: Card_DataBaseRepositoryProtocol {
     
-    //URL定義
+    
+    // MARK: - Private Helpers
+
+    // URL定義
     private let session: UserSession
     let urlBuilder = URLBuilder()
     init(session: UserSession) {
         self.session = session
     }
     
-    //全てを取得
+    // MARK: - Public CRUD Functions
+    
+    // 全てを取得
     func fetchAll() async throws -> [Card] {
         let url = try urlBuilder.makeURL(
             path: "cards",
@@ -28,7 +33,7 @@ final class Card_DataBaseRepository: Card_DataBaseRepositoryProtocol {
         let data = try await sendRequest(url: url, method: "GET")
         return try decoder.decode([Card].self, from: data)
     }
-    //同期
+    // 同期
     func fetchAllBy(listId: String) async throws -> [Card] {
         let url = try urlBuilder.makeURL(
             path: "cards",
@@ -41,7 +46,7 @@ final class Card_DataBaseRepository: Card_DataBaseRepositoryProtocol {
         return try decoder.decode([Card].self, from: data)
     }
     
-    //追加
+    // 追加
     func add(listId: String, card: AddCardRequest) async throws -> Card{
         let url = try urlBuilder.makeURL(
             path: "cards",
@@ -55,7 +60,7 @@ final class Card_DataBaseRepository: Card_DataBaseRepositoryProtocol {
         return try decoder.decode(Card.self, from: data)
     }
     
-    //更新
+    // 更新
     func update(listId: String, card: UpdateCardRequest) async throws -> Card {
         let url = try urlBuilder.makeURL(
             path: "cards",
@@ -70,7 +75,7 @@ final class Card_DataBaseRepository: Card_DataBaseRepositoryProtocol {
         return try decoder.decode(Card.self, from: data)
     }
     
-    //削除
+    // 削除
     func delete(listId: String, id: String) async throws {
         let url = try urlBuilder.makeURL(
             path: "cards",

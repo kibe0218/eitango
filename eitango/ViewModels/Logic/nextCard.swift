@@ -2,7 +2,7 @@ import Foundation
 
 class SessionEngine {
     
-    //order基準
+    // order基準
     private func nextOrderCard(
         flippedCard: Card,
         cards: [Card],
@@ -18,7 +18,7 @@ class SessionEngine {
         return best
     }
     
-    //index基準
+    // index基準
     private func nextIndexCard(
         flippedCard: Card,
         cards: [Card]
@@ -30,9 +30,9 @@ class SessionEngine {
         return cards[nextIndex]
     }
     
-    //ループ処理
+    // ループ処理
     private func loopingCard(
-        mode: SessionMode,
+        mode: PlayMode,
         cards: [Card],
     ) -> Card? {
         switch mode {
@@ -43,7 +43,7 @@ class SessionEngine {
         }
     }
     
-    //間違えたカード処理
+    // 間違えたカード処理
     private func nextMistakeCard (
         flippedCard: Card,
         mistakeCards: [Card]
@@ -51,12 +51,12 @@ class SessionEngine {
         nextOrderCard(flippedCard: flippedCard, cards: mistakeCards)
     }
     
-    //次のカード
+    // 次のカード
     func nextCard(
         cards: [Card],
         mistakeCards: [Card],
         looping: Bool,
-        mode: SessionMode,
+        mode: PlayMode,
         flippedCard: Card,
     ) -> Card? {
         let next: Card?

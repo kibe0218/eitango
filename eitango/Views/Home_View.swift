@@ -37,13 +37,13 @@ struct HomeView: View {
                             Text("User")
                         }
                         .tag(2)
-//                    DogView()
-//                        .environmentObject(vm)
-//                        .tabItem {
-//                            Image(systemName: "dog")
-//                            Text("Dog")
-//                        }
-//                        .tag(2)
+//                     DogView()
+//                         .environmentObject(vm)
+//                         .tabItem {
+//                             Image(systemName: "dog")
+//                             Text("Dog")
+//                         }
+//                         .tag(2)
                 }
                 .accentColor(vm.customaccentColor)
                 .onChange(of: selection) {vm.updateView()}

@@ -9,7 +9,7 @@ class LearningSessionEngine: ObservableObject {
             self.isFlipped[i] = true
         }
         Task {
-            let sleepInterval: UInt64 = 50_000_000 // 0.05 second
+            let sleepInterval: UInt64 = 50_000_000 //  0.05 second
             var waited: UInt64 = 0
             let totalWait: UInt64 = UInt64(1_000_000_000 * UInt64(self.setting?.waitTime))
             while waited < totalWait && !self.cancelFlag {
@@ -26,7 +26,7 @@ class LearningSessionEngine: ObservableObject {
                 
             } else if !mistakecardlist.isEmpty {
                 let index = Int.random(in: 0..<mistakecardlist.count)
-                //ランダムにindexを取得
+                // ランダムにindexを取得
                 let randomCard = mistakecardlist[index]
                 mistakecardlist.remove(at: index)
                 Enlist[i] = randomCard.en

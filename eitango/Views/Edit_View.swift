@@ -7,7 +7,7 @@ struct EditView: View {
     
     @State private var showAlert = false
     @State private var title: String = ""
-    @State private var navigateToCardList = false//画面遷移を監視
+    @State private var navigateToCardList = false// 画面遷移を監視
     
     @State private var CardListTitle: String = ""
     @State private var path = NavigationPath()
@@ -48,7 +48,7 @@ struct EditView: View {
                                 }
                             }
                             .disabled(title.trimmingCharacters(in: .whitespaces).isEmpty)
-                            //isEmptyでから文字列をtrueにしてしまう->disabledでボタンを無効化
+                            // isEmptyでから文字列をtrueにしてしまう->disabledでボタンを無効化
                         }
                     }
                     .padding(.horizontal, 30)
@@ -93,8 +93,8 @@ struct EditView: View {
                                 }
                             }
                         }
-                        //indicesは削除される要素の位置を示している
-                        //atOffsetsで削除＆再描画
+                        // indicesは削除される要素の位置を示している
+                        // atOffsetsで削除＆再描画
                     }
                     .listStyle(PlainListStyle())
                 }

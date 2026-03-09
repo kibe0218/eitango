@@ -21,8 +21,8 @@ extension PlayViewModel {
         case deletingUser
     }
 
-    //state変わったら呼び出される
-    //現在の Flow と State から、次の AppState を決める
+    // state変わったら呼び出される
+    // 現在の Flow と State から、次の AppState を決める
     func updateAppState() {
         if case .failed(_, let err) = userState {
             if case .error = appState {

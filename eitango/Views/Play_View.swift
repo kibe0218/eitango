@@ -52,9 +52,9 @@ struct PlayView: View {
                 withAnimation {
                     vm.showToast = true
                 }
-                // 2秒後に非表示＋vm側をリセット
+                //  2秒後に非表示＋vm側をリセット
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                    //メイン処理
+                    // メイン処理
                     withAnimation {
                         vm.showToast = false
                         vm.showNotification = false

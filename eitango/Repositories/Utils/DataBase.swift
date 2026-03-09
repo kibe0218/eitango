@@ -1,20 +1,20 @@
 import Foundation
 
-//デコード(Json->Swift)
+// デコード(Json->Swift)
 let decoder: JSONDecoder = {
     let decoder = JSONDecoder()
     decoder.dateDecodingStrategy = .iso8601
     return decoder
 }()
 
-//エンコード(Swift->Json)
+// エンコード(Swift->Json)
 let encoder: JSONEncoder = {
     let encoder = JSONEncoder()
     encoder.dateEncodingStrategy = .iso8601
     return encoder
 }()
 
-//リクエスト送信
+// リクエスト送信
 func sendRequest(
     url: URL,
     method: String,
@@ -41,9 +41,9 @@ func sendRequest(
     }
 }
 
-//URL作成
+// URL作成
 struct URLBuilder {
-    private let baseURL = "http://172.20.10.4:8080/"
+    private let baseURL = "http:// 172.20.10.4:8080/"
     func makeURL(
         path: String,
         queryItems: [URLQueryItem]? = nil

@@ -2,13 +2,13 @@ import Foundation
 
 extension RootViewModel {
     
-    //Authが成功かどうか
+    // Authが成功かどうか
     var isAuthCompleted: Bool {
         if case .success = authState { return true }
         return false
     }
     
-    //どっちも成功かどうか
+    // どっちも成功かどうか
     var isAllCompleted: Bool {
         if case .success = authState,
            case .success = dbState {
