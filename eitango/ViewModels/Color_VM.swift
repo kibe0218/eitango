@@ -11,6 +11,5 @@ class ColorViewModel {
         state.currentTheme = theme
         state.palette = theme.palette(for: colorScheme)
     }
-    
    
 }

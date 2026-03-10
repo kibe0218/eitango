@@ -2,40 +2,66 @@ import SwiftUI
 import Combine
 import CoreData
 
-
-
 final class RootViewModel: ObservableObject {
     
-    @Published var keyboard = KeyboardObserver()
-    //  フラグ系
-    @Published var finish = false
-    @Published var cancelFlag = false
-    @Published var reverse = false
-    @Published var shuffleFlag: Bool = false
-    @Published var noshuffleFlag: Bool = false
-    @Published var repeatFlag: Bool = false
-    @Published var showNotification: Bool = false
-    @Published var showToast: Bool = false
-    @Published var showErrorAlert: Bool = false
-    
-    // 設定
-    @Published var setting: setting
-    @Published var appState: AppState = .none
-    
-    @Published var currentFlow: AppFlow = .none
-    fileprivate var previousStableState : AppState = .loggedOut
-    
-    let settingRepository: SettingRepositoryProtocol
+    // App-wide UI state (View は基本これだけを見る)
+    @Published var uiState: RootUIState
 
-    // 初期処理
-    init (
-        settingRepository: SettingRepositoryProtocol = SettingRepository()
-    ) throws {
-        self.settingRepository = settingRepository
-        
-        self.setting = try settingRepository.fetch()
-        self.User = try user_cdRepository.fetch()
-        self.Lists = try list_cdRepository.fetch()
-        ColorSetting()
+    // App-wide sessions (View は直接見ない前提 / Actions が参照)
+    let userSession: UserSession
+    let listSession: ListSession
+    let settingSession: SettingSession
+    let cardSession: CardSession
+
+    // App-wide helpers
+    @Published var keyboard = KeyboardObserver()
+
+    // Actions / Feature ViewModels (UIState を更新する側)
+    let playActions: ActionViewModel
+    let userActions: UserViewModel
+    let listActions: ListViewModel
+
+    init(
+        uiState: RootUIState = RootUIState(),
+        userSession: UserSession = UserSession(),
+        listSession: ListSession = ListSession(),
+        settingSession: SettingSession = SettingSession(),
+        cardSession: CardSession = CardSession(),
+        playEngine: SessionEngine = SessionEngine()
+    ) {
+        self.uiState = uiState
+        self.userSession = userSession
+        self.listSession = listSession
+        self.settingSession = settingSession
+        self.cardSession = cardSession
+
+        // Play actions
+        self.playActions = ActionViewModel(
+            cardSession: cardSession,
+            uiState: uiState.playUIState,
+            engine: playEngine
+        )
+
+        // Auth / User actions
+        let authRepository = AuthRepository()
+        let userDbRepository = User_DataBaseRepository(session: userSession)
+        let userCdRepository = User_CoreDataRepository()
+        let userRepository: UserRepositoryProtocol =
+            (try? UserRepository(
+                authRepository: authRepository,
+                user_dbRepository: userDbRepository,
+                user_cdRepository: userCdRepository
+            )) ?? UnavailableUserRepository()
+        self.authActions = UserViewModel(userRepository: userRepository)
+
+        // List actions
+        let listDbRepository = List_DataBaseRepository(session: userSession)
+        let listCdRepository = List_CoreDataRepository()
+        let listRepository: ListRepositoryProtocol =
+            (try? ListRepository(
+                list_dbRepository: listDbRepository,
+                list_cdRepository: listCdRepository
+            )) ?? UnavailableListRepository()
+        self.listActions = ListViewModel(listRepository: listRepository)
     }
 }

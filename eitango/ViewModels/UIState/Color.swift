@@ -2,7 +2,7 @@ import Foundation
 import Combine
 import SwiftUI
 
-final class ColorState: ObservableObject {
+final class ColorUIState: ObservableObject {
     @Published var currentTheme: ColorTheme = .normal
     @Published var palette: Color_ST
     init(theme: ColorTheme = .normal, colorScheme: ColorScheme = .light) {
