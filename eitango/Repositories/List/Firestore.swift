@@ -1,9 +1,9 @@
 import Foundation
 
 protocol List_DataBaseRepositoryProtocol {
-    func fetch() async throws -> [List]
-    func add(list: AddListRequest) async throws -> List
-    func delete(id: String) async throws
+    func fetchAll(userId: String) async throws -> [List]
+    func add(userId: String, list: AddListRequest) async throws -> List
+    func delete(userId: String, id: String) async throws
 }
 
 final class List_DataBaseRepository: List_DataBaseRepositoryProtocol {
@@ -11,29 +11,25 @@ final class List_DataBaseRepository: List_DataBaseRepositoryProtocol {
     // MARK: - Private Helpers
     
     // URL定義
-    private let session: UserSession
     let urlBuilder = URLBuilder()
-    init(session: UserSession) {
-        self.session = session
-    }
     
     // MARK: - Public CRUD Functions
     
     // 同期
-    func fetch() async throws -> [List] {
+    func fetchAll(userId: String) async throws -> [List] {
         let url = try urlBuilder.makeURL(
             path: "lists",
-            queryItems: [URLQueryItem(name: "userId", value: session.userId)]
+            queryItems: [URLQueryItem(name: "userId", value: userId)]
         )
         let data = try await sendRequest(url: url, method: "GET")
         return try decoder.decode([List].self, from: data)
     }
     
     // 追加
-    func add(list: AddListRequest) async throws -> List {
+    func add(userId: String, list: AddListRequest) async throws -> List {
         let url = try urlBuilder.makeURL(
             path: "lists",
-            queryItems: [URLQueryItem(name: "userId", value: session.userId)]
+            queryItems: [URLQueryItem(name: "userId", value: userId)]
         )
         let body = try encoder.encode(list)
         let data = try await sendRequest(url: url, method: "POST", body: body)
@@ -41,11 +37,11 @@ final class List_DataBaseRepository: List_DataBaseRepositoryProtocol {
     }
     
     // 削除
-    func delete(id: String) async throws {
+    func delete(userId: String, id: String) async throws {
         let url = try urlBuilder.makeURL(
             path: "users",
             queryItems: [
-                URLQueryItem(name: "userId", value: session.userId),
+                URLQueryItem(name: "userId", value: userId),
                 URLQueryItem(name: "listId", value: id)
             ]
         )

@@ -3,25 +3,35 @@ import Combine
 
 class ListViewModel: ObservableObject {
     
-    private let listRepository: ListRepositoryProtocol
-    
-    init(listRepository: ListRepositoryProtocol) {
-        self.listRepository = listRepository
+    private let repository: ListRepositoryProtocol
+    private let session: ListSession
+    private let userSession: UserSession
+
+    init(
+        repository: ListRepositoryProtocol,
+        session: ListSession,
+        userSession: UserSession
+    ) {
+        self.repository = repository
+        self.session = session
+        self.userSession = userSession
     }
     
-    func fetchAll() async throws -> [List] {
-        return try await listRepository.fetchAll()
+    func fetchAll() async throws {
+        session.lists = try await repository.fetchAll()
     }
     
-    func reload() async throws -> [List] {
-        return try await listRepository.reload()
+    func reload() async throws {
+        session.lists = try await repository.reload(userId: userSession.userId())
     }
     
-    func add(list: AddListRequest) async throws -> List {
-        return try await listRepository.add(list: list)
+    func add(list: AddListRequest) async throws {
+        let newList = try await repository.add(userId: userSession.userId(), list: list)
+        session.lists.append(newList)
     }
     
     func delete(id: String) async throws {
-        try await listRepository.delete(id: id)
+        try await repository.delete(userId: userSession.userId(), id: id)
+        session.lists.removeAll { $0.id == id }
     }
 }

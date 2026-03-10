@@ -1,9 +1,9 @@
 import Foundation
 
 protocol User_DataBaseRepositoryProtocol {
-    func fetch() async throws -> User
+    func fetch(id: String) async throws -> User
     func add(user: AddUserRequest) async throws -> User
-    func delete() async throws
+    func delete(id: String) async throws
 }
 
 final class User_DataBaseRepository: User_DataBaseRepositoryProtocol {
@@ -11,19 +11,15 @@ final class User_DataBaseRepository: User_DataBaseRepositoryProtocol {
     // MARK: - Private Helpers
     
     // URL定義
-    private let session: UserSession
     let urlBuilder = URLBuilder()
-    init(session: UserSession) {
-        self.session = session
-    }
     
     // MARK: - Public CRUD Functions
     
     // 同期
-    func fetch() async throws -> User {
+    func fetch(id: String) async throws -> User {
         let url = try urlBuilder.makeURL(
             path: "users",
-            queryItems: [URLQueryItem(name: "userId", value: session.userId)]
+            queryItems: [URLQueryItem(name: "userId", value: id)]
         )
         let data = try await sendRequest(url: url, method: "GET")
         return try decoder.decode(User.self, from: data)
@@ -38,10 +34,10 @@ final class User_DataBaseRepository: User_DataBaseRepositoryProtocol {
     }
     
     // 削除
-    func delete() async throws {
+    func delete(id: String) async throws {
         let url = try urlBuilder.makeURL(
             path: "users",
-            queryItems: [URLQueryItem(name: "userId", value: session.userId)]
+            queryItems: [URLQueryItem(name: "userId", value: id)]
         )
         _ = try await sendRequest(url: url, method: "DELETE")
     }

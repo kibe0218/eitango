@@ -5,7 +5,7 @@ import CoreData
 final class RootViewModel: ObservableObject {
     
     // App-wide UI state (View は基本これだけを見る)
-    @Published var uiState: RootUIState
+    @Published var uiState: PlayUIState
 
     // App-wide sessions (View は直接見ない前提 / Actions が参照)
     let userSession: UserSession
@@ -17,7 +17,7 @@ final class RootViewModel: ObservableObject {
     @Published var keyboard = KeyboardObserver()
 
     // Actions / Feature ViewModels (UIState を更新する側)
-    let playActions: ActionViewModel
+    let playActions: PlayViewModel
     let userActions: UserViewModel
     let listActions: ListViewModel
 

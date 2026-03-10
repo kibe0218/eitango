@@ -4,14 +4,13 @@ import Combine
 protocol CardRepositoryProtocol {
     func fetchAll() throws -> [Card]
     func fetchAllBy(listId: String) throws -> [Card]
-    func reload() async throws -> [Card]
-    func add(listId: String, card: AddCardRequest) async throws -> Card
-    func update(listId: String, card: UpdateCardRequest) async throws -> Card
-    func delete(listId: String, id: String) async throws
+    func reload(userId: String) async throws -> [Card]
+    func add(userId: String, listId: String, card: AddCardRequest) async throws -> Card
+    func update(userId: String, listId: String, card: UpdateCardRequest) async throws -> Card
+    func delete(userId: String, listId: String, id: String) async throws
 }
 
-class C
-ardRepository: CardRepositoryProtocol {
+class CardRepository: CardRepositoryProtocol {
     
     let dbRepository: Card_DataBaseRepositoryProtocol
     let cdRepository: Card_CoreDataRepositoryProtocol
@@ -37,30 +36,30 @@ ardRepository: CardRepositoryProtocol {
     }
     
     // DB基準で再読み込み
-    func reload() async throws -> [Card] {
-        let cards = try await dbRepository.fetchAll()
+    func reload(userId: String) async throws -> [Card] {
+        let cards = try await dbRepository.fetchAll(userId: userId)
         try cdRepository.saveAll(cards: cards)
         return cards
     }
     
     // 追加
-    func add(listId: String, card: AddCardRequest) async throws -> Card {
-        let card = try await dbRepository.add(listId: listId, card: card)
+    func add(userId: String, listId: String, card: AddCardRequest) async throws -> Card {
+        let card = try await dbRepository.add(userId: userId, listId: listId, card: card)
         guard !card.id.isEmpty else { throw AuthError.unknown }
         _ = try cdRepository.add(card: card)
         return card
     }
     
     // 更新
-    func update(listId: String, card: UpdateCardRequest) async throws -> Card {
-        let card  = try await dbRepository.update(listId: listId, card: card)
+    func update(userId: String, listId: String, card: UpdateCardRequest) async throws -> Card {
+        let card  = try await dbRepository.update(userId: userId, listId: listId, card: card)
         try cdRepository.update(card: card)
         return card
     }
     
     // 削除
-    func delete(listId: String, id: String) async throws {
-        try await dbRepository.delete(listId: listId, id: id)
+    func delete(userId: String, listId: String, id: String) async throws {
+        try await dbRepository.delete(userId: userId, listId: listId, id: id)
         try cdRepository.delete(id: id)
     }
 }

@@ -10,7 +10,7 @@ protocol AuthRepositoryProtocol {
     func login(provider: AuthProvider) async throws -> String
     func logout() async throws
     func delete() async throws
-    func currentUser() async throws -> User?
+    func currentUser() async throws -> String?
 }
 
 class AuthRepository: AuthRepositoryProtocol {
@@ -51,9 +51,9 @@ class AuthRepository: AuthRepositoryProtocol {
     }
 
     // 現在のユーザー
-    func currentUser() async throws -> User? {
+    func currentUser() async throws -> String? {
         try await wrapAuthError {
-            return Auth.auth().currentUser
+            return Auth.auth().currentUser?.uid
         }
     }
 

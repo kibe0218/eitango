@@ -3,21 +3,32 @@ import Combine
 
 class UserViewModel: ObservableObject {
     
-    private let userRepository: UserRepositoryProtocol
+    private let repository: UserRepositoryProtocol
+    private let session: UserSession
     
-    init(userRepository: UserRepositoryProtocol) {
-        self.userRepository = userRepository
+    init(
+        repository: UserRepositoryProtocol,
+        session: UserSession
+    ) {
+        self.repository = repository
+        self.session = session
     }
     
     func signUp(email: String, password: String, name: String) async throws {
-        try await userRepository.signUp(email: email, password: password, name: name)
+        session.user = try await repository.signUp(email: email, password: password, name: name)
     }
     
     func login(email: String, password: String) async throws {
-        try await userRepository.login(email: email, password: password)
+        session.user = try await repository.login(email: email, password: password)
+    }
+    
+    func logout() async throws {
+        try await repository.logout()
+        session.user = nil
     }
     
     func delete() async throws {
-        try await userRepository.delete()
+        try await repository.delete(id: session.userId())
+        session.user = nil
     }
 }

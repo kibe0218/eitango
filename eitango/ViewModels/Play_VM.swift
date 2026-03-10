@@ -31,7 +31,7 @@ class PlayViewModel {
             uiState.play.selectedListId = listSession.lists.first?.id
             print("🟡 selectedListId無効だったので初期化:")
         }
-        uiRepository.save(uiState: uiState)
+        try uiRepository.save(play: uiState.play)
     }
     
     // カードを翻す
