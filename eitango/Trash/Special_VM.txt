@@ -56,19 +56,4 @@ extension PlayViewModel {
             print("🟡 [backToDefaultCoreData] CoreData error:", error.localizedDescription)
         }
     }
-    
-    // ============
-    // 全てを同期♻️♻️
-    // ============
-    
-    func fetchAllToCoreData() async {
-        await self.fetchLists(userId: self.User?.id ?? "")
-        print("🟡 初回同期開始: list数 = \(self.Lists.count)")
-
-        for list in self.Lists {
-            guard let listId = list.id else { continue }
-            print("🟡 初回同期 fetchCards 実行: listId = \(listId)")
-            await self.fetchCards(listId: listId)
-        }
-    }
 }
