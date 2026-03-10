@@ -2,8 +2,8 @@ import SwiftUI
 import Combine
 
 class ColorViewModel {
-    let state: ColorState
-    init(state: ColorState) {
+    let state: ColorUIState
+    init(state: ColorUIState) {
         self.state = state
     }
     

@@ -26,6 +26,7 @@
 				Trash/Flow.txt,
 				Trash/List_PVM.txt,
 				Trash/Settings_PVM.txt,
+				Trash/Special_VM.txt,
 				Trash/User_DB.txt,
 			);
 			target = 1821FF672E98E2100021BAF9 /* memoRise */;
@@ -43,6 +44,7 @@
 				Trash/Flow.txt,
 				Trash/List_PVM.txt,
 				Trash/Settings_PVM.txt,
+				Trash/Special_VM.txt,
 				Trash/User_DB.txt,
 			);
 		};

@@ -12,9 +12,9 @@ class PlayViewModel {
     init(
         cardSession: CardSession,
         uiState: PlayUIState,
-        engine: SessionEngine = SessionEngine(),
         listSession: ListSession,
         uiRepository: PlayRepositoryProtocol,
+        engine: SessionEngine = SessionEngine()
     ) {
         self.cardSession = cardSession
         self.uiState = uiState
@@ -25,12 +25,6 @@ class PlayViewModel {
 
     func updateView() async throws {
         uiState.reset()
-        guard listSession.lists.contains(where: {
-            $0.id == uiState.play.selectedListId
-        }) else {
-            uiState.play.selectedListId = listSession.lists.first?.id
-            print("🟡 selectedListId無効だったので初期化:")
-        }
         try uiRepository.save(play: uiState.play)
     }
     
@@ -42,7 +36,7 @@ class PlayViewModel {
         flippedCard: Card,
     ) {
         uiState.play.screenSlots[slotIndex].isFlipped = true
-        Task {
+        Task { @MainActor in
             do { try await DelayController.wait(seconds: Double(waitTime))} catch {return}
             let nextcard = engine.nextCard(
                 cards: cardSession.cards,

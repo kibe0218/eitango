@@ -5,7 +5,12 @@ import CoreData
 final class RootViewModel: ObservableObject {
     
     // App-wide UI state (View は基本これだけを見る)
-    @Published var uiState: PlayUIState
+    @Published var playUIState: PlayUIState
+    @Published var colorUIState: ColorUIState
+    
+    
+    // App-wide helpers
+    @Published var keyboard = KeyboardObserver()
 
     // App-wide sessions (View は直接見ない前提 / Actions が参照)
     let userSession: UserSession
@@ -13,55 +18,64 @@ final class RootViewModel: ObservableObject {
     let settingSession: SettingSession
     let cardSession: CardSession
 
-    // App-wide helpers
-    @Published var keyboard = KeyboardObserver()
-
     // Actions / Feature ViewModels (UIState を更新する側)
     let playActions: PlayViewModel
     let userActions: UserViewModel
     let listActions: ListViewModel
-
+    let cardActions: CardViewModel
+    let colorActions: ColorViewModel
+    
     init(
-        uiState: RootUIState = RootUIState(),
-        userSession: UserSession = UserSession(),
-        listSession: ListSession = ListSession(),
-        settingSession: SettingSession = SettingSession(),
-        cardSession: CardSession = CardSession(),
-        playEngine: SessionEngine = SessionEngine()
+        userSession: UserSession,
+        listSession: ListSession,
+        settingSession: SettingSession,
+        cardSession: CardSession,
+        userRepository: UserRepositoryProtocol,
+        listRepository: ListRepositoryProtocol,
+        cardRepository: CardRepositoryProtocol,
+        playRepository: PlayRepositoryProtocol
     ) {
-        self.uiState = uiState
+
+        // Sessions
         self.userSession = userSession
         self.listSession = listSession
         self.settingSession = settingSession
         self.cardSession = cardSession
 
-        // Play actions
-        self.playActions = ActionViewModel(
+        // UI State
+        let playUIState = PlayUIState()
+        let colorUIState = ColorUIState()
+
+        self.playUIState = playUIState
+        self.colorUIState = colorUIState
+
+        // Actions
+        self.playActions = PlayViewModel(
             cardSession: cardSession,
-            uiState: uiState.playUIState,
-            engine: playEngine
+            uiState: playUIState,
+            listSession: listSession,
+            uiRepository: playRepository
         )
 
-        // Auth / User actions
-        let authRepository = AuthRepository()
-        let userDbRepository = User_DataBaseRepository(session: userSession)
-        let userCdRepository = User_CoreDataRepository()
-        let userRepository: UserRepositoryProtocol =
-            (try? UserRepository(
-                authRepository: authRepository,
-                user_dbRepository: userDbRepository,
-                user_cdRepository: userCdRepository
-            )) ?? UnavailableUserRepository()
-        self.authActions = UserViewModel(userRepository: userRepository)
+        self.userActions = UserViewModel(
+            repository: userRepository,
+            session: userSession
+        )
 
-        // List actions
-        let listDbRepository = List_DataBaseRepository(session: userSession)
-        let listCdRepository = List_CoreDataRepository()
-        let listRepository: ListRepositoryProtocol =
-            (try? ListRepository(
-                list_dbRepository: listDbRepository,
-                list_cdRepository: listCdRepository
-            )) ?? UnavailableListRepository()
-        self.listActions = ListViewModel(listRepository: listRepository)
+        self.listActions = ListViewModel(
+            repository: listRepository,
+            session: listSession,
+            userSession: userSession
+        )
+
+        self.cardActions = CardViewModel(
+            repository: cardRepository,
+            session: cardSession,
+            userSession: userSession
+        )
+
+        self.colorActions = ColorViewModel(
+            state: colorUIState
+        )
     }
 }
