@@ -2,7 +2,7 @@ import SwiftUI
 // import PhotosUI
 
 struct UserView: View {
-    @EnvironmentObject var vm: PlayViewModel
+    @EnvironmentObject var vm: RootViewModel
     @Environment(\.colorScheme) var colorScheme
     
     @State private var geo_height: CGFloat = 0

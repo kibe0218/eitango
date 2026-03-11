@@ -17,7 +17,7 @@ class CardRepository: CardRepositoryProtocol {
     init (
         card_dbRepository: Card_DataBaseRepositoryProtocol,
         card_cdRepository: Card_CoreDataRepositoryProtocol,
-    ) throws {
+    ) {
         self.dbRepository = card_dbRepository
         self.cdRepository = card_cdRepository
     }

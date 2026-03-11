@@ -2,7 +2,7 @@ import SwiftUI
 
 struct PlayView: View {
     @Environment(\.colorScheme) var colorScheme
-    @EnvironmentObject var vm: PlayViewModel
+    @EnvironmentObject var vm: RootViewModel
     
     @State var title: String = ""
 
@@ -21,7 +21,7 @@ struct PlayView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                 VStack {
                     Spacer()
-                    if vm.showToast {
+                    if showToast {
                         VStack {
                             Text("追加しました👍")
                                 .frame(width: 200,height: 25)
@@ -40,34 +40,19 @@ struct PlayView: View {
             
             }
         }
-        .onAppear{
-            vm.colorS = colorScheme
+        .onAppear{vm.playActions.updateView()}
+        .onChange(of: vm.playUIState.play.selectedListId) { _ in
+            vm.playActions.updateView()
         }
-        .onChange(of: vm.selectedListId) {
-            vm.updateView()
+        .onChange(of: vm.playUIState.play.reverse) { _ in
+            vm.playActions.updateView()
         }
-        .onChange(of: vm.reverse) {vm.updateView()}
-        .onChange(of: vm.showNotification) {
-            if vm.showNotification {
-                withAnimation {
-                    vm.showToast = true
-                }
-                //  2秒後に非表示＋vm側をリセット
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                    // メイン処理
-                    withAnimation {
-                        vm.showToast = false
-                        vm.showNotification = false
-                    }
-                }
-            }
-        }
-        .background(vm.backColor.ignoresSafeArea())
+        .background(vm.colorUIState.palette.backColor.ignoresSafeArea())
     }
 }
 
 struct PlayHeaderView: View {
-    @EnvironmentObject var vm: PlayViewModel
+    @EnvironmentObject var vm: RootViewModel
 
     var body: some View {
         ZStack {

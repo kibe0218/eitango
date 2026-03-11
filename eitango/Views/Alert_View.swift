@@ -4,8 +4,6 @@ struct ErrorAlertView: View {
     @EnvironmentObject var vm: RootViewModel
     @Environment(\.colorScheme) var scheme
     
-    var palette: Color_ST { vm.setting.colortheme.palette(for: scheme) }
-
     var body: some View {
         if vm.showErrorAlert {
             GeometryReader() { geo in

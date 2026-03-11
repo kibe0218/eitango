@@ -12,7 +12,7 @@ class SettingRepository: SettingRepositoryProtocol {
     let cdRepository: Setting_CoreDataRepositoryProtocol
     init (
         Setting_cdRepository: Setting_CoreDataRepositoryProtocol,
-    ) throws {
+    ) {
         self.cdRepository = Setting_cdRepository
     }
     

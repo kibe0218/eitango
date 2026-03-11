@@ -9,7 +9,7 @@ extension Character {
 }
 
 struct StartView: View {
-    @EnvironmentObject var vm: PlayViewModel
+    @EnvironmentObject var vm: RootViewModel
     @Environment(\.colorScheme) var colorScheme
     @StateObject var keyboard = KeyboardObserver()
     

@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct EditView: View {
-    @EnvironmentObject var vm: PlayViewModel
+    @EnvironmentObject var vm: RootViewModel
     @StateObject var keyboard = KeyboardObserver()
     @Environment(\.colorScheme) var colorScheme
     

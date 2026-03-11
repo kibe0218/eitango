@@ -16,7 +16,7 @@ class ListRepository: ListRepositoryProtocol {
     init (
         list_dbRepository: List_DataBaseRepositoryProtocol,
         list_cdRepository: List_CoreDataRepositoryProtocol,
-    ) throws {
+    ) {
         self.dbRepository = list_dbRepository
         self.cdRepository = list_cdRepository
     }

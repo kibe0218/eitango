@@ -14,10 +14,10 @@ class UserRepository: UserRepositoryProtocol {
     let dbRepository: User_DataBaseRepositoryProtocol
     let cdRepository: User_CoreDataRepositoryProtocol
     init (
-        authRepository: AuthRepositoryProtocol,
-        user_dbRepository: User_DataBaseRepositoryProtocol,
+        authRepository: AuthRepository,
+        user_dbRepository: User_DataBaseRepository,
         user_cdRepository: User_CoreDataRepositoryProtocol
-    ) throws {
+    ) {
         self.authRepository = authRepository
         self.dbRepository = user_dbRepository
         self.cdRepository = user_cdRepository

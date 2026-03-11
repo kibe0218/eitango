@@ -1,13 +1,14 @@
 import SwiftUI
 
 struct HomeView: View {
-    @EnvironmentObject var vm: PlayViewModel
+    @EnvironmentObject var vm: RootViewModel
     @Environment(\.colorScheme) var colorScheme
-    @State private var selection = 0
-    @StateObject var keyboard = KeyboardObserver()
+    @State private var selection: Int
 
     
-    
+    init() {
+        _selection = State(initialValue: 0)
+    }
     var body: some View {
         NavigationStack {
             GeometryReader { geo in
@@ -21,7 +22,6 @@ struct HomeView: View {
                         .tag(0)
                     EditView()
                         .environmentObject(vm)
-                        .environmentObject(keyboard)
                         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                         .tabItem {
                             Image(systemName: "pencil.and.ellipsis.rectangle")
@@ -30,7 +30,6 @@ struct HomeView: View {
                         .tag(1)
                     UserView()
                         .environmentObject(vm)
-                        .environmentObject(keyboard)
                         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                         .tabItem {
                             Image(systemName: "person")
@@ -45,12 +44,7 @@ struct HomeView: View {
 //                         }
 //                         .tag(2)
                 }
-                .accentColor(vm.customaccentColor)
-                .onChange(of: selection) {vm.updateView()}
-                .onAppear{
-                    vm.updateView()
-                    vm.colorS = colorScheme
-                }
+                .accentColor(vm.colorUIState.palette.customaccentColor)
             }
         }
     }

@@ -12,7 +12,7 @@ class PlayRepository: PlayRepositoryProtocol {
     let cdRepository: Play_CoreDataRepositoryProtocol
     init (
         Play_cdRepository: Play_CoreDataRepositoryProtocol,
-    ) throws {
+    ) {
         self.cdRepository = Play_cdRepository
     }
     

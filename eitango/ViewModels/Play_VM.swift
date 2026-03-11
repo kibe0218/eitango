@@ -28,7 +28,7 @@ class PlayViewModel {
         try uiRepository.save(play: uiState.play)
     }
     
-    // カードを翻す
+    // カードを反転
     @MainActor
     func flipTask(
         slotIndex: Int,
@@ -60,10 +60,16 @@ class PlayViewModel {
     }
         
     // ミスったカードを追加
-    func mistakeTask(mistakeCard: Card) {
+    @MainActor
+    func mistakeTask(mistakeCard: Card) async throws {
         var card = mistakeCard
         card.order = uiState.play.mistakeCards.count
         uiState.play.mistakeCards.append(card)
         uiState.play.finish = false
+        withAnimation {
+            uiState.play.showNotification = true
+        }
+        try await DelayController.wait(seconds: 2)
+        self.uiState.play.showNotification = false
     }
 }

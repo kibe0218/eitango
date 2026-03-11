@@ -8,7 +8,6 @@ final class RootViewModel: ObservableObject {
     @Published var playUIState: PlayUIState
     @Published var colorUIState: ColorUIState
     
-    
     // App-wide helpers
     @Published var keyboard = KeyboardObserver()
 
@@ -17,7 +16,7 @@ final class RootViewModel: ObservableObject {
     let listSession: ListSession
     let settingSession: SettingSession
     let cardSession: CardSession
-
+    
     // Actions / Feature ViewModels (UIState を更新する側)
     let playActions: PlayViewModel
     let userActions: UserViewModel
@@ -35,19 +34,18 @@ final class RootViewModel: ObservableObject {
         cardRepository: CardRepositoryProtocol,
         playRepository: PlayRepositoryProtocol
     ) {
-
+        let playUIState = PlayUIState()
+        let colorUIState = ColorUIState()
+        
+        //State
+        self.playUIState = playUIState
+        self.colorUIState = colorUIState
+        
         // Sessions
         self.userSession = userSession
         self.listSession = listSession
         self.settingSession = settingSession
         self.cardSession = cardSession
-
-        // UI State
-        let playUIState = PlayUIState()
-        let colorUIState = ColorUIState()
-
-        self.playUIState = playUIState
-        self.colorUIState = colorUIState
 
         // Actions
         self.playActions = PlayViewModel(
