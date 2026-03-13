@@ -24,6 +24,7 @@ class PlayViewModel {
         self.cardSession = cardSession
         self.listSession = listSession
         self.settingSession = settingSession
+        self.colorState = colorState
         self.engine = engine
         self.uiRepository = uiRepository
     }
@@ -81,11 +82,6 @@ class PlayViewModel {
             cardSession.cards[index].mistake = true
         }
         playSession.mistakeCards.append(slot.card.id)
-        withAnimation {
-            playUI.showNotification = true
-        }
-        try await DelayController.wait(seconds: 2)
-        playUI.showNotification = false
     }
     
     // カードの色を返す

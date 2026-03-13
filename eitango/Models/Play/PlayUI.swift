@@ -1,7 +1,6 @@
 import Foundation
 
 struct PlayUI {
-    var showNotification = false
     var screenSlots: [ScreenCard?] = []
 }
 

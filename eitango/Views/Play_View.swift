@@ -4,8 +4,8 @@ struct PlayView: View {
     @Environment(\.colorScheme) var colorScheme
     @EnvironmentObject var vm: RootViewModel
     
-    @State var title: String = ""
-
+    @State var showNotification: Bool = false
+    
     var body: some View {
         GeometryReader { geo in
             ZStack{
@@ -13,7 +13,12 @@ struct PlayView: View {
                     PlayHeaderView()
                         .environmentObject(vm)
                     ForEach(0..<4, id: \.self) { position in
-                        CardItemView(position: position, width: geo.size.width, height: geo.size.height)
+                        CardItemView(
+                            showNotification: $showNotification,
+                            position: position,
+                            width: geo.size.width,
+                            height: geo.size.height
+                        )
                             .environmentObject(vm)
                     }
                     .padding(.bottom, 10)
@@ -21,7 +26,7 @@ struct PlayView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                 VStack {
                     Spacer()
-                    if vm.playActions.playUI.showNotification {
+                    if showNotification {
                         VStack {
                             Text("追加しました👍")
                                 .frame(width: 200,height: 25)
@@ -113,6 +118,8 @@ struct CardItemView: View{
     @EnvironmentObject var vm: RootViewModel
     @Environment(\.colorScheme) var colorScheme
     
+    @Binding var showNotification: Bool
+    
     let position: Int
     let width: Double
     let height: Double
@@ -163,7 +170,12 @@ struct CardItemView: View{
             .onTapGesture(count: 2) {
                 if screenCard.cardSide == .back {
                     Task {
+                        withAnimation {
+                            showNotification = true
+                        }
                         try await vm.playActions.mistakeTask(slotIndex: position)
+                        try await DelayController.wait(seconds: 2)
+                            showNotification = false
                     }
                 }
             }
@@ -182,3 +194,5 @@ struct CardItemView: View{
         }
     }
 }
+
+
