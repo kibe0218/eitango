@@ -175,12 +175,12 @@ struct StartView: View {
                     }
                     if selectedOption == "新規作成" {
                         Text("ようこそ")
-                            .foregroundStyle(vm.backColor)
+                            foregroundStyle(vm.colorUIState.palette.backColor)
                             .font(.system(size: 30))
                     }
                     else {
                         Text("おかえりなさい")
-                            .foregroundStyle(vm.backColor)
+                            foregroundStyle(vm.colorUIState.palette.backColor)
                             .font(.system(size: 30))
                     }
                     if keyboard.keyboardHeight.isZero {
@@ -197,7 +197,7 @@ struct StartView: View {
                     }
                     .frame(width: geo_width * 0.6)
                     .pickerStyle(.segmented)
-                    .foregroundStyle(vm.backColor)
+                    foregroundStyle(vm.colorUIState.palette.backColor)
                     if keyboard.keyboardHeight.isZero {
                         Spacer()
                             .frame(height: geo_height * 0.03)
@@ -205,7 +205,7 @@ struct StartView: View {
                     if selectedOption == "新規作成" {
                         Text("アカウント名(1~4文字)")
                             .font(.system(size: geo_height * 0.025))
-                            .foregroundStyle(vm.backColor)
+                            foregroundStyle(vm.colorUIState.palette.backColor)
                         ZStack{
                             TextField("", text: $user)
                                 .foregroundStyle(.black)
@@ -244,7 +244,7 @@ struct StartView: View {
                     }
                     Text("E-mailアドレス")
                         .font(.system(size: geo_height * 0.025))
-                        .foregroundStyle(vm.backColor)
+                        foregroundStyle(vm.colorUIState.palette.backColor)
                     ZStack{
                         TextField("", text: $email)
                             .foregroundStyle(.black)
@@ -280,7 +280,7 @@ struct StartView: View {
                     }
                     Text("パスワード(10~64文字）")
                         .font(.system(size: geo_height * 0.025))
-                        .foregroundStyle(vm.backColor)
+                        foregroundStyle(vm.colorUIState.palette.backColor)
                     ZStack{
                         SecureField("", text: $pass)
                             .foregroundStyle(.black)

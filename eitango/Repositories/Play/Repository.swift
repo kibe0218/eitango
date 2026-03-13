@@ -3,8 +3,8 @@ import Combine
 import SwiftUI
 
 protocol PlayRepositoryProtocol {
-    func fetch() throws -> Play
-    func save(play: Play) throws
+    func fetch() throws -> PlaySession
+    func save(play: PlaySession) throws
 }
 
 class PlayRepository: PlayRepositoryProtocol {
@@ -19,12 +19,12 @@ class PlayRepository: PlayRepositoryProtocol {
     // MARK: - Public CRUD Functions
 
     // CoreDataから全て読み込み
-    func fetch() throws -> Play {
+    func fetch() throws -> PlaySession {
         return try cdRepository.fetch()
     }
 
     // CoreDataに全て保存
-    func save(play: Play) throws {
+    func save(play: PlaySession) throws {
         return try cdRepository.save(play: play)
     }
 }

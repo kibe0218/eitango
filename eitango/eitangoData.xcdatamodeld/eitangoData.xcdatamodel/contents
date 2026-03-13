@@ -6,6 +6,7 @@
         <attribute name="id" optional="YES" attributeType="String"/>
         <attribute name="jp" optional="YES" attributeType="String"/>
         <attribute name="listId" optional="YES" attributeType="String"/>
+        <attribute name="mistake" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="order" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <relationship name="cardlist" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ListEntity" inverseName="cards" inverseEntity="ListEntity"/>
     </entity>
@@ -21,6 +22,7 @@
         <attribute name="mode" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="reverse" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="selectedListId" optional="YES" attributeType="String"/>
+        <attribute name="shownCount" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
     </entity>
     <entity name="SettingEntity" representedClassName="SettingEntity" syncable="YES" codeGenerationType="class">
         <attribute name="colorTheme" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>

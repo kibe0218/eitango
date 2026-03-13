@@ -2,8 +2,8 @@ import SwiftUI
 import CoreData
 
 protocol Play_CoreDataRepositoryProtocol {
-    func fetch() throws -> Play
-    func save(play: Play) throws
+    func fetch() throws -> PlaySession
+    func save(play: PlaySession) throws
 }
 
 class Play_CoreDataRepository: Play_CoreDataRepositoryProtocol {
@@ -17,12 +17,14 @@ class Play_CoreDataRepository: Play_CoreDataRepositoryProtocol {
     }
     
     // Structに変換
-    private func convertEntitiesToStructs(entity: PlayEntity) throws -> Play {
+    private func convertEntitiesToStructs(entity: PlayEntity) throws -> PlaySession {
+        var shownCount = Int(entity.shownCount)
         let mode = PlayMode(rawValue: Int(entity.mode)) ?? .ordered
         let looping = entity.looping
         let reverse = entity.reverse
         let selectedListId = entity.selectedListId
-        return Play (
+        return PlaySession (
+            shownCount: shownCount,
             mode: mode,
             looping: looping,
             reverse: reverse,
@@ -31,8 +33,9 @@ class Play_CoreDataRepository: Play_CoreDataRepositoryProtocol {
     }
     
     // Entityに変換
-    private func convertStructsToEntities(play: Play) throws {
+    private func convertStructsToEntities(play: PlaySession) throws {
             let entity = PlayEntity(context: context)
+            entity.shownCount = Int16(play.shownCount)
             entity.mode = Int16(play.mode.rawValue)
             entity.looping = play.looping
             entity.reverse = play.reverse
@@ -42,13 +45,13 @@ class Play_CoreDataRepository: Play_CoreDataRepositoryProtocol {
     // MARK: - Public CRUD Functions
 
     // 同期
-    func fetch() throws -> Play {
-        guard let entity = try currentEntity() else { return Play() }
+    func fetch() throws -> PlaySession {
+        guard let entity = try currentEntity() else { return PlaySession() }
         return try convertEntitiesToStructs(entity: entity)
     }
     
     // 変更保存
-    func save(play: Play) throws {
+    func save(play: PlaySession) throws {
         do {
             if let oldPlay = try currentEntity() {
                 context.delete(oldPlay)

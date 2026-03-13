@@ -34,7 +34,8 @@ class Card_CoreDataRepository: Card_CoreDataRepositoryProtocol {
                 throw CDError.inconsistentCardData
             }
             let order = Int(entity.order)
-            cards.append(Card(id: id, listId: listId, en: en, jp: jp, createdAt: createdAt, order: order))
+            let mistake = entity.mistake
+            cards.append(Card(id: id, listId: listId, en: en, jp: jp, createdAt: createdAt, order: order, mistake: mistake))
         }
         return cards
     }
@@ -49,6 +50,7 @@ class Card_CoreDataRepository: Card_CoreDataRepositoryProtocol {
             entity.jp = card.jp
             entity.createdAt = card.createdAt
             entity.order = Int16(card.order)
+            entity.mistake = card.mistake
         }
     }
     

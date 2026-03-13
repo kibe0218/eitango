@@ -28,7 +28,7 @@ struct UserView: View {
                                 }) {
                                     Image(systemName: "gearshape.2.fill")
                                         .font(.title)
-                                        .foregroundStyle(vm.customaccentColor)
+                                        foregroundStyle(vm.colorUIState.palette.customaccentColor)
                                 }
 //                                 PhotosPicker(
 //                                     selection: $selectedItem,
@@ -37,7 +37,7 @@ struct UserView: View {
 //                                 ) {
 //                                     Image(systemName: "pencil")
 //                                         .font(.title)
-//                                         .foregroundStyle(vm.customaccentColor)
+//                                         foregroundStyle(vm.colorUIState.palette.customaccentColor)
 //                                 }
 //                                 .onChange(of: selectedItem) { _, newItem in
 //                                     Task {
@@ -69,7 +69,7 @@ struct UserView: View {
 //                                 .resizable()
 //                                 .scaledToFit()
 //                                 .frame(width: geo_width * 0.4, height: geo_width * 0.4)
-//                                 .foregroundStyle(vm.customaccentColor)
+//                                 foregroundStyle(vm.colorUIState.palette.customaccentColor)
 //                         }
 //                         Spacer()
 //                     }

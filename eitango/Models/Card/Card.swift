@@ -7,4 +7,5 @@ struct Card: Codable, Identifiable, Equatable {
     var jp: String
     let createdAt: Date?
     var order: Int
+    var mistake: Bool
 }

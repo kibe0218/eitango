@@ -24,7 +24,7 @@ struct EditView: View {
                         }) {
                             Image(systemName: "plus")
                                 .font(.title)
-                                .foregroundStyle(vm.customaccentColor)
+                                foregroundStyle(vm.colorUIState.palette.colorUIState.palette.customaccentColor)
                         }
                         .padding(.horizontal, 30)
                         .frame(width: geo.size.height * 0.06,  height: geo.size.height * 0.06)
@@ -64,7 +64,7 @@ struct EditView: View {
                                         }
                                         Text(list.title ?? "")
                                             .font(.system(size: CGFloat(vm.JpfontSize(i: list.title ?? ""))))
-                                            .foregroundStyle(vm.cardfrontColor)
+                                            foregroundStyle(vm.colorUIState.palette.cardfrontColor)
                                             .frame(width: geo.size.width * 0.85, height: geo.size.height * 0.18)
                                             .background(vm.cardColor)
                                             .cornerRadius(20)

@@ -102,7 +102,7 @@ struct CardsView: View {
                             submitNewWord(trimmedWord)
                         }
                         .frame(width: geo.size.width * 0.85, height: geo.size.height * 0.18, alignment: .center)
-                        .foregroundStyle(vm.cardfrontColor)
+                        foregroundStyle(vm.colorUIState.palette.cardfrontColor)
                         .background(vm.cardColor)
                         .cornerRadius(20)
                         .frame(maxWidth: .infinity, alignment: .center)

@@ -4,72 +4,98 @@ import Combine
 
 class PlayViewModel {
     
+    @Published var playSession: PlaySession
+    @Published var playUI: PlayUI
+    
     private let cardSession: CardSession
-    private let uiState: PlayUIState
-    private let engine: SessionEngine
     private let listSession: ListSession
+    private let settingSession: SettingSession
+    private let colorState: ColorUIState
+    private let engine: SessionEngine
     private let uiRepository: PlayRepositoryProtocol
     init(
         cardSession: CardSession,
-        uiState: PlayUIState,
         listSession: ListSession,
-        uiRepository: PlayRepositoryProtocol,
-        engine: SessionEngine = SessionEngine()
+        settingSession: SettingSession,
+        colorState: ColorUIState,
+        engine: SessionEngine = SessionEngine(),
+        uiRepository: PlayRepositoryProtocol
     ) {
         self.cardSession = cardSession
-        self.uiState = uiState
-        self.engine = engine
         self.listSession = listSession
+        self.settingSession = settingSession
+        self.engine = engine
         self.uiRepository = uiRepository
     }
 
-    func updateView() async throws {
-        uiState.reset()
-        try uiRepository.save(play: uiState.play)
+    // UIをリセット、保存すべきものは保存
+    func updateView() async {
+        playUI = PlayUI()
+        playUI.screenSlots = engine.firstCard(cards: cardSession.cards, mode: playSession.mode)
+        for slot in playUI.screenSlots.compactMap({ $0 }) {
+            playSession.shownCount += 1
+        }
+        do {
+            try uiRepository.save(play: playSession)
+        } catch {
+            
+        }
+        
     }
     
     // カードを反転
     @MainActor
     func flipTask(
         slotIndex: Int,
-        waitTime: Int,
-        flippedCard: Card,
     ) {
-        uiState.play.screenSlots[slotIndex].isFlipped = true
+        guard var slot = playUI.screenSlots[slotIndex] else { return }
+        slot.cardSide = .back
+        playUI.screenSlots[slotIndex] = slot
+        let nextCard = engine.nextCard(
+            cards: cardSession.cards,
+            looping: playSession.looping,
+            mode: playSession.mode,
+            shownCount: playSession.shownCount,
+            mistakeCards: &playSession.mistakeCards
+        )
         Task { @MainActor in
-            do { try await DelayController.wait(seconds: Double(waitTime))} catch {return}
-            let nextcard = engine.nextCard(
-                cards: cardSession.cards,
-                mistakeCards: uiState.play.mistakeCards,
-                looping: uiState.play.looping,
-                mode: uiState.play.mode,
-                flippedCard: flippedCard)
-            if let nextcard {
-                if let first = uiState.play.mistakeCards.first, first.id == nextcard.id {
-                    uiState.play.mistakeCards.removeFirst()
-                }
-                uiState.play.screenSlots[slotIndex].card = nextcard
-                uiState.play.screenSlots[slotIndex].isFlipped = false
+            do {
+                try await DelayController.wait(seconds: Double(settingSession.setting.waitTime))
+            } catch {return}
+            if let nextcard = nextCard {
+                playSession.shownCount += 1
+                slot.card = nextcard
+                slot.cardSide = .front
+                playUI.screenSlots[slotIndex] = slot
             } else {
-                uiState.play.screenSlots[slotIndex].isFinished = true
-                if uiState.play.screenSlots.allSatisfy({ $0.isFinished }) {
-                    uiState.play.finish = true
-                }
+                playUI.screenSlots[slotIndex] = nil
             }
         }
     }
         
     // ミスったカードを追加
     @MainActor
-    func mistakeTask(mistakeCard: Card) async throws {
-        var card = mistakeCard
-        card.order = uiState.play.mistakeCards.count
-        uiState.play.mistakeCards.append(card)
-        uiState.play.finish = false
+    func mistakeTask(slotIndex: Int) async throws {
+        guard var slot = playUI.screenSlots[slotIndex] else { return }
+        if let index = cardSession.cards.firstIndex(where: { $0.id == slot.card.id }) {
+            cardSession.cards[index].mistake = true
+        }
+        playSession.mistakeCards.append(slot.card.id)
         withAnimation {
-            uiState.play.showNotification = true
+            playUI.showNotification = true
         }
         try await DelayController.wait(seconds: 2)
-        self.uiState.play.showNotification = false
+        playUI.showNotification = false
+    }
+    
+    // カードの色を返す
+    func currentCardColor(position: Int, colorScheme: ColorScheme) -> Color {
+        guard let slot = playUI.screenSlots[position] else { return .clear }
+        return cardColor(
+            side: slot.cardSide,
+            reverse: playSession.reverse,
+            colorTheme: colorState.currentTheme,
+            colorScheme: colorScheme
+        )
     }
 }

@@ -12,8 +12,8 @@ struct PlayView: View {
                 VStack {
                     PlayHeaderView()
                         .environmentObject(vm)
-                    ForEach(0..<min(vm.Enlist.count, vm.Jplist.count, 4), id: \.self) { i in
-                        CardItemView(i: i,width: geo.size.width, height: geo.size.height)
+                    ForEach(0..<4, id: \.self) { position in
+                        CardItemView(position: position, width: geo.size.width, height: geo.size.height)
                             .environmentObject(vm)
                     }
                     .padding(.bottom, 10)
@@ -21,12 +21,12 @@ struct PlayView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                 VStack {
                     Spacer()
-                    if showToast {
+                    if vm.playActions.playUI.showNotification {
                         VStack {
                             Text("追加しました👍")
                                 .frame(width: 200,height: 25)
                                 .padding()
-                                .background(vm.customaccentColor.opacity(0.5))
+                                .background(vm.colorUIState.palette.customaccentColor.opacity(0.5))
                                 .foregroundColor(.white)
                                 .cornerRadius(10)
                                 .transition(.move(edge: .top).combined(with: .opacity))
@@ -40,12 +40,14 @@ struct PlayView: View {
             
             }
         }
-        .onAppear{vm.playActions.updateView()}
-        .onChange(of: vm.playUIState.play.selectedListId) { _ in
-            vm.playActions.updateView()
+        .task {
+            await vm.playActions.updateView()
         }
-        .onChange(of: vm.playUIState.play.reverse) { _ in
-            vm.playActions.updateView()
+        .task(id: vm.playActions.playSession.selectedListId) {
+            await vm.playActions.updateView()
+        }
+        .task(id: vm.playActions.playSession.reverse) {
+            await vm.playActions.updateView()
         }
         .background(vm.colorUIState.palette.backColor.ignoresSafeArea())
     }
@@ -58,29 +60,36 @@ struct PlayHeaderView: View {
         ZStack {
             HStack {
                 Button(action: {
-                    vm.shuffleFlag.toggle()
-                    vm.updateView()
+                    vm.playActions.playSession.mode.toggle()
+                    Task {
+                        await vm.playActions.updateView()
+                    }
+                    
                 }) {
                     Image(systemName: "shuffle")
                         .font(.title)
-                        .foregroundStyle(vm.shuffleFlag ? vm.customaccentColor : vm.noaccentColor)
+                        .foregroundStyle(
+                            vm.playActions.playSession.mode == .ordered
+                            ? vm.colorUIState.palette.customaccentColor
+                            : vm.colorUIState.palette.noaccentColor
+                        )
                 }
                 .padding(.leading, 40)
                 Button(action: {
-                    vm.repeatFlag.toggle()
+                    vm.playActions.playSession.looping.toggle()
                 }) {
                     Image(systemName: "repeat")
                         .font(.title)
-                        .foregroundStyle(vm.repeatFlag ? vm.customaccentColor : vm.noaccentColor)
+                        .foregroundStyle(vm.playActions.playSession.looping ? vm.colorUIState.palette.customaccentColor : vm.colorUIState.palette.noaccentColor)
                 }
                 Spacer()
             }
             HStack {
                 Spacer()
-                if !vm.Lists.isEmpty {
-                    Picker("単語帳", selection: $vm.selectedListId) {
-                        ForEach(vm.Lists) { list in
-                            Text(list.title ?? "")
+                if !vm.listSession.lists.isEmpty {
+                    Picker("単語帳", selection: $vm.playActions.playSession.selectedListId) {
+                        ForEach(vm.listSession.lists) { list in
+                            Text(list.title)
                                 .tag(list.id)
                         }
                     }
@@ -91,8 +100,8 @@ struct PlayHeaderView: View {
 
             HStack {
                 Spacer()
-                Toggle("", isOn: $vm.reverse)
-                    .tint(vm.customaccentColor)
+                Toggle("", isOn: $vm.playActions.playSession.reverse)
+                    .tint(vm.colorUIState.palette.customaccentColor)
             }
             .padding(30)
         }
@@ -101,51 +110,75 @@ struct PlayHeaderView: View {
 }
 
 struct CardItemView: View{
-    @EnvironmentObject var vm: PlayViewModel
+    @EnvironmentObject var vm: RootViewModel
     @Environment(\.colorScheme) var colorScheme
     
-    let i: Int
+    let position: Int
     let width: Double
     let height: Double
     
     var body: some View {
-        ZStack {
-            Text(vm.Enlist[i])
-                .font(.system(size: vm.Finishlist[i] ? CGFloat(vm.JpfontSize(i: vm.Enlist[i])) : CGFloat(vm.EnfontSize(i: vm.Enlist[i]))))
-                .foregroundStyle(
-                    vm.EnColor(y: vm.isFlipped[i], rev: vm.reverse, colorScheme: colorScheme)
+        if let screenCard = vm.playActions.playUI.screenSlots[position] {
+            ZStack {
+                switch screenCard.cardSide {
+                case .front:
+                    Text(screenCard.card.en)
+                        .font(.system(size: CGFloat(EnfontSize(screenCard.card.en))))
+                        .foregroundStyle(
+                            vm.playActions.currentCardColor(
+                                position: position,
+                                colorScheme: colorScheme
+                            )
+                        )
+                        .frame(width: width * 0.85, height: height * 0.18)
+                        .background(vm.colorUIState.palette.cardColor)
+                        .cornerRadius(20)
+                case .back:
+                    Text(screenCard.card.jp)
+                        .font(.system(size: CGFloat(JpfontSize(screenCard.card.en))))
+                        .foregroundStyle(
+                            vm.playActions.currentCardColor(
+                                position: position,
+                                colorScheme: colorScheme
+                            )
+                        )
+                        .frame(width: width * 0.85, height: height * 0.18)
+                        .background(vm.colorUIState.palette.cardColor)
+                        .cornerRadius(20)
+                }
+            }
+            .rotation3DEffect(
+                .degrees(screenCard.cardSide == .back ? -180 : 0),
+                axis: (x: 0, y: 1, z: 0)
+            )
+            .animation(
+                .easeOut(duration: 0.4),
+                value: screenCard.cardSide
+            )
+            .onTapGesture {
+                vm.playActions.flipTask(
+                    slotIndex: position
                 )
-                .frame(width: width * 0.85,height: height * 0.18)
-                .background(vm.cardColor)
-                .cornerRadius(20)
-                .opacity(vm.Enopacity(y: vm.isFlipped[i], rev: vm.reverse))
-                .scaleEffect(x: vm.reverse ? -1 : 1, y: 1)
-            Text(vm.Jplist[i])
-                .font(.system(size: CGFloat(vm.JpfontSize(i: vm.Jplist[i]))))
+            }
+            .onTapGesture(count: 2) {
+                if screenCard.cardSide == .back {
+                    Task {
+                        try await vm.playActions.mistakeTask(slotIndex: position)
+                    }
+                }
+            }
+        } else {
+            Text("finished")
+                .font(.system(size: CGFloat(EnfontSize("finish"))))
                 .foregroundStyle(
-                    vm.JpColor(y: vm.isFlipped[i], rev: vm.reverse, colorScheme: colorScheme)
+                    vm.playActions.currentCardColor(
+                        position: position,
+                        colorScheme: colorScheme
+                    )
                 )
                 .frame(width: width * 0.85, height: height * 0.18)
-                .background(vm.cardColor)
+                .background(vm.colorUIState.palette.cardColor)
                 .cornerRadius(20)
-                .opacity(vm.Jpopacity(y: vm.isFlipped[i], rev: vm.reverse))
-                .scaleEffect(x: vm.reverse ? 1 : -1, y: 1)
-        }
-        .padding(.bottom,10)
-        .rotation3DEffect(
-            .degrees(vm.isFlipped[i] ? -180 : 0),
-            axis: (x: 0, y: 1, z: 0)
-        )
-        .animation(.easeOut(duration: 0.4), value: vm.isFlipped[i])
-        .onTapGesture {
-            if !vm.Finishlist[i]{
-                vm.FlippTask(i: i)
-            }
-        }
-        .onTapGesture(count: 2) {
-            if vm.isFlipped[i], !vm.Finishlist[i] {
-                vm.MistakeTask(i: i)
-            }
         }
     }
 }

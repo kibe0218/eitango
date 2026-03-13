@@ -1,4 +1,4 @@
 enum CardSide {
-    case en
-    case jp
+    case front
+    case back
 }

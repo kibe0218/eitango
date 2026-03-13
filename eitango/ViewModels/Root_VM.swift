@@ -5,7 +5,6 @@ import CoreData
 final class RootViewModel: ObservableObject {
     
     // App-wide UI state (View は基本これだけを見る)
-    @Published var playUIState: PlayUIState
     @Published var colorUIState: ColorUIState
     
     // App-wide helpers
@@ -18,7 +17,7 @@ final class RootViewModel: ObservableObject {
     let cardSession: CardSession
     
     // Actions / Feature ViewModels (UIState を更新する側)
-    let playActions: PlayViewModel
+    var playActions: PlayViewModel
     let userActions: UserViewModel
     let listActions: ListViewModel
     let cardActions: CardViewModel
@@ -34,7 +33,6 @@ final class RootViewModel: ObservableObject {
         cardRepository: CardRepositoryProtocol,
         playRepository: PlayRepositoryProtocol
     ) {
-        let playUIState = PlayUIState()
         let colorUIState = ColorUIState()
         
         //State

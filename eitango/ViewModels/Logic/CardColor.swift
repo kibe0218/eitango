@@ -2,16 +2,17 @@ import Foundation
 import SwiftUI
 
 func cardColor(
-    isEnglish: Bool,
+    side: CardSide,
     reverse: Bool,
     colorTheme: ColorTheme,
     colorScheme: ColorScheme
 ) -> Color {
     let palette = colorTheme.palette(for: colorScheme)
 
-    if isEnglish {
+    switch side {
+    case .front:
         return reverse ? palette.cardbackColor : palette.cardfrontColor
-    } else {
+    case .back:
         return reverse ? palette.cardfrontColor : palette.cardbackColor
     }
 }
