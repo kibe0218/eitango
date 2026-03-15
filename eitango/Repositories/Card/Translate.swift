@@ -7,24 +7,28 @@ enum TranslateError: Error {
     case network(Error)
 }
 
-class Card_GoogleAppScriptTranslate: ObservableObject{
+protocol TranslateRepositoryProtocol {
+    func translateTextWithGAS(text: String, source: String, target: String) -> String
+}
+
+class Card_GoogleAppScriptTranslate {
     
     func translateTextWithGAS(
         _ text: String,
-        source: String = "en",
-        target: String = "ja"
+        source: String,
+        target: String
     ) async throws -> String {
-
+        let encodedWord = text.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
         let urlString = "https:// script.google.com/macros/s/AKfycbxotVWEIFCz2YhhUZSdPJ7jkYlQKj2W2ya7QWRlFiGixeRaoFg7P9E75HfgQEN-GakP/exec?text=\(text.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")&source=\(source)&target=\(target)"
-
+        
         guard let url = URL(string: urlString) else {
             print("翻訳URL生成失敗")
             throw TranslateError.invalidURL
         }
-
+        
         do {
             let (data, _) = try await URLSession.shared.data(from: url)
-
+            
             if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
                let code = json["code"] as? Int,
                code == 200,
@@ -39,5 +43,4 @@ class Card_GoogleAppScriptTranslate: ObservableObject{
             throw TranslateError.network(error)
         }
     }
-    
 }

@@ -5,6 +5,7 @@ protocol CardRepositoryProtocol {
     func fetchAll() throws -> [Card]
     func fetchAllBy(listId: String) throws -> [Card]
     func reload(userId: String) async throws -> [Card]
+    func addTranslated(userId: String, listId: String, source: String, target: String, sourceWord: String) async throws -> Card
     func add(userId: String, listId: String, card: AddCardRequest) async throws -> Card
     func update(userId: String, listId: String, card: UpdateCardRequest) async throws -> Card
     func delete(userId: String, listId: String, id: String) async throws
@@ -14,12 +15,15 @@ class CardRepository: CardRepositoryProtocol {
     
     let dbRepository: Card_DataBaseRepositoryProtocol
     let cdRepository: Card_CoreDataRepositoryProtocol
+    let translateRepository: TranslateRepositoryProtocol
     init (
         card_dbRepository: Card_DataBaseRepositoryProtocol,
         card_cdRepository: Card_CoreDataRepositoryProtocol,
+        card_translateRepository: TranslateRepositoryProtocol
     ) {
         self.dbRepository = card_dbRepository
         self.cdRepository = card_cdRepository
+        self.translateRepository = card_translateRepository
     }
     
     // MARK: - Public CRUD Functions
@@ -40,6 +44,13 @@ class CardRepository: CardRepositoryProtocol {
         let cards = try await dbRepository.fetchAll(userId: userId)
         try cdRepository.saveAll(cards: cards)
         return cards
+    }
+    
+    //翻訳して追加
+    func addTranslated(userId: String, listId: String, source: String, target: String, sourceWord: String) async throws -> Card {
+        let translated = translateRepository.translateTextWithGAS(text: sourceWord, source: source, target: target)
+        return try await add(userId: userId, listId: listId, card: AddCardRequest(en: source, jp: translated))
+        // ↑逆もできるようにする
     }
     
     // 追加

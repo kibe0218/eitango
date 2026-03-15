@@ -36,6 +36,11 @@ class CardViewModel: ObservableObject {
         }
     }
     
+    func addTranslated(listId: String, source: String, target: String, sourceWord: String) async throws {
+        let newCard = try await repository.addTranslated(userId: userSession.userId(), listId: listId, source: source, target: target, sourceWord: sourceWord)
+        session.cards.append(newCard)
+    }
+    
     func add(listId: String, card: AddCardRequest) async throws {
         let newCard = try await repository.add(userId: userSession.userId(), listId: listId, card: card)
         session.cards.append(newCard)

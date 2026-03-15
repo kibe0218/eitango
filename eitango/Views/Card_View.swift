@@ -26,18 +26,9 @@ struct CardView: View {
 
     //  🌍 翻訳してカードを追加する非同期処理
     func translateAndAddCard(_ word: String) async {
-        guard let currentListId = vm.selectedListId else {
-            print("🟡 listIdが無効のためカード追加できません")
-            await MainActor.run {
-                ing -= 1
-            }
-            return
-        }
-
         do {
-            let encodedWord = word.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
             let translated = try await vm.translateTextWithGAS(encodedWord, source: "en", target: "ja")
-            await vm.addCardAPI(listId: currentListId, en: word, jp: translated)
+            try await vm.cardActions.add(listId: currentListId, Card(en: word, jp: translated))
             await MainActor.run {
                 ing -= 1
             }
@@ -59,12 +50,12 @@ struct CardView: View {
                                 Spacer()
                                 Text("翻訳中: \(ing)件...")
                                     .font(.system(size: CGFloat(20)))
-                                    .foregroundStyle(palette.customaccentColor)
+                                    .foregroundStyle(vm.colorUIState.palette.customaccentColor)
                                     .frame(height: geo_height * 0.05, alignment: .center)
-                                    .background(palette.backColor)
+                                    .background(vm.colorUIState.palette.backColor)
                                 Spacer()
                             }
-                            .listRowBackground(palette.backColor)
+                            .listRowBackground(vm.colorUIState.palette.backColor)
                             .listRowSeparator(.hidden)
                             .scrollContentBackground(.hidden)
                         }
