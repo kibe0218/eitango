@@ -85,7 +85,8 @@ struct SettingsView: View {
             switch state {
             case .failed:
                 break
-            case .success(.deleteUserAPI):                vm.backToDefaultCoreData()
+            case .success(.deleteUserAPI):
+                vm.backToDefaultCoreData()
                 vm.reinit()
                 vm.moveToStartView()
             default:

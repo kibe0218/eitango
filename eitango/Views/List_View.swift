@@ -1,7 +1,7 @@
 import SwiftUI
 
 
-struct EditListView: View {
+struct ListView: View {
     @EnvironmentObject var vm: RootViewModel
     @Environment(\.colorScheme) var colorScheme
     
@@ -50,8 +50,7 @@ struct EditListView: View {
                                         CardListView(z: z, width: geo.size.width, height: geo.size.height)
                                             .environmentObject(vm)
                                     }
-                                    Text(list.title)
-                                        .font(.system(size: CGFloat(jpFontSize(list.title))))
+                                    Text(list.title.isEmpty ? "Untitled" : list.title)      .font(.system(size: CGFloat(jpFontSize(list.title))))
                                         .foregroundStyle(vm.colorUIState.palette.cardfrontColor)
                                         .frame(width: geo.size.width * 0.85, height: geo.size.height * 0.18)
                                         .background(vm.colorUIState.palette.cardColor)
@@ -71,13 +70,16 @@ struct EditListView: View {
                     }
                     .onDelete { indices in
                         Task {
-                            try await vm.listActions.delete(id: <#T##String#>)
+                            try await vm.listActions.delete(indices: indices)
                         }
                     }
-                    // indicesは削除される要素の位置を示している
-                    // atOffsetsで削除＆再描画
                 }
                 .listStyle(PlainListStyle())
+            }
+        }
+        .onAppear {
+            Task {
+                try await vm.listActions.fetchAll()
             }
         }
         .background(vm.colorUIState.palette.backColor.ignoresSafeArea())
