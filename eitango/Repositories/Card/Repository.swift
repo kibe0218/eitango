@@ -50,7 +50,7 @@ class CardRepository: CardRepositoryProtocol {
     func addTranslated(userId: String, listId: String, source: String, target: String, sourceWord: String) async throws -> Card {
         let translated = translateRepository.translateTextWithGAS(text: sourceWord, source: source, target: target)
         return try await add(userId: userId, listId: listId, card: AddCardRequest(en: source, jp: translated))
-        // ↑逆もできるようにする
+        // ↑逆もできるようにできまする
     }
     
     // 追加

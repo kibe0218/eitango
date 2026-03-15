@@ -1,0 +1,5 @@
+全てのvmはrootに集める（ui状態保持の為とあと管理が楽）(Feature分割も面白そう)
+vmがしていいのはsessionの変更、ロジック
+純粋ロジックはできるだけlogicフォルダに
+viewはsessionに触れないようにするため、ほとんどの処理がここで完結することになる（viewはsessionをromるのはOK）
+@Publishedと(observable)を持つことができる

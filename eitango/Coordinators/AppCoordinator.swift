@@ -24,22 +24,20 @@ extension RootViewModel {
                 window.rootViewController = UIHostingController(
                     rootView: StartView()
                         .environmentObject(self)
-                        .environmentObject(self.keyboard)
                 )
                 window.makeKeyAndVisible()
             }
         }
     }
     
-    func moveToCardView() {
+    func moveToCardView(list: CardList) {
         print("🟡 moveToCardView 呼ばれたっピ")
         Task { @MainActor in
             if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                let window = windowScene.windows.first {
                 window.rootViewController = UIHostingController(
-                    rootView: CardView()
+                    rootView: CardView(list: list)
                         .environmentObject(self)
-                        .environmentObject(self.keyboard)
                 )
                 window.makeKeyAndVisible()
             }

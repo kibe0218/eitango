@@ -18,7 +18,7 @@ struct ListView: View {
                     }) {
                         Image(systemName: "plus")
                             .font(.title)
-                            .foregroundStyle(vm.colorUIState.palette.customaccentColor)
+                            .foregroundStfyle(vm.colorUIState.palette.customaccentColor)
                     }
                     .padding(.horizontal, 30)
                     .frame(width: geo.size.height * 0.06,  height: geo.size.height * 0.06)
@@ -30,9 +30,9 @@ struct ListView: View {
                         }
                         Button("OK") {
                             Task {
-                                try await vm.listActions.add(list: AddListRequest(title: title))
+                                let list = try await vm.listActions.add(list: AddListRequest(title: title))
                                 title = ""
-                                vm.moveToCardView()
+                                vm.moveToCardView(list: list)
                                 
                             }
                         }
@@ -58,7 +58,7 @@ struct ListView: View {
                                         .zIndex(100)
                                 }
                                 .onTapGesture{
-                                    vm.moveToCardView()
+                                    vm.moveToCardView(list: list)
                                 }
                                 .frame(height: geo.size.height * 0.18 + 30)
                                 .padding(.bottom,10)
@@ -69,8 +69,11 @@ struct ListView: View {
                         .listRowBackground(Color.clear)
                     }
                     .onDelete { indices in
+                        let listsToDelete = indices.map { vm.listSession.cards[$0] }
                         Task {
-                            try await vm.listActions.delete(indices: indices)
+                            for list in listsToDelete {
+                                try await vm.listActions.delete(id: list.id)
+                            }
                         }
                     }
                 }

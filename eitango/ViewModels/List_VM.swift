@@ -25,16 +25,14 @@ class ListViewModel: ObservableObject {
         session.lists = try await repository.reload(userId: userSession.userId())
     }
     
-    func add(list: AddListRequest) async throws {
+    func add(list: AddListRequest) async throws -> CardList {
         let newList = try await repository.add(userId: userSession.userId(), list: list)
         session.lists.append(newList)
+        return newList
     }
     
-    func delete(indices: IndexSet) async throws {
-        for index in indices {
-            let id = session.lists[index].id
-            try await repository.delete(userId: userSession.userId(), id: id)
-            session.lists.removeAll { $0.id == id }
-        }
+    func delete(id: String) async throws {
+        try await repository.delete(userId: userSession.userId(), id: id)
+        session.lists.removeAll { $0.id == id }
     }
 }

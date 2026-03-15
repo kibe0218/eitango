@@ -3,18 +3,23 @@ import Combine
 
 class CardViewModel: ObservableObject {
     
+    @Published var translatingCount: Int = 0
+    
     private let repository: CardRepositoryProtocol
     private let session: CardSession
     private let userSession: UserSession
+    private let listSession: ListSession
     
     init(
         repository: CardRepositoryProtocol,
         session: CardSession,
-        userSession: UserSession
+        userSession: UserSession,
+        listSession: ListSession
     ) {
         self.repository = repository
         self.session = session
         self.userSession = userSession
+        self.listSession = listSession
     }
     
     func fetchAll() throws {
@@ -37,8 +42,10 @@ class CardViewModel: ObservableObject {
     }
     
     func addTranslated(listId: String, source: String, target: String, sourceWord: String) async throws {
+        translatingCount += 1
         let newCard = try await repository.addTranslated(userId: userSession.userId(), listId: listId, source: source, target: target, sourceWord: sourceWord)
         session.cards.append(newCard)
+        translatingCount -= 1
     }
     
     func add(listId: String, card: AddCardRequest) async throws {
@@ -51,4 +58,5 @@ class CardViewModel: ObservableObject {
         try await repository.delete(userId: userSession.userId(), listId: listId, id: id)
         session.cards.removeAll { $0.id == id }
     }
+
 }
