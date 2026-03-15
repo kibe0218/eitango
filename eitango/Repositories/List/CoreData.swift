@@ -2,9 +2,9 @@ import Foundation
 import CoreData
 
 protocol List_CoreDataRepositoryProtocol {
-    func fetchAll() throws -> [List]
-    func saveAll(lists: [List]) throws
-    func add(list: List) throws
+    func fetchAll() throws -> [CardList]
+    func saveAll(lists: [CardList]) throws
+    func add(list: CardList) throws
     func delete(id: String) throws
 }
 
@@ -19,8 +19,8 @@ class List_CoreDataRepository: List_CoreDataRepositoryProtocol {
     }
     
     // Structに変換
-    private func convertEntitiesToStructs(entities: [ListEntity]) throws -> [List] {
-        var lists: [List] = []
+    private func convertEntitiesToStructs(entities: [ListEntity]) throws -> [CardList] {
+        var lists: [CardList] = []
         for entity in entities {
             guard
                 let id = entity.id,
@@ -30,13 +30,13 @@ class List_CoreDataRepository: List_CoreDataRepositoryProtocol {
                 throw CDError.inconsistentListData
             }
             let cardCount = Int(entity.cardCount)
-            lists.append(List(id: id, title: title, createdAt: createdAt, cardCount: cardCount))
+            lists.append(CardList(id: id, title: title, createdAt: createdAt, cardCount: cardCount))
         }
         return lists
     }
     
     // Entityに変換
-    private func convertStructsToEntities(lists: [List]) throws {
+    private func convertStructsToEntities(lists: [CardList]) throws {
         for list in lists {
             let entity = ListEntity(context: context)
             entity.id = list.id
@@ -49,13 +49,13 @@ class List_CoreDataRepository: List_CoreDataRepositoryProtocol {
     // MARK: - Public CRUD Functions
     
     // 同期
-    func fetchAll() throws -> [List] {
+    func fetchAll() throws -> [CardList] {
         let entities = try currentEntities()
         return try convertEntitiesToStructs(entities: entities)
     }
     
     // 保存
-    func saveAll(lists: [List]) throws {
+    func saveAll(lists: [CardList]) throws {
         do {
             let oldEntities = try currentEntities()
             oldEntities.forEach { context.delete($0) }
@@ -68,7 +68,7 @@ class List_CoreDataRepository: List_CoreDataRepositoryProtocol {
     }
     
     // 追加
-    func add(list: List) throws {
+    func add(list: CardList) throws {
         do {
             try convertStructsToEntities(lists: [list])
             try context.save()

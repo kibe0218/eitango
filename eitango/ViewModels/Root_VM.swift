@@ -17,41 +17,39 @@ final class RootViewModel: ObservableObject {
     let cardSession: CardSession
     
     // Actions / Feature ViewModels (UIState を更新する側)
-    var playActions: PlayViewModel
+    let playActions: PlayViewModel
     let userActions: UserViewModel
     let listActions: ListViewModel
     let cardActions: CardViewModel
     let colorActions: ColorViewModel
     
     init(
+        playSession: PlaySession,
         userSession: UserSession,
         listSession: ListSession,
         settingSession: SettingSession,
         cardSession: CardSession,
+        colorUIState: ColorUIState,
         userRepository: UserRepositoryProtocol,
         listRepository: ListRepositoryProtocol,
         cardRepository: CardRepositoryProtocol,
-        playRepository: PlayRepositoryProtocol
+        playRepository: PlayRepositoryProtocol,
+        colorActions: ColorViewModel
     ) {
-        let colorUIState = ColorUIState()
         
-        //State
-        self.playUIState = playUIState
-        self.colorUIState = colorUIState
-        
+        self.playActions = PlayViewModel(
+            playSession: playSession,
+            cardSession: cardSession,
+            listSession: listSession,
+            settingSession: settingSession,
+            colorState: colorUIState,
+            uiRepository: playRepository
+        )
         // Sessions
         self.userSession = userSession
         self.listSession = listSession
         self.settingSession = settingSession
         self.cardSession = cardSession
-
-        // Actions
-        self.playActions = PlayViewModel(
-            cardSession: cardSession,
-            uiState: playUIState,
-            listSession: listSession,
-            uiRepository: playRepository
-        )
 
         self.userActions = UserViewModel(
             repository: userRepository,
@@ -69,6 +67,8 @@ final class RootViewModel: ObservableObject {
             session: cardSession,
             userSession: userSession
         )
+        
+        self.colorUIState = ColorUIState()
 
         self.colorActions = ColorViewModel(
             state: colorUIState

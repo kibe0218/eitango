@@ -20,7 +20,7 @@ struct HomeView: View {
                             Text("Play")
                         }
                         .tag(0)
-                    EditView()
+                    ListView()
                         .environmentObject(vm)
                         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                         .tabItem {

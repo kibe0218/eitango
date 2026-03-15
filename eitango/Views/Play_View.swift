@@ -130,7 +130,7 @@ struct CardItemView: View{
                 switch screenCard.cardSide {
                 case .front:
                     Text(screenCard.card.en)
-                        .font(.system(size: CGFloat(EnfontSize(screenCard.card.en))))
+                        .font(.system(size: CGFloat(vm.enFontSize(screenCard.card.en))))
                         .foregroundStyle(
                             vm.playActions.currentCardColor(
                                 position: position,
@@ -142,7 +142,7 @@ struct CardItemView: View{
                         .cornerRadius(20)
                 case .back:
                     Text(screenCard.card.jp)
-                        .font(.system(size: CGFloat(JpfontSize(screenCard.card.en))))
+                        .font(.system(size: CGFloat(jpFontSize(screenCard.card.en))))
                         .foregroundStyle(
                             vm.playActions.currentCardColor(
                                 position: position,
@@ -181,7 +181,7 @@ struct CardItemView: View{
             }
         } else {
             Text("finished")
-                .font(.system(size: CGFloat(EnfontSize("finish"))))
+                .font(.system(size: CGFloat(vm.enFontSize("finish"))))
                 .foregroundStyle(
                     vm.playActions.currentCardColor(
                         position: position,

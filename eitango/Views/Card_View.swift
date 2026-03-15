@@ -1,14 +1,12 @@
 import SwiftUI
 import Combine
 
-struct CardsView: View {
-    @Environment(\.colorScheme) var scheme
+struct CardView: View {
     @EnvironmentObject var vm: RootViewModel
-    @StateObject var keyboard = KeyboardObserver()
+    @Environment(\.colorScheme) var scheme
+    
     @FocusState private var isTextFieldFocused: Bool
     
-    var palette: Color_ST { vm.setting.colortheme.palette(for: scheme) }
-
     @State private var geo_height: CGFloat = 0
     @State private var ing: Int = 0
     @State private var keeplistid: String = ""
@@ -18,7 +16,7 @@ struct CardsView: View {
     @State private var newWord: String = ""
     // デフォルトはen->ja
     
-    //  🐙 新しい単語の送信入口
+    //  🐙 新い単語の送信入口
     func submitNewWord(_ word: String) {
         ing += 1
         Task {
@@ -120,9 +118,6 @@ struct CardsView: View {
                     isTextFieldFocused = true
                 }
             }
-            .onDisappear {
-                vm.noshuffleFlag = false
-            }
         }
         .background(palette.backColor.ignoresSafeArea())
     }
@@ -141,7 +136,7 @@ struct ItemView: View{
     var body: some View {
         VStack{
             Text(card.en ?? "")
-                .font(.system(size: CGFloat(vm.EnfontSize(i: card.en ?? ""))))
+                .font(.system(size: CGFloat(vm.enFontSize(i: card.en ?? ""))))
                 .foregroundStyle(palette.cardfrontColor)
             TextField(
                 "",

@@ -3,9 +3,9 @@ import Combine
 import SwiftUI
 
 protocol ListRepositoryProtocol {
-    func fetchAll() async throws -> [List]
-    func reload(userId: String) async throws-> [List]
-    func add(userId: String, list: AddListRequest) async throws -> List
+    func fetchAll() async throws -> [CardList]
+    func reload(userId: String) async throws-> [CardList]
+    func add(userId: String, list: AddListRequest) async throws -> CardList
     func delete(userId: String, id: String) async throws
 }
 
@@ -24,18 +24,18 @@ class ListRepository: ListRepositoryProtocol {
     // MARK: - Public CRUD Functions
     
     // CoreDataから全て読み込み
-    func fetchAll() throws -> [List] {
+    func fetchAll() throws -> [CardList] {
         return try cdRepository.fetchAll()
     }
     
     // DB基準で再読み込み
-    func reload(userId: String) async throws -> [List] {
+    func reload(userId: String) async throws -> [CardList] {
         try cdRepository.saveAll(lists: try await dbRepository.fetchAll(userId: userId))
         return try cdRepository.fetchAll()
     }
 
     // 追加
-    func add(userId: String, list: AddListRequest) async throws -> List {
+    func add(userId: String, list: AddListRequest) async throws -> CardList {
         let list = try await dbRepository.add(userId: userId, list: list)
         guard !list.id.isEmpty else { throw AuthError.unknown }
         _ = try cdRepository.add(list: list)

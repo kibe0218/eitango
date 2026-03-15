@@ -1,6 +1,6 @@
 import Foundation
 
-struct List: Codable, Identifiable {
+struct CardList: Codable, Identifiable, Equatable {
     let id: String
     let title: String
     let createdAt: Date?

@@ -2,7 +2,7 @@ import SwiftUI
 import CoreData
 import Combine
 
-class PlayViewModel {
+class PlayViewModel: ObservableObject {
     
     @Published var playSession: PlaySession
     @Published var playUI: PlayUI
@@ -14,6 +14,8 @@ class PlayViewModel {
     private let engine: SessionEngine
     private let uiRepository: PlayRepositoryProtocol
     init(
+        playSession: PlaySession,
+        playUI: PlayUI = PlayUI(),
         cardSession: CardSession,
         listSession: ListSession,
         settingSession: SettingSession,
@@ -21,6 +23,8 @@ class PlayViewModel {
         engine: SessionEngine = SessionEngine(),
         uiRepository: PlayRepositoryProtocol
     ) {
+        self.playSession = playSession
+        self.playUI = playUI
         self.cardSession = cardSession
         self.listSession = listSession
         self.settingSession = settingSession
