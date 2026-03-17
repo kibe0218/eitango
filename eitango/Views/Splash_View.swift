@@ -50,6 +50,9 @@ struct SplashScreenView: View {
                     Spacer()
                 }
             }
+            .onChange(of: colorScheme) {
+                vm.colorUIState.updateForColorScheme(colorScheme)
+            }
             .background(vm.backColor.ignoresSafeArea())
         }
     }

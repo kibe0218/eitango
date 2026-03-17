@@ -321,9 +321,13 @@ struct StartView: View {
                 ErrorAlertView()
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             }
+            .onChange(of: colorScheme) {
+                vm.colorUIState.updateForColorScheme(colorScheme)
+            }
             .onAppear {
                 geo_height = geo.size.height
                 geo_width = geo.size.width
+                vm.colorUIState.updateForColorScheme(colorScheme)
             }
         }
     }

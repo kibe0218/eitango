@@ -44,6 +44,9 @@ struct HomeView: View {
 //                         }
 //                         .tag(2)
                 }
+                .onChange(of: colorScheme) {
+                    vm.colorUIState.updateForColorScheme(colorScheme)
+                }
                 .accentColor(vm.colorUIState.palette.customaccentColor)
             }
         }

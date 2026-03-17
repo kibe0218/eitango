@@ -93,5 +93,8 @@ struct SettingsView: View {
                 break
             }
         }
+        .onChange(of: colorScheme){
+            vm.colorUIState.updateForColorScheme(colorScheme)
+        }
     }
 }
