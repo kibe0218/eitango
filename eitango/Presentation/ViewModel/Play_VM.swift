@@ -11,7 +11,7 @@ class PlayViewModel: ObservableObject {
     private let listSession: ListSession
     private let settingSession: SettingSession
     private let colorState: ColorUIState
-    private let engine: SessionEngine
+    private let engine: CardNavigation
     private let uiRepository: PlayRepositoryProtocol
     init(
         playSession: PlaySession,
@@ -20,7 +20,7 @@ class PlayViewModel: ObservableObject {
         listSession: ListSession,
         settingSession: SettingSession,
         colorState: ColorUIState,
-        engine: SessionEngine = SessionEngine(),
+        engine: CardNavigation = CardNavigation(),
         uiRepository: PlayRepositoryProtocol
     ) {
         self.playSession = playSession

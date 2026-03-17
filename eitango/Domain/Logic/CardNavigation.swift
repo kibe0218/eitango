@@ -1,6 +1,6 @@
 import Foundation
 
-class SessionEngine {
+class CardNavigation {
     
     // MARK: - Private Helpers
     

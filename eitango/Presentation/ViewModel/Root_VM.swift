@@ -13,30 +13,57 @@ final class RootViewModel: ObservableObject {
     // App-wide sessions (View は直接見ない前提 / Actions が参照)
     let userSession: UserSession
     let listSession: ListSession
-    let settingSession: SettingSession
     let cardSession: CardSession
+    let settingSession: SettingSession
+    let playSession: PlaySession
     
     // Actions / Feature ViewModels (UIState を更新する側)
-    let playActions: PlayViewModel
     let userActions: UserViewModel
     let listActions: ListViewModel
     let cardActions: CardViewModel
-    let colorActions: ColorViewModel
-    
+    let playActions: PlayViewModel
+    let startActions: StartViewModel
+
+
+
     init(
-        playSession: PlaySession,
         userSession: UserSession,
         listSession: ListSession,
-        settingSession: SettingSession,
         cardSession: CardSession,
+        settingSession: SettingSession,
+        playSession: PlaySession,
         colorUIState: ColorUIState,
         userRepository: UserRepositoryProtocol,
         listRepository: ListRepositoryProtocol,
         cardRepository: CardRepositoryProtocol,
-        playRepository: PlayRepositoryProtocol,
-        colorActions: ColorViewModel
+        playRepository: PlayRepositoryProtocol
     ) {
         
+        // Sessions
+        self.userSession = userSession
+        self.listSession = listSession
+        self.settingSession = settingSession
+        self.cardSession = cardSession
+        self.playSession = playSession
+        
+        // UIState
+        self.colorUIState = ColorUIState()
+        
+        self.userActions = UserViewModel(
+            repository: userRepository,
+            session: userSession
+        )
+        self.listActions = ListViewModel(
+            repository: listRepository,
+            session: listSession,
+            userSession: userSession
+        )
+        self.cardActions = CardViewModel(
+            repository: cardRepository,
+            session: cardSession,
+            userSession: userSession,
+            listSession: listSession
+        )
         self.playActions = PlayViewModel(
             playSession: playSession,
             cardSession: cardSession,
@@ -45,33 +72,9 @@ final class RootViewModel: ObservableObject {
             colorState: colorUIState,
             uiRepository: playRepository
         )
-        // Sessions
-        self.userSession = userSession
-        self.listSession = listSession
-        self.settingSession = settingSession
-        self.cardSession = cardSession
-
-        self.userActions = UserViewModel(
+        self.startActions = StartViewModel(
             repository: userRepository,
             session: userSession
-        )
-
-        self.listActions = ListViewModel(
-            repository: listRepository,
-            session: listSession,
-            userSession: userSession
-        )
-
-        self.cardActions = CardViewModel(
-            repository: cardRepository,
-            session: cardSession,
-            userSession: userSession
-        )
-        
-        self.colorUIState = ColorUIState()
-
-        self.colorActions = ColorViewModel(
-            state: colorUIState
         )
     }
 }

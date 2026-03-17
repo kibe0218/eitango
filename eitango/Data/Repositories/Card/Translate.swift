@@ -8,13 +8,13 @@ enum TranslateError: Error {
 }
 
 protocol TranslateRepositoryProtocol {
-    func translateTextWithGAS(text: String, source: String, target: String) -> String
+    func translateTextWithGAS (text: String, source: String, target: String) async throws -> String
 }
 
-class Card_GoogleAppScriptTranslate {
+class Card_GoogleAppScriptTranslate: TranslateRepositoryProtocol {
     
     func translateTextWithGAS(
-        _ text: String,
+        text: String,
         source: String,
         target: String
     ) async throws -> String {

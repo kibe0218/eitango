@@ -2,7 +2,7 @@ import SwiftUI
 import CoreData
 import Combine
 
-class LearningSessionEngine: ObservableObject {
+class LearningCardNavigation: ObservableObject {
     
     func FlippTask(i: Int) {
         DispatchQueue.main.async {

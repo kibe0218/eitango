@@ -73,7 +73,7 @@ struct UserView: View {
 //                         }
 //                         Spacer()
 //                     }
-                    Text(vm.userName)
+                    Text(vm.userSession.user?.name ?? "")
                         .foregroundColor(vm.customaccentColor)
                         .font(.system(size: geo_height * 0.05))
                         .bold()

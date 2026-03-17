@@ -1,13 +1,6 @@
 import SwiftUI
 import FirebaseAuth
 
-extension Character {
-    var isEmoji: Bool {
-        unicodeScalars.first?.properties.isEmojiPresentation == true
-        || unicodeScalars.first?.properties.isEmoji == true
-    }
-}
-
 struct StartView: View {
     @EnvironmentObject var vm: RootViewModel
     @Environment(\.colorScheme) var colorScheme
@@ -38,86 +31,7 @@ struct StartView: View {
         case pass
     }
     
-    // ユーザーネームをチェック
-    private func isValidUsername(_ name: String) -> String? {
-        let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty,
-              trimmed.count <= 4
-        else {
-            return nil
-        }
-        for ch in trimmed {
-            if ch.isEmoji {
-                continue //  絵文字OK
-            }
-            if ch.isLetter || ch.isNumber {
-                continue //  漢字・ひらがな・英数字OK
-            }
-            return nil //  記号だけNG
-        }
-        
-        return trimmed
-    }
     
-    // メアドをチェック
-    private func isValidEmail(_ email: String) -> String? {
-        let trimmed = email.trimmingCharacters(in: .whitespacesAndNewlines)
-        
-        let pattern =
-        #"^[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$"#
-        
-        guard !trimmed.isEmpty,
-              trimmed.range(of: pattern, options: .regularExpression) != nil
-        else {
-            return nil
-        }
-        return trimmed
-    }
-    
-    // パスワードをチェック
-    private func isValidPassword(_ password: String) -> String? {
-        let trimmed = password.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty,
-              trimmed.count >= 10, trimmed.count <= 64,
-              trimmed.rangeOfCharacter(from: CharacterSet.alphanumerics) != nil
-        else {
-            return nil
-        }
-        return trimmed
-    }
-    
-    // 最終判定
-    private func validateInputs() -> Bool {
-        var valid = true
-        
-        if selectedOption == "新規作成" {
-            if isValidUsername(user) == nil {
-                danger_user = true
-                focusedField = .user
-                valid = false
-            } else {
-                danger_user = false
-            }
-        }
-        
-        if isValidEmail(email) == nil {
-            danger_email = true
-            focusedField = .email
-            valid = false
-        } else {
-            danger_email = false
-        }
-        
-        if isValidPassword(pass) == nil {
-            danger_pass = true
-            focusedField = .pass
-            valid = false
-        } else {
-            danger_pass = false
-        }
-        
-        return valid
-    }
     
     // 吹き出し💬
     struct Triangle: Shape {
@@ -144,7 +58,7 @@ struct StartView: View {
                             .multilineTextAlignment(.center)
                             .background(
                                 RoundedRectangle(cornerRadius: 10)
-                                    .fill(vm.backColor)
+                                    .fill(vm.colorUIState.palette.backColor)
                             )
                         Spacer()
                             .frame(width: geo.size.width * 0.1)
@@ -166,7 +80,7 @@ struct StartView: View {
     var body: some View {
         GeometryReader { geo in
             ZStack {
-                vm.customaccentColor
+                vm.colorUIState.palette.customaccentColor
                     .ignoresSafeArea()
                 VStack {
                     if keyboard.keyboardHeight.isZero {
@@ -211,7 +125,7 @@ struct StartView: View {
                                 .foregroundStyle(.black)
                                 .multilineTextAlignment(.center)
                                 .frame(width: geo_width * 0.6, height: geo_height * 0.05)
-                                .background(vm.backColor)
+                                .background(vm.colorUIState.palette.backColor)
                                 .cornerRadius(10)
                                 .focused($focusedField, equals: .user)
                                 .submitLabel(.next)
@@ -286,7 +200,7 @@ struct StartView: View {
                             .foregroundStyle(.black)
                             .multilineTextAlignment(.center)
                             .frame(width: geo_width * 0.6, height: geo_height * 0.05)
-                            .background(vm.backColor)
+                            .background(vm.colorUIState.palette.backColor)
                             .cornerRadius(10)
                             .focused($focusedField, equals: .pass)
                             .submitLabel(.done)

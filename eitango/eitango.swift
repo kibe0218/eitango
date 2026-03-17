@@ -7,8 +7,10 @@ struct eitangoApp: App {
     @StateObject private var vm = RootViewModel(
         userSession: UserSession(),
         listSession: ListSession(),
-        settingSession: SettingSession(),
         cardSession: CardSession(),
+        settingSession: SettingSession(),
+        playSession: PlaySession(),
+        colorUIState: ColorUIState(),
         userRepository: UserRepository(
             authRepository: AuthRepository(),
             user_dbRepository: User_DataBaseRepository(),
@@ -20,7 +22,8 @@ struct eitangoApp: App {
         ),
         cardRepository: CardRepository(
             card_dbRepository: Card_DataBaseRepository(),
-            card_cdRepository: Card_CoreDataRepository()
+            card_cdRepository: Card_CoreDataRepository(),
+            card_translateRepository: Card_GoogleAppScriptTranslate()
         ),
         playRepository: PlayRepository(
             Play_cdRepository: Play_CoreDataRepository()
@@ -33,7 +36,7 @@ struct eitangoApp: App {
     
     var body: some Scene {
         WindowGroup {
-            if session.userId != nil {
+            if vm.userSession.user != nil {
                 StartView()
                     .environmentObject(vm)
             }
