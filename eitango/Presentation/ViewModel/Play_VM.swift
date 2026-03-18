@@ -11,7 +11,7 @@ class PlayViewModel: ObservableObject {
     private let listSession: ListSession
     private let settingSession: SettingSession
     private let colorState: ColorUIState
-    private let engine: CardNavigation
+    private let logic: CardNavigation
     private let uiRepository: PlayRepositoryProtocol
     init(
         playSession: PlaySession,
@@ -20,7 +20,7 @@ class PlayViewModel: ObservableObject {
         listSession: ListSession,
         settingSession: SettingSession,
         colorState: ColorUIState,
-        engine: CardNavigation = CardNavigation(),
+        logic: CardNavigation = CardNavigation(),
         uiRepository: PlayRepositoryProtocol
     ) {
         self.playSession = playSession
@@ -29,14 +29,14 @@ class PlayViewModel: ObservableObject {
         self.listSession = listSession
         self.settingSession = settingSession
         self.colorState = colorState
-        self.engine = engine
+        self.logic = logic
         self.uiRepository = uiRepository
     }
 
     // UIをリセット、保存すべきものは保存
     func updateView() async {
         playUI = PlayUI()
-        playUI.screenSlots = engine.firstCard(cards: cardSession.cards, mode: playSession.mode)
+        playUI.screenSlots = logic.firstCard(cards: cardSession.cards, mode: playSession.mode)
         for slot in playUI.screenSlots.compactMap({ $0 }) {
             playSession.shownCount += 1
         }
@@ -56,7 +56,7 @@ class PlayViewModel: ObservableObject {
         guard var slot = playUI.screenSlots[slotIndex] else { return }
         slot.cardSide = .back
         playUI.screenSlots[slotIndex] = slot
-        let nextCard = engine.nextCard(
+        let nextCard = logic.nextCard(
             cards: cardSession.cards,
             looping: playSession.looping,
             mode: playSession.mode,

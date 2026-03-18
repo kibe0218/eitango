@@ -5,25 +5,17 @@ struct LoginView: View {
     @EnvironmentObject var vm: RootViewModel
     @Environment(\.colorScheme) var colorScheme
     
-    @State private var email: String = ""
+    @State private var identifier: String = ""
     @State private var pass: String = ""
     
     @State private var geo_height: CGFloat = 0
     @State private var geo_width: CGFloat = 0
-    
-    @State private var danger_user: Bool = false
-    @State private var danger_email: Bool = false
-    @State private var danger_pass: Bool = false
-    
-    @State private var isSubmitting = false
-    
     
     
     @FocusState private var focusedField: Field?
     
     enum Field {
         case user
-        case email
         case pass
     }
     
@@ -60,7 +52,7 @@ struct LoginView: View {
                             .frame(width: geo.size.width * 0.1)
                     }
                     Triangle()
-                        .fill(vm.backColor)
+                        .fill(vm.colorUIState.palette.backColor)
                         .frame(width: geo.size.width * 0.2, height: geo.size.height * 0.2)
                         .padding(.leading, geo.size.width * 0.05)
                         .offset(x: -0.4 * geo.size.width, y: -0.5 * geo.size.height)
@@ -81,7 +73,6 @@ struct LoginView: View {
                 VStack {
                     if vm.keyboard.keyboardHeight.isZero {
                         Spacer()
-                            .frame(height: geo_height * 0.1)
                     }
                     Text("ようこそ")
                         .foregroundStyle(vm.colorUIState.palette.backColor)
@@ -91,70 +82,20 @@ struct LoginView: View {
                         Spacer()
                             .frame(height: max(0, (geo_height * 0.18) - 30))
                     }
-                    if vm.keyboard.keyboardHeight.isZero {
-                        Spacer()
-                            .frame(height: geo_height * 0.03)
-                    }
-                        ZStack{
-                            TextField("ユーザー名,メールまたは電話番号", text: $vm.loginAction.identifier)
-                                .foregroundStyle(.black)
-                                .multilineTextAlignment(.center)
-                                .frame(width: geo_width * 0.6, height: geo_height * 0.05)
-                                .background(vm.colorUIState.palette.backColor)
-                                .cornerRadius(10)
-                                .focused($focusedField, equals: .user)
-                                .submitLabel(.next)
-                                .textContentType(.username)
-                                .onSubmit {
-                                    guard isValidUsername(user) != nil
-                                    else {
-                                        danger_user = true
-                                        focusedField = .user
-                                        return
-                                    }
-                                    danger_user = false
-                                    focusedField = .email
-                                }
-                            if danger_user {
-                                HStack{
-                                    Spacer()
-                                    SpeechBubble()
-                                        .multilineTextAlignment(.center)
-                                        .frame(width: geo_width * 0.2, height: geo_height * 0.05)
-                                }
-                            }
-                        }
-                    }
-                    if selectedOption == "新規作成" {
-                        if keyboard.keyboardHeight.isZero {
-                            Spacer()
-                                .frame(height: geo_height * 0.03)
-                        }
-                    }
-                    Text("E-mailアドレス")
-                        .font(.system(size: geo_height * 0.025))
-                        foregroundStyle(vm.colorUIState.palette.backColor)
                     ZStack{
-                        TextField("", text: $email)
+                        TextField("ユーザー名,メールまたは電話番号", text: $identifier)
                             .foregroundStyle(.black)
                             .multilineTextAlignment(.center)
                             .frame(width: geo_width * 0.6, height: geo_height * 0.05)
-                            .background(vm.backColor)
+                            .background(vm.colorUIState.palette.backColor)
                             .cornerRadius(10)
-                            .focused($focusedField, equals: .email)
+                            .focused($focusedField, equals: .user)
                             .submitLabel(.next)
-                            .textContentType(.emailAddress)
+                            .textContentType(.username)
                             .onSubmit {
-                                guard isValidEmail(email) != nil
-                                else {
-                                    danger_email = true
-                                    focusedField = .email
-                                    return
-                                }
-                                danger_email = false
                                 focusedField = .pass
                             }
-                        if danger_email {
+                        if  {
                             HStack{
                                 Spacer()
                                 SpeechBubble()
@@ -163,7 +104,7 @@ struct LoginView: View {
                             }
                         }
                     }
-                    if keyboard.keyboardHeight.isZero {
+                    if vm.keyboard.keyboardHeight.isZero {
                         Spacer()
                             .frame(height: geo_height * 0.03)
                     }
@@ -171,7 +112,7 @@ struct LoginView: View {
                         .font(.system(size: geo_height * 0.025))
                         foregroundStyle(vm.colorUIState.palette.backColor)
                     ZStack{
-                        SecureField("", text: $pass)
+                        SecureField("パスワード(10~64文字)", text: $pass)
                             .foregroundStyle(.black)
                             .multilineTextAlignment(.center)
                             .frame(width: geo_width * 0.6, height: geo_height * 0.05)
@@ -181,18 +122,8 @@ struct LoginView: View {
                             .submitLabel(.done)
                             .textContentType(.password)
                             .onSubmit {
-                                Task {
-                                    guard validateInputs() else { return }
-                                    isSubmitting = true
-                                    defer { isSubmitting = false }
-                                    if selectedOption == "ログイン" {
-                                        try await vm.login(email: email, password: pass)
-                                    } else {
-                                        try await vm.signUp(email: email, password: pass, name: user)
-                                    }
-                                }
                             }
-                        if danger_pass {
+                        if  {
                             HStack{
                                 Spacer()
                                 SpeechBubble()
@@ -203,12 +134,9 @@ struct LoginView: View {
                     }
                     if keyboard.keyboardHeight.isZero {
                         Spacer()
-                            .frame(height: geo_height * 0.1)
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                ErrorAlertView()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             }
             .onChange(of: colorScheme) {
                 vm.colorUIState.updateForColorScheme(colorScheme)

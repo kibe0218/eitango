@@ -1,6 +1,7 @@
 import Foundation
 
-
-enum AuthProvider {
-    case email(email: String, password: String)
+enum LoginMethod {
+    case userName(String)
+    case phoneNumber(String)
+    case email(String)
 }
