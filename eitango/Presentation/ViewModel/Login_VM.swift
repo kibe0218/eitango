@@ -15,9 +15,42 @@ class LoginViewModel: ObservableObject {
     
     // 最終判定
     func validateInputs() -> Bool {
-        var valid = true
+        @Published var danger: loginType
         
-        if selectedOption == "新規作成" {
+        enum loginType {
+            case email
+            case userName
+            case
+        }
+        
+        
+        private let cardSession: CardSession
+        private let listSession: ListSession
+        private let settingSession: SettingSession
+        private let colorState: ColorUIState
+        private let engine: CardNavigation
+        private let uiRepository: PlayRepositoryProtocol
+        init(
+            playSession: PlaySession,
+            playUI: PlayUI = PlayUI(),
+            cardSession: CardSession,
+            listSession: ListSession,
+            settingSession: SettingSession,
+            colorState: ColorUIState,
+            engine: CardNavigation = CardNavigation(),
+            uiRepository: PlayRepositoryProtocol
+        ) {
+            self.playSession = playSession
+            self.playUI = playUI
+            self.cardSession = cardSession
+            self.listSession = listSession
+            self.settingSession = settingSession
+            self.colorState = colorState
+            self.engine = engine
+            self.uiRepository = uiRepository
+        }
+
+        
             if isValidUsername(user) == nil {
                 danger_user = true
                 focusedField = .user
@@ -25,7 +58,6 @@ class LoginViewModel: ObservableObject {
             } else {
                 danger_user = false
             }
-        }
         
         if isValidEmail(email) == nil {
             danger_email = true
