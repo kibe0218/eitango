@@ -1,7 +1,4 @@
-//
-//  Screen.swift
-//  memoRise
-//
-//  Created by kibe on 2026/03/18.
-//
-
+enum Screen: Hashable {
+    case card(CardList)
+    case setting
+}

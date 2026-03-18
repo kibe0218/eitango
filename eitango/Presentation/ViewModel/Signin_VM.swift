@@ -1,7 +1,7 @@
 import Foundation
 import Combine
 
-class StartViewModel: ObservableObject {
+class SigninViewModel: ObservableObject {
     private let repository: UserRepositoryProtocol
     private let session: UserSession
     

@@ -18,7 +18,7 @@ struct ListView: View {
                     }) {
                         Image(systemName: "plus")
                             .font(.title)
-                            .foregroundStfyle(vm.colorUIState.palette.customaccentColor)
+                            .foregroundStyle(vm.colorUIState.palette.customaccentColor)
                     }
                     .padding(.horizontal, 30)
                     .frame(width: geo.size.height * 0.06,  height: geo.size.height * 0.06)
@@ -32,8 +32,7 @@ struct ListView: View {
                             Task {
                                 let list = try await vm.listActions.add(list: AddListRequest(title: title))
                                 title = ""
-                                vm.moveToCardView(list: list)
-                                
+                                vm.path.append(.card(list))
                             }
                         }
                         .disabled(title.trimmingCharacters(in: .whitespaces).isEmpty)
@@ -58,7 +57,7 @@ struct ListView: View {
                                         .zIndex(100)
                                 }
                                 .onTapGesture{
-                                    vm.moveToCardView(list: list)
+                                    vm.path.append(.card(list))
                                 }
                                 .frame(height: geo.size.height * 0.18 + 30)
                                 .padding(.bottom,10)
@@ -87,7 +86,6 @@ struct ListView: View {
         }
         .background(vm.colorUIState.palette.backColor.ignoresSafeArea())
     }
-}
 
 struct CardListView: View {
     @EnvironmentObject var vm: RootViewModel

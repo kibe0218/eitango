@@ -1,9 +1,7 @@
 import Foundation
 import FirebaseAuth
 
-enum AuthProvider {
-    case email(email: String, password: String)
-}
+
 
 protocol AuthRepositoryProtocol {
     func signUp(provider: AuthProvider) async throws -> String

@@ -1,15 +1,12 @@
 import SwiftUI
 import FirebaseAuth
 
-struct StartView: View {
+struct LoginView: View {
     @EnvironmentObject var vm: RootViewModel
     @Environment(\.colorScheme) var colorScheme
-    @StateObject var keyboard = KeyboardObserver()
     
-    @State private var user: String = ""
     @State private var email: String = ""
     @State private var pass: String = ""
-    @State private var selectedOption = "新規作成"
     
     @State private var geo_height: CGFloat = 0
     @State private var geo_width: CGFloat = 0
@@ -21,7 +18,6 @@ struct StartView: View {
     @State private var isSubmitting = false
     
     
-    let options = ["新規作成", "ログイン"]
     
     @FocusState private var focusedField: Field?
     
@@ -83,45 +79,24 @@ struct StartView: View {
                 vm.colorUIState.palette.customaccentColor
                     .ignoresSafeArea()
                 VStack {
-                    if keyboard.keyboardHeight.isZero {
+                    if vm.keyboard.keyboardHeight.isZero {
                         Spacer()
                             .frame(height: geo_height * 0.1)
                     }
-                    if selectedOption == "新規作成" {
-                        Text("ようこそ")
-                            foregroundStyle(vm.colorUIState.palette.backColor)
-                            .font(.system(size: 30))
-                    }
-                    else {
-                        Text("おかえりなさい")
-                            foregroundStyle(vm.colorUIState.palette.backColor)
-                            .font(.system(size: 30))
-                    }
-                    if keyboard.keyboardHeight.isZero {
+                    Text("ようこそ")
+                        .foregroundStyle(vm.colorUIState.palette.backColor)
+                        .font(.system(size: 30))
+
+                    if vm.keyboard.keyboardHeight.isZero {
                         Spacer()
                             .frame(height: max(0, (geo_height * 0.18) - 30))
                     }
-                    Picker("", selection: $selectedOption){
-                        ForEach(options, id: \.self) {
-                            option in
-                            Text(option)
-                                .font(.system(size: 20))
-                                .cornerRadius(8)
-                        }
-                    }
-                    .frame(width: geo_width * 0.6)
-                    .pickerStyle(.segmented)
-                    foregroundStyle(vm.colorUIState.palette.backColor)
-                    if keyboard.keyboardHeight.isZero {
+                    if vm.keyboard.keyboardHeight.isZero {
                         Spacer()
                             .frame(height: geo_height * 0.03)
                     }
-                    if selectedOption == "新規作成" {
-                        Text("アカウント名(1~4文字)")
-                            .font(.system(size: geo_height * 0.025))
-                            foregroundStyle(vm.colorUIState.palette.backColor)
                         ZStack{
-                            TextField("", text: $user)
+                            TextField("ユーザー名,メールまたは電話番号", text: $vm.loginAction.identifier)
                                 .foregroundStyle(.black)
                                 .multilineTextAlignment(.center)
                                 .frame(width: geo_width * 0.6, height: geo_height * 0.05)
@@ -244,5 +219,13 @@ struct StartView: View {
                 vm.colorUIState.updateForColorScheme(colorScheme)
             }
         }
+    }
+}
+
+
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        LoginView()
+            .environmentObject(Manager())
     }
 }

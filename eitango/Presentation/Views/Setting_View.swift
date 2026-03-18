@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct SettingsView: View {
+struct SettingView: View {
     @Environment(\.colorScheme) var colorScheme
     @EnvironmentObject var vm: RootViewModel
     @State private var showLogoutAlert = false

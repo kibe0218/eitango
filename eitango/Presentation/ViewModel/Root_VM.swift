@@ -9,6 +9,9 @@ final class RootViewModel: ObservableObject {
     
     // App-wide helpers
     @Published var keyboard = KeyboardObserver()
+    
+    // Screen Observer
+    @Published var path: [Screen] = []
 
     // App-wide sessions (View は直接見ない前提 / Actions が参照)
     let userSession: UserSession
@@ -22,7 +25,7 @@ final class RootViewModel: ObservableObject {
     let listActions: ListViewModel
     let cardActions: CardViewModel
     let playActions: PlayViewModel
-    let startActions: StartViewModel
+    let loginActions: LoginViewModel
 
 
 
@@ -36,7 +39,7 @@ final class RootViewModel: ObservableObject {
         userRepository: UserRepositoryProtocol,
         listRepository: ListRepositoryProtocol,
         cardRepository: CardRepositoryProtocol,
-        playRepository: PlayRepositoryProtocol
+        playRepository: PlayRepositoryProtocol,
     ) {
         
         // Sessions

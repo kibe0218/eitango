@@ -10,8 +10,8 @@ struct HomeView: View {
         _selection = State(initialValue: 0)
     }
     var body: some View {
-        NavigationStack {
-            GeometryReader { geo in
+        GeometryReader { geo in
+            NavigationStack(path: $vm.path) {
                 TabView(selection: $selection) {
                     PlayView()
                         .environmentObject(vm)
@@ -36,19 +36,20 @@ struct HomeView: View {
                             Text("User")
                         }
                         .tag(2)
-//                     DogView()
-//                         .environmentObject(vm)
-//                         .tabItem {
-//                             Image(systemName: "dog")
-//                             Text("Dog")
-//                         }
-//                         .tag(2)
                 }
-                .onChange(of: colorScheme) {
-                    vm.colorUIState.updateForColorScheme(colorScheme)
-                }
-                .accentColor(vm.colorUIState.palette.customaccentColor)
             }
+            .navigationDestination(for: Screen.self) { screen in
+                switch screen {
+                case .card(let list):
+                    CardView(list: list)
+                case .setting:
+                    SettingView()
+                }
+            }
+            .onChange(of: colorScheme) {
+                vm.colorUIState.updateForColorScheme(colorScheme)
+            }
+            .accentColor(vm.colorUIState.palette.customaccentColor)
         }
     }
 }
