@@ -36,33 +36,3 @@ extension AuthError {
         }
     }
 }
-
-extension AuthError {
-    var message: String {
-        switch self {
-        case .wrongPassword:
-            print("🟡 message case: wrongPassword")
-            return "パスワードが間違っています"
-        case .userNotFound:
-            print("🟡 message case: userNotFound")
-            return "ユーザーが見つかりません"
-        case .invalidEmail:
-            print("🟡 message case: invalidEmail")
-            return "メールアドレスの形式が正しくありません"
-        case .emailAlreadyInUse:
-            print("🟡 message case: emailAlreadyInUse")
-            return "そのメールアドレスは既に使用されています"
-        case .requiresRecentLogin:
-            print("🟡 message case: requiresRecentLogin")
-            return "もう一度ログインしてください"
-        case .network:
-            print("🟡 message case: network")
-            return "ネットワークエラーです"
-        case .noCurrentUser:
-            return "現在ログインしていません"
-        case .unknown:
-            print("🟡 message case: unknown")
-            return "ログインに失敗しました"
-        }
-    }
-}

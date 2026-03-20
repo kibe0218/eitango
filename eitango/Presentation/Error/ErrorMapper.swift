@@ -7,7 +7,17 @@ struct ErrorMapper {
         } else if let coreDataError = error as? CoreDataError {
             return .coreData(coreDataError)
         } else {
-            return .unknown
+            return .unknown(error)
+        }
+    }
+
+    static func toMessage(_ error: AppError) -> String {
+        switch error {
+        case .network: return "ネットワーク接続エラー"
+        case .auth(let e): return e.message
+        case .database(let e): return e.message
+        case .coreData: return "保存エラー"
+        case .unknown: return "不明なエラー"
         }
     }
 }
