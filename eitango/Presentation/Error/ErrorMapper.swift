@@ -13,11 +13,10 @@ struct ErrorMapper {
 
     static func toMessage(_ error: AppError) -> String {
         switch error {
-        case .network: return "ネットワーク接続エラー"
         case .auth(let e): return e.message
         case .database(let e): return e.message
-        case .coreData: return "保存エラー"
-        case .unknown: return "不明なエラー"
+        case .coreData: return "保存エラーが発生しました。"
+        case .unknown: return "不明なエラーです。"
         }
     }
 }
