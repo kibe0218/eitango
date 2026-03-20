@@ -51,7 +51,7 @@ struct URLBuilder {
         var components = URLComponents(string: baseURL + path)
         components?.queryItems = queryItems
         guard let url = components?.url else {
-            throw UBError.invalidURL
+            fatalError("🟡URL生成失敗")
         }
         return url
     }
