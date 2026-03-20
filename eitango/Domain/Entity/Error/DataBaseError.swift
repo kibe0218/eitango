@@ -1,5 +1,4 @@
 import Foundation
-import FirebaseAuth
 
 // DataBase
 enum DataBaseError: Error {
@@ -12,7 +11,7 @@ enum DataBaseError: Error {
     case unknown
 }
 
-extension DBError {
+extension DataBaseError {
     var message: String {
         switch self {
         case .duplicatedUsername:

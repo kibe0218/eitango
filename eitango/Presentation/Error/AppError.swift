@@ -7,3 +7,4 @@ enum AppError {
     case coreData(CoreDataError)
     case unknown
 }
+
