@@ -20,6 +20,10 @@
 		1849202C2F4139660069FF22 /* Exceptions for "eitango" folder in "memoRise" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Domain/Entity/Screen/readme.txt,
+				Domain/Logic/readme.txt,
+				Presentation/Coordinator/readme.txt,
+				Presentation/ViewModel/readme.txt,
 				Presentation/ViewModel/Utils/readme.txt,
 				Trash/AppState.txt,
 				Trash/Card_PVM.txt,
@@ -39,7 +43,6 @@
 			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
 			buildPhase = 1821FF642E98E2100021BAF9 /* Sources */;
 			membershipExceptions = (
-				Presentation/ViewModel/Utils/readme.txt,
 				Trash/AppState.txt,
 				Trash/Card_PVM.txt,
 				Trash/Flip_PVM.txt,

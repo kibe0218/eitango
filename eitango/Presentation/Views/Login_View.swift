@@ -95,7 +95,7 @@ struct LoginView: View {
                             .onSubmit {
                                 focusedField = .pass
                             }
-                        if  {
+                        if case .identifier = vm.loginActions.danger {
                             HStack{
                                 Spacer()
                                 SpeechBubble()
@@ -123,7 +123,7 @@ struct LoginView: View {
                             .textContentType(.password)
                             .onSubmit {
                             }
-                        if  {
+                        if case .password = vm.loginActions.danger {
                             HStack{
                                 Spacer()
                                 SpeechBubble()
@@ -132,7 +132,7 @@ struct LoginView: View {
                             }
                         }
                     }
-                    if keyboard.keyboardHeight.isZero {
+                    if vm.keyboard.keyboardHeight.isZero {
                         Spacer()
                     }
                 }
@@ -154,6 +154,5 @@ struct LoginView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         LoginView()
-            .environmentObject(Manager())
     }
 }

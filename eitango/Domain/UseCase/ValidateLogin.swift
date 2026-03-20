@@ -1,6 +1,6 @@
 import Foundation
 
-struct ValidateIdentifierUseCase {
+struct LoginUseCase {
     
     private let userSession: UserSession
 
@@ -10,18 +10,20 @@ struct ValidateIdentifierUseCase {
         self.userSession = userSession
     }
     
-    func validate (
-        identifier: String,
-    ) -> LoginMethod? {
+    func identifierValidate(identifier: String, password: String) -> ValidateResult {
+        
+        guard UserValidator.isValidPassword(password) != nil else {
+            return .failure(.password)
+        }
         
         if UserValidator.isValidUsername(identifier) != nil {
-            return .userName(identifier)
+            return .success(LoginInput(identifier: identifier, password: password, method: .userName))
         } else if UserValidator.isValidPhoneNumber(identifier) != nil {
-            return .phoneNumber(identifier)
+            return .success(LoginInput(identifier: identifier, password: password, method: .phoneNumber))
         } else if UserValidator.isValidEmail(identifier) != nil {
-            return .email(identifier)
+            return .success(LoginInput(identifier: identifier, password: password, method: .email))
         } else {
-            return nil
+            return .failure(.identifier)
         }
     }
 }

@@ -75,7 +75,7 @@ final class RootViewModel: ObservableObject {
             colorState: colorUIState,
             uiRepository: playRepository
         )
-        self.startActions = StartViewModel(
+        self.loginActions = LoginViewModel(
             repository: userRepository,
             session: userSession
         )
