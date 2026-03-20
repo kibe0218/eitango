@@ -64,7 +64,7 @@ struct SignInView: View {
                             .frame(width: geo.size.width * 0.1)
                     }
                     Triangle()
-                        .fill(vm.backColor)
+                        .fill(vm.colorUIState.palette.backColor)
                         .frame(width: geo.size.width * 0.2, height: geo.size.height * 0.2)
                         .padding(.leading, geo.size.width * 0.05)
                         .offset(x: -0.4 * geo.size.width, y: -0.5 * geo.size.height)

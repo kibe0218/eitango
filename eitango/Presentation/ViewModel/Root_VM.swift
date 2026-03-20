@@ -14,18 +14,18 @@ final class RootViewModel: ObservableObject {
     @Published var path: [Screen] = []
 
     // App-wide sessions (View は直接見ない前提 / Actions が参照)
-    let userSession: UserSession
-    let listSession: ListSession
-    let cardSession: CardSession
-    let settingSession: SettingSession
-    let playSession: PlaySession
+    var userSession: UserSession
+    var listSession: ListSession
+    var cardSession: CardSession
+    var settingSession: SettingSession
+    var playSession: PlaySession
     
     // Actions / Feature ViewModels (UIState を更新する側)
-    let userActions: UserViewModel
-    let listActions: ListViewModel
-    let cardActions: CardViewModel
-    let playActions: PlayViewModel
-    let loginActions: LoginViewModel
+    var userActions: UserViewModel
+    var listActions: ListViewModel
+    var cardActions: CardViewModel
+    var playActions: PlayViewModel
+    var loginActions: LoginViewModel
 
 
 

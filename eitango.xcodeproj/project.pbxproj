@@ -30,37 +30,22 @@
 				Trash/Flip_PVM.txt,
 				Trash/Flow.txt,
 				Trash/List_PVM.txt,
+				Trash/readme.txt,
 				Trash/Settings_PVM.txt,
 				Trash/Special_VM.txt,
+				Trash/Spetial_PVM.txt,
+				Trash/UIUpdate_PVM.txt,
 				Trash/User_DB.txt,
 			);
 			target = 1821FF672E98E2100021BAF9 /* memoRise */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
-/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-		1849202D2F4139660069FF22 /* Exceptions for "eitango" folder in "Compile Sources" phase from "memoRise" target */ = {
-			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
-			buildPhase = 1821FF642E98E2100021BAF9 /* Sources */;
-			membershipExceptions = (
-				Trash/AppState.txt,
-				Trash/Card_PVM.txt,
-				Trash/Flip_PVM.txt,
-				Trash/Flow.txt,
-				Trash/List_PVM.txt,
-				Trash/Settings_PVM.txt,
-				Trash/Special_VM.txt,
-				Trash/User_DB.txt,
-			);
-		};
-/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		1821FF6A2E98E2100021BAF9 /* eitango */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				1849202C2F4139660069FF22 /* Exceptions for "eitango" folder in "memoRise" target */,
-				1849202D2F4139660069FF22 /* Exceptions for "eitango" folder in "Compile Sources" phase from "memoRise" target */,
 			);
 			path = eitango;
 			sourceTree = "<group>";

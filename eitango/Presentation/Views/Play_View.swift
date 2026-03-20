@@ -13,7 +13,7 @@ struct PlayView: View {
                     PlayHeaderView()
                         .environmentObject(vm)
                     ForEach(0..<4, id: \.self) { position in
-                        CardItemView(
+                        PlayCardView(
                             showNotification: $showNotification,
                             position: position,
                             width: geo.size.width,
@@ -114,7 +114,7 @@ struct PlayHeaderView: View {
     }
 }
 
-struct CardItemView: View{
+struct PlayCardView: View{
     @EnvironmentObject var vm: RootViewModel
     @Environment(\.colorScheme) var colorScheme
     
@@ -130,7 +130,7 @@ struct CardItemView: View{
                 switch screenCard.cardSide {
                 case .front:
                     Text(screenCard.card.en)
-                        .font(.system(size: CGFloat(vm.enFontSize(screenCard.card.en))))
+                        .font(.system(size: CGFloat(enFontSize(screenCard.card.en))))
                         .foregroundStyle(
                             vm.playActions.currentCardColor(
                                 position: position,

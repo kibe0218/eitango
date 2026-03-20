@@ -68,7 +68,7 @@ struct ListView: View {
                         .listRowBackground(Color.clear)
                     }
                     .onDelete { indices in
-                        let listsToDelete = indices.map { vm.listSession.cards[$0] }
+                        let listsToDelete = indices.map { vm.listSession.lists[$0] }
                         Task {
                             for list in listsToDelete {
                                 try await vm.listActions.delete(id: list.id)
@@ -86,6 +86,7 @@ struct ListView: View {
         }
         .background(vm.colorUIState.palette.backColor.ignoresSafeArea())
     }
+}
 
 struct CardListView: View {
     @EnvironmentObject var vm: RootViewModel

@@ -13,7 +13,6 @@ struct LoginView: View {
     
     
     @FocusState private var focusedField: Field?
-    
     enum Field {
         case user
         case pass
@@ -130,6 +129,11 @@ struct LoginView: View {
                                     .multilineTextAlignment(.center)
                                     .frame(width: geo_width * 0.2, height: geo_height * 0.05)
                             }
+                        }
+                    }
+                    Button("ログイン") {
+                        Task {
+                            await vm.loginActions.validateInput()
                         }
                     }
                     if vm.keyboard.keyboardHeight.isZero {
