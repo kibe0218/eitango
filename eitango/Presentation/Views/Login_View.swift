@@ -73,19 +73,14 @@ struct LoginView: View {
                     if vm.keyboard.keyboardHeight.isZero {
                         Spacer()
                     }
-                    Text("ようこそ")
-                        .foregroundStyle(vm.colorUIState.palette.backColor)
-                        .font(.system(size: 30))
-
-                    if vm.keyboard.keyboardHeight.isZero {
-                        Spacer()
-                            .frame(height: max(0, (geo_height * 0.18) - 30))
-                    }
+                    Image("memodog")
+                        .resizable()
+                        .frame(width: 200, height: 200)
                     ZStack{
                         TextField("ユーザー名,メールまたは電話番号", text: $identifier)
                             .foregroundStyle(.black)
                             .multilineTextAlignment(.center)
-                            .frame(width: geo_width * 0.6, height: geo_height * 0.05)
+                            .frame(width: geo_width * 0.8, height: geo_height * 0.06)
                             .background(vm.colorUIState.palette.backColor)
                             .cornerRadius(10)
                             .focused($focusedField, equals: .user)
@@ -103,18 +98,13 @@ struct LoginView: View {
                             }
                         }
                     }
-                    if vm.keyboard.keyboardHeight.isZero {
-                        Spacer()
-                            .frame(height: geo_height * 0.03)
-                    }
-                    Text("パスワード(10~64文字）")
-                        .font(.system(size: geo_height * 0.025))
-                        foregroundStyle(vm.colorUIState.palette.backColor)
+                    Spacer()
+                        .frame(height: geo_height * 0.02)
                     ZStack{
-                        SecureField("パスワード(10~64文字)", text: $pass)
+                        SecureField("パスワード", text: $pass)
                             .foregroundStyle(.black)
                             .multilineTextAlignment(.center)
-                            .frame(width: geo_width * 0.6, height: geo_height * 0.05)
+                            .frame(width: geo_width * 0.8, height: geo_height * 0.06)
                             .background(vm.colorUIState.palette.backColor)
                             .cornerRadius(10)
                             .focused($focusedField, equals: .pass)
@@ -131,7 +121,7 @@ struct LoginView: View {
                             }
                         }
                     }
-                    Button("ログイン") {
+                    Button("ログイン"){
                         Task {
                             try await vm.loginActions.validateInput()
                         }
@@ -146,6 +136,7 @@ struct LoginView: View {
                 vm.colorUIState.updateForColorScheme(colorScheme)
             }
             .onAppear {
+                print("🟡 LoginView表示")
                 geo_height = geo.size.height
                 geo_width = geo.size.width
                 vm.colorUIState.updateForColorScheme(colorScheme)
@@ -158,5 +149,6 @@ struct LoginView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         LoginView()
+            .environmentObject(CompositionRoot.build())
     }
 }

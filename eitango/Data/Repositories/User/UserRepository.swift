@@ -2,6 +2,7 @@ import Foundation
 import Combine
 
 protocol UserRepositoryProtocol {
+    func fetchFromCoreData() throws -> User?
     func signUp(email: String, password: String, name: String) async throws -> User
     func login(email: String, password: String) async throws -> User
     func logout() async throws
@@ -25,6 +26,11 @@ class UserRepository: UserRepositoryProtocol {
     
     // MARK: - Account Operations
 
+    //同期
+    func fetchFromCoreData() throws -> User? {
+        return try cdRepository.fetch()
+    }
+    
     // 追加
     func signUp(email: String, password: String, name: String) async throws -> User {
         do {

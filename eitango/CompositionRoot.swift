@@ -1,6 +1,8 @@
 struct CompositionRoot {
     
     static func build() -> RootViewModel {
+        print("🟡 build開始")
+
         
         let colorUIState = ColorUIState()
         // Session
@@ -69,7 +71,8 @@ struct CompositionRoot {
         )
         
         let appState = AppState()
-        
+        print("🟡 build終了")
+
         return RootViewModel(
             userSession: userSession,
             listSession: listSession,

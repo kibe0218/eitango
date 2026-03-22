@@ -42,7 +42,7 @@ final class RootViewModel: ObservableObject {
         listActions: ListViewModel,
         cardActions: CardViewModel,
         playActions: PlayViewModel,
-        loginActions: LoginViewModel
+        loginActions: LoginViewModel,
     ) {
         
         // Sessions

@@ -14,6 +14,14 @@ class UserViewModel: ObservableObject {
         self.session = session
     }
     
+    func fetch() {
+        do {
+            session.user = try repository.fetchFromCoreData()
+        } catch {
+            fatalError()
+        }
+    }
+    
     func signUp(email: String, password: String, name: String) async throws {
         session.user = try await repository.signUp(email: email, password: password, name: name)
     }

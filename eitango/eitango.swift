@@ -12,13 +12,19 @@ struct eitangoApp: App {
     
     var body: some Scene {
         WindowGroup {
-            if vm.userSession.user != nil {
-                LoginView()
-                    .environmentObject(vm)
+            Group {
+                if vm.userSession.user == nil {
+                    LoginView()
+                }
+                else {
+                    SplashScreenView()
+                }
             }
-            else {
-                SplashScreenView()
-                    .environmentObject(vm)
+            .environmentObject(vm)
+            .onAppear {
+                print("🟡 RootView表示された")
+                print("🟡 user:", vm.userSession.user as Any)
+                vm.userActions.fetch()
             }
         }
     }
