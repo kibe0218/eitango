@@ -32,34 +32,6 @@ struct LoginView: View {
         }
     }
     
-    struct SpeechBubble: View {
-        @EnvironmentObject var vm: RootViewModel
-        let text = "😢"
-        var body: some View {
-            GeometryReader { geo in
-                ZStack(alignment: .bottom) {
-                    HStack{
-                        Spacer()
-                        Text(text)
-                            .frame(width: geo.size.width * 0.7, height: geo.size.height)
-                            .multilineTextAlignment(.center)
-                            .background(
-                                RoundedRectangle(cornerRadius: 10)
-                                    .fill(vm.colorUIState.palette.backColor)
-                            )
-                        Spacer()
-                            .frame(width: geo.size.width * 0.1)
-                    }
-                    Triangle()
-                        .fill(vm.colorUIState.palette.backColor)
-                        .frame(width: geo.size.width * 0.2, height: geo.size.height * 0.2)
-                        .padding(.leading, geo.size.width * 0.05)
-                        .offset(x: -0.4 * geo.size.width, y: -0.5 * geo.size.height)
-                }
-            }
-        }
-    }
-    
     // =========
     // body部分📱
     // =========
@@ -69,65 +41,85 @@ struct LoginView: View {
             ZStack {
                 vm.colorUIState.palette.customaccentColor
                     .ignoresSafeArea()
+                    .onTapGesture {
+                                        focusedField = nil
+                                    }
+                
                 VStack {
-                    if vm.keyboard.keyboardHeight.isZero {
-                        Spacer()
-                    }
+                    Spacer()
+                    
                     Image("memodog")
                         .resizable()
-                        .frame(width: 200, height: 200)
-                    ZStack{
-                        TextField("ユーザー名,メールまたは電話番号", text: $identifier)
-                            .foregroundStyle(.black)
-                            .multilineTextAlignment(.center)
-                            .frame(width: geo_width * 0.8, height: geo_height * 0.06)
-                            .background(vm.colorUIState.palette.backColor)
-                            .cornerRadius(10)
-                            .focused($focusedField, equals: .user)
-                            .submitLabel(.next)
-                            .textContentType(.username)
-                            .onSubmit {
-                                focusedField = .pass
-                            }
-                        if case .identifier = vm.loginActions.danger {
-                            HStack{
-                                Spacer()
-                                SpeechBubble()
-                                    .multilineTextAlignment(.center)
-                                    .frame(width: geo_width * 0.2, height: geo_height * 0.05)
-                            }
+                        .frame(width: 130, height: 130)
+                    
+                    TextField("ユーザー名,メールまたは電話番号", text: $identifier)
+                        .foregroundStyle(vm.colorUIState.palette.textColor)
+                        .multilineTextAlignment(.center)
+                        .frame(width: geo_width * 0.8, height: geo_height * 0.06)
+                        .background(vm.colorUIState.palette.backColor)
+                        .cornerRadius(10)
+                        .focused($focusedField, equals: .user)
+                        .submitLabel(.next)
+                        .textContentType(.username)
+                        .onSubmit {
+                            focusedField = .pass
                         }
-                    }
+                    
                     Spacer()
                         .frame(height: geo_height * 0.02)
-                    ZStack{
-                        SecureField("パスワード", text: $pass)
-                            .foregroundStyle(.black)
-                            .multilineTextAlignment(.center)
-                            .frame(width: geo_width * 0.8, height: geo_height * 0.06)
-                            .background(vm.colorUIState.palette.backColor)
-                            .cornerRadius(10)
-                            .focused($focusedField, equals: .pass)
-                            .submitLabel(.done)
-                            .textContentType(.password)
-                            .onSubmit {
-                            }
-                        if case .password = vm.loginActions.danger {
-                            HStack{
-                                Spacer()
-                                SpeechBubble()
-                                    .multilineTextAlignment(.center)
-                                    .frame(width: geo_width * 0.2, height: geo_height * 0.05)
-                            }
+                    
+                    SecureField("パスワード", text: $pass)
+                        .foregroundStyle(vm.colorUIState.palette.textColor)
+                        .multilineTextAlignment(.center)
+                        .frame(width: geo_width * 0.8, height: geo_height * 0.06)
+                        .background(vm.colorUIState.palette.backColor)
+                        .cornerRadius(10)
+                        .focused($focusedField, equals: .pass)
+                        .submitLabel(.done)
+                        .textContentType(.password)
+                        .onSubmit {
                         }
-                    }
-                    Button("ログイン"){
+                    
+                    Spacer()
+                        .frame(height: geo_height * 0.06)
+                    
+                    Button("ログイン")
+                    {
                         Task {
                             try await vm.loginActions.validateInput()
+                            if vm.loginActions.danger == nil {
+                                Task {
+                                    try await vm.userActions.login(email: identifier, password: pass)
+                                }
+                            }
                         }
                     }
-                    if vm.keyboard.keyboardHeight.isZero {
+                    .font(.title3)
+                    .foregroundStyle(vm.colorUIState.palette.textColor)
+                    .frame(width: geo_width * 0.8, height: geo_height * 0.08)
+                    .background(vm.colorUIState.palette.strongaccentColor)
+                    .cornerRadius(40)
+                    
+                    Spacer()
+                    
+                    if focusedField == nil {
+                        Text("または")
+                            .foregroundStyle(vm.colorUIState.palette.backColor)
                         Spacer()
+                            .frame(height: geo_height * 0.03)
+                        Button("新規作成") {
+                            Task {
+                                try await vm.loginActions.validateInput()
+                            }
+                        }
+                        .font(.title3)
+                        .foregroundStyle(vm.colorUIState.palette.backColor)
+                        .frame(width: geo_width * 0.8, height: geo_height * 0.08)
+                        .background(Color.clear) // ← 塗り消す
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 40)
+                                .stroke(vm.colorUIState.palette.strongaccentColor, lineWidth: 4)
+                        )
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
@@ -148,7 +140,8 @@ struct LoginView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        LoginView()
-            .environmentObject(CompositionRoot.build())
+        let vm = CompositionRoot.build()
+        return LoginView()
+            .environmentObject(vm)
     }
 }

@@ -17,6 +17,7 @@ class KeyboardObserver: ObservableObject{
                 .map { $0.height },
             // 高さを抽出,mapは変換メソッド
             NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)
+                
             // keyboardWillHideNotificationはキーボードが閉じる前の通知
                 .map { _ in CGFloat(0) }
             // キーボードが閉じたら０に
