@@ -60,7 +60,7 @@
 				Domain/Entity/User/User.swift,
 				Domain/Logic/CardNavigation.swift,
 				Domain/Logic/UserValidator.swift,
-				Domain/UseCase/ValidateLogin.swift,
+				Domain/UseCase/DivideLoginMethod.swift,
 				eitango.swift,
 				"GoogleService-Info.plist",
 				"NSManagedObject/CardEntity+CoreDataClass.swift",

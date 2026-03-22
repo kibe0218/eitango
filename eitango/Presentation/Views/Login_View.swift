@@ -19,19 +19,6 @@ struct LoginView: View {
     }
     
     
-    
-    // 吹き出し💬
-    struct Triangle: Shape {
-        func path(in rect: CGRect) -> Path {// rectは描画可能領域
-            var path = Path()
-            path.move(to: CGPoint(x: rect.minX, y: rect.midY))
-            path.addLine(to: CGPoint(x: rect.maxX, y: rect.minY))
-            path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
-            path.closeSubpath()
-            return path
-        }
-    }
-    
     // =========
     // body部分📱
     // =========
@@ -42,8 +29,8 @@ struct LoginView: View {
                 vm.colorUIState.palette.customaccentColor
                     .ignoresSafeArea()
                     .onTapGesture {
-                                        focusedField = nil
-                                    }
+                        focusedField = nil
+                    }
                 
                 VStack {
                     Spacer()
@@ -85,12 +72,13 @@ struct LoginView: View {
                     
                     Button("ログイン")
                     {
+                        print("🟡 ログイン押")
                         Task {
-                            try await vm.loginActions.validateInput()
-                            if vm.loginActions.danger == nil {
-                                Task {
-                                    try await vm.userActions.login(email: identifier, password: pass)
-                                }
+                            try await vm.loginActions.divideInputAndLogin()
+                            if let danger = vm.loginActions.danger {
+                                print("🟡 danger: \(danger)")
+                            } else {
+                                print("🟡 danger: nil")
                             }
                         }
                     }
@@ -109,7 +97,6 @@ struct LoginView: View {
                             .frame(height: geo_height * 0.03)
                         Button("新規作成") {
                             Task {
-                                try await vm.loginActions.validateInput()
                             }
                         }
                         .font(.title3)

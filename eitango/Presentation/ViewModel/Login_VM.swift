@@ -30,9 +30,9 @@ class LoginViewModel: ObservableObject {
     }
     
     // 最終判定
-    func validateInput() async throws {
-        let result = useCase.identifierValidate(identifier: identifier, password: password)
-    
+    func divideInputAndLogin() async throws {
+        let result = useCase.divideLoginMethod(identifier: identifier, password: password)
+        
         if case .success(let input) = result {
             switch input.method {
             case .email:

@@ -10,11 +10,7 @@ struct LoginUseCase {
         self.userSession = userSession
     }
     
-    func identifierValidate(identifier: String, password: String) -> ValidateResult {
-        
-        guard UserValidator.isValidPassword(password) != nil else {
-            return .failure(.password)
-        }
+    func divideLoginMethod(identifier: String, password: String) -> ValidateResult {
         
         if UserValidator.isValidUsername(identifier) != nil {
             return .success(LoginInput(identifier: identifier, password: password, method: .userName))
