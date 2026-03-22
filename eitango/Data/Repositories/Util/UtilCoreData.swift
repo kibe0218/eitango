@@ -7,7 +7,7 @@ struct CoreDataRequest {
     
     // 1つだけ
     func fetchSingle<T: NSManagedObject>(ofType type: T.Type) throws -> T? {
-        let request: NSFetchRequest<T> = T.fetchRequest() as! NSFetchRequest<T>
+        let request = NSFetchRequest<T>(entityName: String(describing: T.self))
         let entities = try context.fetch(request)
         if entities.count > 1 {
             throw CoreDataError.inconsistentUserData
@@ -17,7 +17,7 @@ struct CoreDataRequest {
     
     // 全部
     func fetchAll<T: NSManagedObject>(ofType type: T.Type) throws -> [T] {
-        let request: NSFetchRequest<T> = T.fetchRequest() as! NSFetchRequest<T>
+        let request = NSFetchRequest<T>(entityName: String(describing: T.self))
         return try context.fetch(request)
     }
     
@@ -27,7 +27,7 @@ struct CoreDataRequest {
         key: String,
         value: Value
     ) throws -> T? {
-        let request: NSFetchRequest<T> = T.fetchRequest() as! NSFetchRequest<T>
+        let request = NSFetchRequest<T>(entityName: String(describing: T.self))
         request.fetchLimit = 1
         request.predicate = NSPredicate(format: "\(key) == %@", value)
         let results = try context.fetch(request)
@@ -40,7 +40,7 @@ struct CoreDataRequest {
         key: String,
         value: Value
     ) throws -> [T] {
-        let request: NSFetchRequest<T> = T.fetchRequest() as! NSFetchRequest<T>
+        let request = NSFetchRequest<T>(entityName: String(describing: T.self))
         request.predicate = NSPredicate(format: "\(key) == %@", value)
         return try context.fetch(request)
     }

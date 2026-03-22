@@ -17,35 +17,121 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		1849202C2F4139660069FF22 /* Exceptions for "eitango" folder in "memoRise" target */ = {
+		18D671F02F6FF01B0048FB77 /* Exceptions for "eitango" folder in "memoRise" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Domain/Entity/Screen/readme.txt,
-				Domain/Logic/readme.txt,
-				Presentation/Coordinator/readme.txt,
-				Presentation/ViewModel/readme.txt,
-				Presentation/ViewModel/Utils/readme.txt,
-				Trash/AppState.txt,
-				Trash/Card_PVM.txt,
-				Trash/Flip_PVM.txt,
-				Trash/Flow.txt,
-				Trash/List_PVM.txt,
-				Trash/readme.txt,
-				Trash/Settings_PVM.txt,
-				Trash/Special_VM.txt,
-				Trash/Spetial_PVM.txt,
-				Trash/UIUpdate_PVM.txt,
-				Trash/User_DB.txt,
+				Assets.xcassets,
+				CompositionRoot.swift,
+				Data/Repositories/Card/CardCoreData.swift,
+				Data/Repositories/Card/CardDTO.swift,
+				Data/Repositories/Card/CardFirestore.swift,
+				Data/Repositories/Card/CardRepository.swift,
+				Data/Repositories/Card/CardTranslate.swift,
+				Data/Repositories/List/ListCoreData.swift,
+				Data/Repositories/List/ListDTO.swift,
+				Data/Repositories/List/ListFirestore.swift,
+				Data/Repositories/List/ListRepository.swift,
+				Data/Repositories/Play/PlayCoreData.swift,
+				Data/Repositories/Play/PlayRepository.swift,
+				Data/Repositories/Setting/SettingCoreData.swift,
+				Data/Repositories/Setting/SettingRepository.swift,
+				Data/Repositories/User/UserCoreData.swift,
+				Data/Repositories/User/UserDTO.swift,
+				Data/Repositories/User/UserFBAuth.swift,
+				Data/Repositories/User/UserFirestore.swift,
+				Data/Repositories/User/UserRepository.swift,
+				Data/Repositories/Util/UtilCoreData.swift,
+				Data/Repositories/Util/UtilDataBase.swift,
+				Domain/Entity/Card/Card.swift,
+				Domain/Entity/Card/CardSide.swift,
+				Domain/Entity/Error/AuthError.swift,
+				Domain/Entity/Error/CoreDataError.swift,
+				Domain/Entity/Error/DataBaseError.swift,
+				Domain/Entity/List/List.swift,
+				Domain/Entity/Login/LoginInput.swift,
+				Domain/Entity/Login/LoginMethod.swift,
+				Domain/Entity/Login/LoginSlot.swift,
+				Domain/Entity/Login/ValidateResult.swift,
+				Domain/Entity/Play/PlaySession.swift,
+				Domain/Entity/Play/PlayUI.swift,
+				Domain/Entity/Screen/Screen.swift,
+				Domain/Entity/Setting/Setting.swift,
+				Domain/Entity/User/AuthProvider.swift,
+				Domain/Entity/User/User.swift,
+				Domain/Logic/CardNavigation.swift,
+				Domain/Logic/UserValidator.swift,
+				Domain/UseCase/ValidateLogin.swift,
+				eitango.swift,
+				"GoogleService-Info.plist",
+				"NSManagedObject/CardEntity+CoreDataClass.swift",
+				"NSManagedObject/CardEntity+CoreDataProperties.swift",
+				"NSManagedObject/ListEntity+CoreDataClass.swift",
+				"NSManagedObject/ListEntity+CoreDataProperties.swift",
+				"NSManagedObject/PlayEntity+CoreDataClass.swift",
+				"NSManagedObject/PlayEntity+CoreDataProperties.swift",
+				"NSManagedObject/SettingEntity+CoreDataClass.swift",
+				"NSManagedObject/SettingEntity+CoreDataProperties.swift",
+				"NSManagedObject/UserEntity+CoreDataClass.swift",
+				"NSManagedObject/UserEntity+CoreDataProperties.swift",
+				PC.swift,
+				Presentation/Coordinator/AppCoordinator.swift,
+				Presentation/Error/AppError.swift,
+				"Presentation/Error/AuthError+message.swift",
+				"Presentation/Error/DataBaseError+message.swift",
+				Presentation/Error/ErrorMapper.swift,
+				Presentation/Error/ErrorMessageTemplate.swift,
+				Presentation/Session/CardSession.swift,
+				Presentation/Session/ListSession.swift,
+				Presentation/Session/SettingSession.swift,
+				Presentation/Session/UserSession.swift,
+				Presentation/State/State.swift,
+				Presentation/UIHelper/CardColor.swift,
+				Presentation/UIHelper/ColorTheme.swift,
+				Presentation/ViewModel/Card_VM.swift,
+				Presentation/ViewModel/KeyBoardObserver.swift,
+				Presentation/ViewModel/List_VM.swift,
+				Presentation/ViewModel/Login_VM.swift,
+				Presentation/ViewModel/Play_VM.swift,
+				Presentation/ViewModel/Root_VM.swift,
+				Presentation/ViewModel/Signin_VM.swift,
+				Presentation/ViewModel/UIState/Color.swift,
+				Presentation/ViewModel/User_VM.swift,
+				Presentation/ViewModel/Utils/DalayController.swift,
+				"Presentation/ViewModel/Utils/Extensions/Character+Emoji.swift",
+				"Presentation/ViewModel/Utils/Extensions/Color+Hex.swift",
+				Presentation/ViewModel/Utils/FontSize.swift,
+				Presentation/ViewModel/Utils/HandleError.swift,
+				Presentation/Views/Alert_View.swift,
+				Presentation/Views/Card_View.swift,
+				Presentation/Views/Home_View.swift,
+				Presentation/Views/List_View.swift,
+				Presentation/Views/Login_View.swift,
+				Presentation/Views/Play_View.swift,
+				Presentation/Views/Setting_View.swift,
+				Presentation/Views/Signin_View.swift,
+				Presentation/Views/Splash_View.swift,
+				Presentation/Views/User_View.swift,
 			);
 			target = 1821FF672E98E2100021BAF9 /* memoRise */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
+/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+		18D671F12F6FF01B0048FB77 /* Exceptions for "eitango" folder in "Compile Sources" phase from "memoRise" target */ = {
+			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
+			buildPhase = 1821FF642E98E2100021BAF9 /* Sources */;
+			membershipExceptions = (
+				eitangoData.xcdatamodeld,
+			);
+		};
+/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		1821FF6A2E98E2100021BAF9 /* eitango */ = {
+		18D671932F6FF01B0048FB77 /* eitango */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				1849202C2F4139660069FF22 /* Exceptions for "eitango" folder in "memoRise" target */,
+				18D671F02F6FF01B0048FB77 /* Exceptions for "eitango" folder in "memoRise" target */,
+				18D671F12F6FF01B0048FB77 /* Exceptions for "eitango" folder in "Compile Sources" phase from "memoRise" target */,
 			);
 			path = eitango;
 			sourceTree = "<group>";
@@ -70,7 +156,7 @@
 			children = (
 				189175AF2F0698A00066AC02 /* memoRise-Info.plist */,
 				1862C2C62EF0BF3C00077808 /* memoRise.app */,
-				1821FF6A2E98E2100021BAF9 /* eitango */,
+				18D671932F6FF01B0048FB77 /* eitango */,
 			);
 			sourceTree = "<group>";
 		};
@@ -88,9 +174,6 @@
 			buildRules = (
 			);
 			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				1821FF6A2E98E2100021BAF9 /* eitango */,
 			);
 			name = memoRise;
 			packageProductDependencies = (

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="24512" systemVersion="24G419" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
-    <entity name="CardEntity" representedClassName="CardEntity" syncable="YES" codeGenerationType="class">
+    <entity name="CardEntity" representedClassName="CardEntity" syncable="YES">
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="en" optional="YES" attributeType="String"/>
         <attribute name="id" optional="YES" attributeType="String"/>
@@ -10,25 +10,25 @@
         <attribute name="order" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <relationship name="cardlist" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ListEntity" inverseName="cards" inverseEntity="ListEntity"/>
     </entity>
-    <entity name="ListEntity" representedClassName="ListEntity" syncable="YES" codeGenerationType="class">
+    <entity name="ListEntity" representedClassName="ListEntity" syncable="YES">
         <attribute name="cardCount" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" optional="YES" attributeType="String"/>
         <attribute name="title" optional="YES" attributeType="String"/>
         <relationship name="cards" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CardEntity" inverseName="cardlist" inverseEntity="CardEntity"/>
     </entity>
-    <entity name="PlayEntity" representedClassName="PlayEntity" syncable="YES" codeGenerationType="class">
+    <entity name="PlayEntity" representedClassName="PlayEntity" syncable="YES">
         <attribute name="looping" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="mode" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="reverse" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="selectedListId" optional="YES" attributeType="String"/>
         <attribute name="shownCount" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
     </entity>
-    <entity name="SettingEntity" representedClassName="SettingEntity" syncable="YES" codeGenerationType="class">
+    <entity name="SettingEntity" representedClassName="SettingEntity" syncable="YES">
         <attribute name="colorTheme" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="waitTime" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
     </entity>
-    <entity name="UserEntity" representedClassName="UserEntity" syncable="YES" codeGenerationType="class">
+    <entity name="UserEntity" representedClassName="UserEntity" syncable="YES">
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" optional="YES" attributeType="String"/>
         <attribute name="name" optional="YES" attributeType="String"/>

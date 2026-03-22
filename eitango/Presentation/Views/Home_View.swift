@@ -28,14 +28,14 @@ struct HomeView: View {
                             Text("Edit")
                         }
                         .tag(1)
-                    UserView()
-                        .environmentObject(vm)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                        .tabItem {
-                            Image(systemName: "person")
-                            Text("User")
-                        }
-                        .tag(2)
+//                    UserView()
+//                        .environmentObject(vm)
+//                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+//                        .tabItem {
+//                            Image(systemName: "person")
+//                            Text("User")
+//                        }
+//                        .tag(2)
                 }
             }
             .navigationDestination(for: Screen.self) { screen in
