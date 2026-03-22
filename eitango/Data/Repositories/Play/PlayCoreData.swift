@@ -18,7 +18,7 @@ class Play_CoreDataRepository: Play_CoreDataRepositoryProtocol {
     
     // Structに変換
     private func convertEntitiesToStructs(entity: PlayEntity) throws -> PlaySession {
-        var shownCount = Int(entity.shownCount)
+        let shownCount = Int(entity.shownCount)
         let mode = PlayMode(rawValue: Int(entity.mode)) ?? .ordered
         let looping = entity.looping
         let reverse = entity.reverse

@@ -12,14 +12,14 @@ struct PlayView: View {
                 VStack {
                     PlayHeaderView()
                         .environmentObject(vm)
-                    ForEach(0..<4, id: \.self) { position in
+                    ForEach(Array(vm.playActions.playUI.screenSlots.enumerated()), id: \.offset) { position, _ in
                         PlayCardView(
                             showNotification: $showNotification,
                             position: position,
                             width: geo.size.width,
                             height: geo.size.height
                         )
-                            .environmentObject(vm)
+                        .environmentObject(vm)
                     }
                     .padding(.bottom, 10)
                 }

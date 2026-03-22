@@ -37,9 +37,7 @@ class PlayViewModel: ObservableObject {
     func updateView() async {
         playUI = PlayUI()
         playUI.screenSlots = logic.firstCard(cards: cardSession.cards, mode: playSession.mode)
-        for slot in playUI.screenSlots.compactMap({ $0 }) {
-            playSession.shownCount += 1
-        }
+        playSession.shownCount = playUI.screenSlots.compactMap { $0 }.count
         do {
             try uiRepository.save(play: playSession)
         } catch {
@@ -81,7 +79,7 @@ class PlayViewModel: ObservableObject {
     // ミスったカードを追加
     @MainActor
     func mistakeTask(slotIndex: Int) async throws {
-        guard var slot = playUI.screenSlots[slotIndex] else { return }
+        guard let slot = playUI.screenSlots[slotIndex] else { return }
         if let index = cardSession.cards.firstIndex(where: { $0.id == slot.card.id }) {
             cardSession.cards[index].mistake = true
         }
