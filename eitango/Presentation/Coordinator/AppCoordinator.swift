@@ -18,13 +18,13 @@ extension RootViewModel {
         }
     }
 
-    func moveToStartView() {
+    func moveToLoginView() {
         print("🟡 moveToStartView 呼ばれたっピ")
         Task { @MainActor in
             if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                let window = windowScene.windows.first {
                 window.rootViewController = UIHostingController(
-                    rootView: StartView()
+                    rootView: LoginView()
                         .environmentObject(self)
                 )
                 window.makeKeyAndVisible()

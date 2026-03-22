@@ -27,7 +27,7 @@ class List_CoreDataRepository: List_CoreDataRepositoryProtocol {
                 let title = entity.title,
                 let createdAt = entity.createdAt
             else {
-                throw CDError.inconsistentListData
+                throw CoreDataError.inconsistentListData
             }
             let cardCount = Int(entity.cardCount)
             lists.append(CardList(id: id, title: title, createdAt: createdAt, cardCount: cardCount))
@@ -63,7 +63,7 @@ class List_CoreDataRepository: List_CoreDataRepositoryProtocol {
             try context.save()
         } catch {
             context.rollback()
-            throw CDError.saveFailed
+            throw CoreDataError.saveFailed
         }
     }
     
@@ -74,7 +74,7 @@ class List_CoreDataRepository: List_CoreDataRepositoryProtocol {
             try context.save()
         } catch {
             context.rollback()
-            throw CDError.saveFailed
+            throw CoreDataError.saveFailed
         }
         
     }
@@ -84,13 +84,13 @@ class List_CoreDataRepository: List_CoreDataRepositoryProtocol {
         do {
             let entities = try currentEntities()
             guard let entity = entities.first(where: {$0.id == id}) else {
-                throw CDError.inconsistentListData
+                throw CoreDataError.inconsistentListData
             }
             context.delete(entity)
             try context.save()
         } catch {
             context.rollback()
-            throw CDError.deleteFailed
+            throw CoreDataError.deleteFailed
         }
     }
     

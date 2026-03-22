@@ -10,11 +10,6 @@ final class ColorUIState: ObservableObject {
         self.currentTheme = theme
         self.palette = theme.palette(for: colorScheme)
     }
-
-    func update(theme: ColorTheme, colorScheme: ColorScheme) {
-        self.currentTheme = theme
-        self.palette = theme.palette(for: colorScheme)
-    }
     
     func updateForColorScheme(_ colorScheme: ColorScheme) {
         self.palette = currentTheme.palette(for: colorScheme)

@@ -24,7 +24,7 @@ class User_CoreDataRepository: User_CoreDataRepositoryProtocol {
             let name = entity.name,
             let createdAt = entity.createdAt
         else {
-            throw CDError.inconsistentUserData
+            throw CoreDataError.inconsistentUserData
         }
         return User(id: id, name: name, createdAt: createdAt)
     }
@@ -55,7 +55,7 @@ class User_CoreDataRepository: User_CoreDataRepositoryProtocol {
             try context.save()
         } catch {
             context.rollback()
-            throw CDError.saveFailed
+            throw CoreDataError.saveFailed
         }
     }
     
@@ -68,7 +68,7 @@ class User_CoreDataRepository: User_CoreDataRepositoryProtocol {
             try context.save()
         } catch {
             context.rollback()
-            throw CDError.deleteFailed
+            throw CoreDataError.deleteFailed
         }
     }
 }

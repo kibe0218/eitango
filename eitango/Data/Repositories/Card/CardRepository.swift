@@ -48,7 +48,7 @@ class CardRepository: CardRepositoryProtocol {
     
     //翻訳して追加
     func addTranslated(userId: String, listId: String, source: String, target: String, sourceWord: String) async throws -> Card {
-        let translated = translateRepository.translateTextWithGAS(text: sourceWord, source: source, target: target)
+        let translated = try await translateRepository.translateTextWithGAS(text: sourceWord, source: source, target: target)
         return try await add(userId: userId, listId: listId, card: AddCardRequest(en: source, jp: translated))
         // ↑逆もできるようにできまする
     }

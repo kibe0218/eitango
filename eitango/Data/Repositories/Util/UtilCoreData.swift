@@ -10,7 +10,7 @@ struct CoreDataRequest {
         let request: NSFetchRequest<T> = T.fetchRequest() as! NSFetchRequest<T>
         let entities = try context.fetch(request)
         if entities.count > 1 {
-            throw CDError.inconsistentUserData
+            throw CoreDataError.inconsistentUserData
         }
         return entities.first
     }

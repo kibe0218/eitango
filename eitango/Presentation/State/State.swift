@@ -4,6 +4,7 @@ import Combine
 
 final class AppState: ObservableObject {
     @Published var error: UIError? = nil
+    
 }
 
 enum UIError {

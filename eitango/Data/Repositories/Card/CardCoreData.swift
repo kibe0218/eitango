@@ -31,7 +31,7 @@ class Card_CoreDataRepository: Card_CoreDataRepositoryProtocol {
                 let jp = entity.jp,
                 let createdAt = entity.createdAt
             else {
-                throw CDError.inconsistentCardData
+                throw CoreDataError.inconsistentCardData
             }
             let order = Int(entity.order)
             let mistake = entity.mistake
@@ -89,7 +89,7 @@ class Card_CoreDataRepository: Card_CoreDataRepositoryProtocol {
             try context.save()
         } catch {
             context.rollback()
-            throw CDError.saveFailed
+            throw CoreDataError.saveFailed
         }
     }
     
@@ -97,14 +97,14 @@ class Card_CoreDataRepository: Card_CoreDataRepositoryProtocol {
     func update(card: Card) throws {
         do {
                 guard let entity = try fetchById(by: card.id) else {
-                    throw CDError.inconsistentCardData
+                    throw CoreDataError.inconsistentCardData
                 }
                 entity.en = card.en
                 entity.jp = card.jp
                 try context.save()
             } catch {
                 context.rollback()
-                throw CDError.saveFailed
+                throw CoreDataError.saveFailed
             }
     }
     
@@ -112,13 +112,13 @@ class Card_CoreDataRepository: Card_CoreDataRepositoryProtocol {
     func add(card: Card) throws {
         do {
             if try fetchById(by: card.id) != nil {
-                throw CDError.inconsistentCardData
+                throw CoreDataError.inconsistentCardData
             }
             try convertStructsToEntities(cards: [card])
             try context.save()
         } catch {
             context.rollback()
-            throw CDError.saveFailed
+            throw CoreDataError.saveFailed
         }
         
     }
@@ -127,13 +127,13 @@ class Card_CoreDataRepository: Card_CoreDataRepositoryProtocol {
     func delete(id: String) throws {
         do {
             guard let entity = try fetchById(by: id) else {
-                throw CDError.inconsistentCardData
+                throw CoreDataError.inconsistentCardData
             }
             context.delete(entity)
             try context.save()
         } catch {
             context.rollback()
-            throw CDError.deleteFailed
+            throw CoreDataError.deleteFailed
         }
     }
 }

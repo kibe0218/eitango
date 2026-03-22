@@ -5,7 +5,7 @@ struct ErrorAlertView: View {
     @Environment(\.colorScheme) var scheme
     
     var body: some View {
-        if vm.showErrorAlert {
+        if case .alert(let msg) = vm.appState.error {
             GeometryReader() { geo in
                 VStack {
                     Spacer()
@@ -14,26 +14,26 @@ struct ErrorAlertView: View {
                         VStack {
                             Text("エラー")
                                 .font(.title)
-                                .foregroundStyle(palette.customaccentColor)
+                                .foregroundStyle(vm.colorUIState.palette.customaccentColor)
                                 .multilineTextAlignment(.center)
                             Spacer()
-                            Text(message)
-                                .foregroundColor(palette.cardfrontColor)
+                            Text(msg)
+                                .foregroundColor(vm.colorUIState.palette.cardfrontColor)
                                 .multilineTextAlignment(.center)
                             Spacer()
                             Button("OK") {
-                                vm.appState = .none
+                                vm.appState.error = nil
                             }
                             .foregroundColor(.white)
                             .padding()
                             .frame(width: geo.size.width * 0.3)
                             .cornerRadius(20)
-                            .glassEffect(.regular.tint(palette.customaccentColor).interactive())
+                            .glassEffect(.regular.tint(vm.colorUIState.palette.customaccentColor).interactive())
 
                         }
                         .padding()
                         .frame(width: geo.size.width * 0.7, height: geo.size.height * 0.25, alignment: .top)
-                        .background(palette.backColor)
+                        .background(vm.colorUIState.palette.backColor)
                         .cornerRadius(50)
                         .shadow(radius: 5)
                         Spacer()

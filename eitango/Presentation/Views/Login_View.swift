@@ -133,7 +133,7 @@ struct LoginView: View {
                     }
                     Button("ログイン") {
                         Task {
-                            await vm.loginActions.validateInput()
+                            try await vm.loginActions.validateInput()
                         }
                     }
                     if vm.keyboard.keyboardHeight.isZero {

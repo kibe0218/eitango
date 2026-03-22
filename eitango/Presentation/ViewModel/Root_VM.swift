@@ -12,6 +12,8 @@ final class RootViewModel: ObservableObject {
     
     // Screen Observer
     @Published var path: [Screen] = []
+    
+    @Published var appState: AppState
 
     // App-wide sessions (View は直接見ない前提 / Actions が参照)
     var userSession: UserSession
@@ -28,7 +30,6 @@ final class RootViewModel: ObservableObject {
     var loginActions: LoginViewModel
 
 
-
     init(
         userSession: UserSession,
         listSession: ListSession,
@@ -36,10 +37,12 @@ final class RootViewModel: ObservableObject {
         settingSession: SettingSession,
         playSession: PlaySession,
         colorUIState: ColorUIState,
-        userRepository: UserRepositoryProtocol,
-        listRepository: ListRepositoryProtocol,
-        cardRepository: CardRepositoryProtocol,
-        playRepository: PlayRepositoryProtocol,
+        appState: AppState,
+        userActions: UserViewModel,
+        listActions: ListViewModel,
+        cardActions: CardViewModel,
+        playActions: PlayViewModel,
+        loginActions: LoginViewModel
     ) {
         
         // Sessions
@@ -50,34 +53,14 @@ final class RootViewModel: ObservableObject {
         self.playSession = playSession
         
         // UIState
-        self.colorUIState = ColorUIState()
+        self.colorUIState = colorUIState
         
-        self.userActions = UserViewModel(
-            repository: userRepository,
-            session: userSession
-        )
-        self.listActions = ListViewModel(
-            repository: listRepository,
-            session: listSession,
-            userSession: userSession
-        )
-        self.cardActions = CardViewModel(
-            repository: cardRepository,
-            session: cardSession,
-            userSession: userSession,
-            listSession: listSession
-        )
-        self.playActions = PlayViewModel(
-            playSession: playSession,
-            cardSession: cardSession,
-            listSession: listSession,
-            settingSession: settingSession,
-            colorState: colorUIState,
-            uiRepository: playRepository
-        )
-        self.loginActions = LoginViewModel(
-            repository: userRepository,
-            session: userSession
-        )
+        self.userActions = userActions
+        self.listActions = listActions
+        self.cardActions = cardActions
+        self.playActions = playActions
+        self.loginActions = loginActions
+        
+        self.appState = appState
     }
 }

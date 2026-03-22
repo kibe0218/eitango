@@ -11,14 +11,13 @@ struct SettingView: View {
             ZStack {
                 Form {
                     Section(header: Text("テーマ").foregroundColor(vm.textColor)) {
-                        Toggle(isOn: Binding<Bool>(
-                            get: { vm.colorUIState.currentTheme == 0 },
-                            set: { newValue in
-                                vm.colorUIState.currentTheme = newValue ? 0 : 1
-                            }
-                        )) {
-                            Text("シンプルモード")
-                                .foregroundColor(vm.textColor)
+                        Picker("テーマ選択", selection: $vm.colorUIState.currentTheme) {
+                            Text("シンプルモード").tag(ColorTheme.monochromatic)
+                            Text("暖色系").tag(ColorTheme.normal)
+                        }
+                        .pickerStyle(.menu)
+                        .onChange(of: vm.colorUIState.currentTheme) { _, _ in
+                            vm.colorUIState.palette = vm.colorUIState.currentTheme.palette(for: colorScheme)
                         }
                     }
                     .listRowBackground(vm.cardColor)
@@ -32,7 +31,7 @@ struct SettingView: View {
                         .alert("ログアウトしますか？", isPresented: $showLogoutAlert) {
                             Button("キャンセル", role: .cancel) {}
                             Button("ログアウト", role: .destructive) {
-                                vm.logoutUserAuth()
+                                vm.userActions.logout()
                             }
                         }
                         Button(action: {
@@ -44,54 +43,32 @@ struct SettingView: View {
                         .alert("本当にユーザー削除しますか？", isPresented: $showDeleteAlert) {
                             Button("キャンセル", role: .cancel) {}
                             Button("削除", role: .destructive) {
-                                vm.Delete()
+                                vm.userActions.delete()
                             }
                         }
                     }
                     .listRowBackground(vm.cardColor)
                     Section(header: Text("機能").foregroundColor(vm.textColor)) {
-                        Text("待機時間：\(vm.waittime)秒").foregroundColor(vm.textColor)
-                        Picker("", selection: $vm.waittime) {
+                        Picker(selection: $vm.settingSession.setting.waitTime) {
                             ForEach(1..<10) { second in
-                                Text("\(second) 秒").tag(second).foregroundColor(vm.textColor)
+                                Text("\(second) 秒").tag(second)
                             }
+                        } label: {
+                            Text("待機時間")
                         }
-                        .pickerStyle(WheelPickerStyle())
-                        .onChange(of: vm.waittime){
-                            vm.updateView()
+                        .pickerStyle(.wheel)
+                        .onChange(of: vm.settingSession.setting.waitTime) { _, _ in
+                            Task { await vm.playActions.updateView() }
                         }
                     }
                     .listRowBackground(vm.cardColor)
                 }
                 .scrollContentBackground(.hidden)
-                .background(vm.backColor)
+                .background(vm.colorUIState.palette.backColor)
             }
         }
-        .onReceive(vm.$authState) { state in
-            switch state {
-            case .success(.logoutUserAuth):
-                print("🟡 authState set:", vm.authState)
-                vm.backToDefaultCoreData()
-                vm.reinit()
-                vm.moveToStartView()
-            default:
-                break
-            }
-        }
-        .onReceive(vm.$userState) { state in
-            switch state {
-            case .failed:
-                break
-            case .success(.deleteUserAPI):
-                vm.backToDefaultCoreData()
-                vm.reinit()
-                vm.moveToStartView()
-            default:
-                break
-            }
-        }
-        .onChange(of: colorScheme){
-            vm.colorUIState.updateForColorScheme(colorScheme)
+        .onChange(of: colorScheme) { _, newValue in
+            vm.colorUIState.updateForColorScheme(newValue)
         }
     }
 }
