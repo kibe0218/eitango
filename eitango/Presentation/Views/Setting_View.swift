@@ -10,7 +10,7 @@ struct SettingView: View {
         GeometryReader { geo in
             ZStack {
                 Form {
-                    Section(header: Text("テーマ").foregroundColor(vm.textColor)) {
+                    Section(header: Text("テーマ").foregroundColor(vm.colorUIState.palette.textColor)) {
                         Picker("テーマ選択", selection: $vm.colorUIState.currentTheme) {
                             Text("シンプルモード").tag(ColorTheme.monochromatic)
                             Text("暖色系").tag(ColorTheme.normal)
@@ -20,8 +20,8 @@ struct SettingView: View {
                             vm.colorUIState.palette = vm.colorUIState.currentTheme.palette(for: colorScheme)
                         }
                     }
-                    .listRowBackground(vm.cardColor)
-                    Section(header: Text("ユーザー").foregroundColor(vm.textColor)) {
+                    .listRowBackground(vm.colorUIState.palette.cardColor)
+                    Section(header: Text("ユーザー").foregroundColor(vm.colorUIState.palette.textColor)) {
                         Button(action: {
                             showLogoutAlert = true
                         }) {
@@ -31,7 +31,9 @@ struct SettingView: View {
                         .alert("ログアウトしますか？", isPresented: $showLogoutAlert) {
                             Button("キャンセル", role: .cancel) {}
                             Button("ログアウト", role: .destructive) {
-                                vm.userActions.logout()
+                                Task {
+                                    try await vm.userActions.logout()
+                                }
                             }
                         }
                         Button(action: {
@@ -43,12 +45,16 @@ struct SettingView: View {
                         .alert("本当にユーザー削除しますか？", isPresented: $showDeleteAlert) {
                             Button("キャンセル", role: .cancel) {}
                             Button("削除", role: .destructive) {
-                                vm.userActions.delete()
+                                Task{
+                                    try await vm.userActions.delete()
+
+                                }
                             }
                         }
                     }
-                    .listRowBackground(vm.cardColor)
-                    Section(header: Text("機能").foregroundColor(vm.textColor)) {
+                    .listRowBackground(vm.colorUIState.palette.cardColor)
+                    Section(header: Text("機能").foregroundColor(vm.colorUIState.palette
+                        .textColor)) {
                         Picker(selection: $vm.settingSession.setting.waitTime) {
                             ForEach(1..<10) { second in
                                 Text("\(second) 秒").tag(second)
@@ -61,7 +67,7 @@ struct SettingView: View {
                             Task { await vm.playActions.updateView() }
                         }
                     }
-                    .listRowBackground(vm.cardColor)
+                    .listRowBackground(vm.colorUIState.palette.cardColor)
                 }
                 .scrollContentBackground(.hidden)
                 .background(vm.colorUIState.palette.backColor)

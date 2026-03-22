@@ -45,7 +45,6 @@ struct SplashScreenView: View {
                                 self.isActive = true
                             }
                         }
-                        vm.colorS = colorScheme
                     }
                     Spacer()
                 }
@@ -53,7 +52,7 @@ struct SplashScreenView: View {
             .onChange(of: colorScheme) {
                 vm.colorUIState.updateForColorScheme(colorScheme)
             }
-            .background(vm.backColor.ignoresSafeArea())
+            .background(vm.colorUIState.palette.backColor.ignoresSafeArea())
         }
     }
 }

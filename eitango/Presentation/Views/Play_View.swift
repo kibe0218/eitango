@@ -181,7 +181,7 @@ struct PlayCardView: View{
             }
         } else {
             Text("finished")
-                .font(.system(size: CGFloat(vm.enFontSize("finish"))))
+                .font(.system(size: CGFloat(enFontSize("finished"))))
                 .foregroundStyle(
                     vm.playActions.currentCardColor(
                         position: position,

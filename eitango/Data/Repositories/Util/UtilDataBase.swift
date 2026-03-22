@@ -31,13 +31,13 @@ func sendRequest(
         
         guard let httpResponse = response as? HTTPURLResponse,
               200..<300 ~= httpResponse.statusCode else {
-            throw DBError.invalidResponse
+            throw DataBaseError.invalidResponse
         }
         return data
-    } catch let error as DBError {
+    } catch let error as DataBaseError {
         throw error
     } catch {
-        throw DBError.network
+        throw DataBaseError.network
     }
 }
 
