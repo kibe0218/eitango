@@ -21,6 +21,7 @@ struct eitangoApp: App {
                 }
             }
             .environmentObject(vm)
+            .environmentObject(vm.appState)
             .onAppear {
                 print("🟡 RootView表示された")
                 print("🟡 user:", vm.userSession.user as Any)

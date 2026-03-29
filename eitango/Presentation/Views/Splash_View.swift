@@ -3,7 +3,6 @@ import SwiftUI
 struct SplashScreenView: View {
     @EnvironmentObject var vm: RootViewModel
     @Environment(\.colorScheme) var colorScheme
-    @StateObject var keyboard = KeyboardObserver()
     
     @State private var isActive = false
     @State private var size = 0.8
@@ -13,7 +12,7 @@ struct SplashScreenView: View {
         if isActive {
             HomeView()
                 .environmentObject(vm)
-                .environmentObject(keyboard)
+                .environmentObject(vm.appState)
         } else {
             GeometryReader { geo in
                 HStack {

@@ -60,7 +60,7 @@
 				Domain/Entity/User/User.swift,
 				Domain/Logic/CardNavigation.swift,
 				Domain/Logic/UserValidator.swift,
-				Domain/UseCase/DivideLoginMethod.swift,
+				Domain/UseCase/DivideSigninMethod.swift,
 				eitango.swift,
 				eitangoData.xcdatamodeld,
 				"GoogleService-Info.plist",

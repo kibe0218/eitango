@@ -1,7 +1,7 @@
 import Foundation
 
 struct UserValidator {
-        
+    
     // ユーザーネームをチェック
     static func isValidUsername(_ name: String) -> String? {
         let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)

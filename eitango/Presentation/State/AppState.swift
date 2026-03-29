@@ -7,7 +7,7 @@ final class AppState: ObservableObject {
     
 }
 
-enum UIError {
+enum UIError: Equatable {
     case alert(String)
     case toast(String)
 }

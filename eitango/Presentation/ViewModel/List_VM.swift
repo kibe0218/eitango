@@ -36,12 +36,14 @@ class ListViewModel: ObservableObject {
         }
     }
     
-    func add(list: AddListRequest) async {
+    func add(list: AddListRequest) async -> CardList? {
         do {
             let newList = try await repository.add(userId: userSession.userId(), list: list)
             session.lists.append(newList)
+            return newList
         } catch {
             appState.error = ErrorToUIAlertError(error)
+            return nil
         }
     }
     

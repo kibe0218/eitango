@@ -19,11 +19,14 @@ class AuthRepository: AuthRepositoryProtocol {
     func wrapAuthError<T>(_ body: () async throws -> T) async throws -> T {
         do {
             return try await body()
+        } catch let authError as AuthError {
+            throw authError
         } catch let nsError as NSError {
             throw AuthError(error: nsError)
+        } catch {
+            throw AuthError.unknown
         }
     }
-    
     // MARK: - User Authentication / Account Operations
     
     // 新規登録

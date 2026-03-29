@@ -33,15 +33,14 @@ struct CompositionRoot {
         )
         
         // UseCase
-        let loginUseCase = LoginUseCase(
-            userSession: userSession
-        )
+        let loginUseCase = AuthUseCase()
         
         // ViewModel
         let loginVM = LoginViewModel(
             repository: userRepository,
             session: userSession,
-            useCase: loginUseCase
+            useCase: loginUseCase,
+            appState: appState
         )
         
         let userVM = UserViewModel(

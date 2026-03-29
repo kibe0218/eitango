@@ -11,45 +11,43 @@ import Combine
 
 class LoginViewModel: ObservableObject {
     
-    @Published var danger: LoginSlot?
-    @Published var identifier: String = ""
-    @Published var password: String = ""
-    
     private let repository: UserRepositoryProtocol
     private let session: UserSession
-    private let useCase: LoginUseCase
+    private let useCase: AuthUseCase
+    private let appState: AppState
     
     init(
         repository: UserRepositoryProtocol,
         session: UserSession,
-        useCase: LoginUseCase
+        useCase: AuthUseCase,
+        appState: AppState
     ) {
         self.repository = repository
         self.session = session
         self.useCase = useCase
+        self.appState = appState
     }
     
     // 最終判定
-    func divideInputAndLogin() async throws {
-        let result = useCase.divideLoginMethod(identifier: identifier, password: password)
-        
+    func divideInputAndLogin(identifier: String, password: String) async {
+        let result = useCase.resolveAuthMethod(identifier: identifier, password: password)
         if case .success(let input) = result {
             switch input.method {
             case .email:
-                session.user = try await repository.login(email: input.identifier, password: input.password)
-    //        case .userName:
-    //            session.user = try await repository.login(username: input.identifier, input.password: input.password)
-    //
-    //        case .phoneNumber:
-    //            session.user = try await repository.login(phone: input.identifier, password: input.password)
-    //        }
-            default:
-                danger = .identifier
-                break
+                do {
+                    session.user = try await repository.login(email: input.identifier, password: input.password)
+                } catch {
+                    print("🟡 catch:")
+                    appState.error = ErrorToUIAlertError(error)
+                }
+            case .userName:
+                appState.error = .alert("未実装です")
+                
+            case .phoneNumber:
+                appState.error = .alert("未実装です")
             }
-            danger = nil
-        } else if case .failure(let loginSlot) = result {
-            danger = loginSlot
+        } else {
+            appState.error = .alert("アドレスまたはパスワードが違います")
         }
     }
 }

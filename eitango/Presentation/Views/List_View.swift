@@ -30,9 +30,11 @@ struct ListView: View {
                         }
                         Button("OK") {
                             Task {
-                                let list =  try await vm.listActions.add(list: AddListRequest(title: title))
+                                let list = await vm.listActions.add(list: AddListRequest(title: title))
                                 title = ""
-                                vm.path.append(.card(list))
+                                if let currentList = list {
+                                    vm.path.append(.card(currentList))
+                                }
                             }
                         }
                         .disabled(title.trimmingCharacters(in: .whitespaces).isEmpty)
@@ -71,7 +73,7 @@ struct ListView: View {
                         let listsToDelete = indices.map { vm.listSession.lists[$0] }
                         Task {
                             for list in listsToDelete {
-                                try await vm.listActions.delete(id: list.id)
+                                await vm.listActions.delete(id: list.id)
                             }
                         }
                     }
@@ -81,7 +83,7 @@ struct ListView: View {
         }
         .onAppear {
             Task {
-                try await vm.listActions.fetchAll()
+                await vm.listActions.fetchAll()
             }
         }
         .background(vm.colorUIState.palette.backColor.ignoresSafeArea())

@@ -31,7 +31,6 @@ struct LoginView: View {
                     .onTapGesture {
                         focusedField = nil
                     }
-                
                 VStack {
                     Spacer()
                     
@@ -74,12 +73,7 @@ struct LoginView: View {
                     {
                         print("🟡 ログイン押")
                         Task {
-                            try await vm.loginActions.divideInputAndLogin()
-                            if let danger = vm.loginActions.danger {
-                                print("🟡 danger: \(danger)")
-                            } else {
-                                print("🟡 danger: nil")
-                            }
+                            await vm.loginActions.divideInputAndLogin(identifier: identifier, password: pass)
                         }
                     }
                     .font(.title3)
@@ -110,6 +104,9 @@ struct LoginView: View {
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                ErrorAlertView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                
             }
             .onChange(of: colorScheme) {
                 vm.colorUIState.updateForColorScheme(colorScheme)
@@ -130,5 +127,6 @@ struct ContentView_Previews: PreviewProvider {
         let vm = CompositionRoot.build()
         return LoginView()
             .environmentObject(vm)
+            .environmentObject(vm.appState)
     }
 }

@@ -62,9 +62,7 @@ class PlayViewModel: ObservableObject {
             mistakeCards: &playSession.mistakeCards
         )
         Task { @MainActor in
-            do {
-                try await DelayController.wait(seconds: Double(settingSession.setting.waitTime))
-            } catch {return}
+            await DelayController.wait(seconds: Double(settingSession.setting.waitTime))
             if let nextcard = nextCard {
                 playSession.shownCount += 1
                 slot.card = nextcard
@@ -78,7 +76,7 @@ class PlayViewModel: ObservableObject {
         
     // ミスったカードを追加
     @MainActor
-    func mistakeTask(slotIndex: Int) async throws {
+    func mistakeTask(slotIndex: Int) async {
         guard let slot = playUI.screenSlots[slotIndex] else { return }
         if let index = cardSession.cards.firstIndex(where: { $0.id == slot.card.id }) {
             cardSession.cards[index].mistake = true

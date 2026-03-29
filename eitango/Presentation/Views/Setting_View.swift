@@ -32,7 +32,7 @@ struct SettingView: View {
                             Button("キャンセル", role: .cancel) {}
                             Button("ログアウト", role: .destructive) {
                                 Task {
-                                    try await vm.userActions.logout()
+                                    await vm.userActions.logout()
                                 }
                             }
                         }
@@ -46,7 +46,7 @@ struct SettingView: View {
                             Button("キャンセル", role: .cancel) {}
                             Button("削除", role: .destructive) {
                                 Task{
-                                    try await vm.userActions.delete()
+                                    await vm.userActions.delete()
 
                                 }
                             }

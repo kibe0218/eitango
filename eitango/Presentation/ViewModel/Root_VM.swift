@@ -1,6 +1,6 @@
 import SwiftUI
-import Combine
 import CoreData
+import Combine
 
 final class RootViewModel: ObservableObject {
     
@@ -13,7 +13,8 @@ final class RootViewModel: ObservableObject {
     // Screen Observer
     @Published var path: [Screen] = []
     
-    @Published var appState: AppState
+    /// 画面は `@EnvironmentObject` で受け取る。ここは Coordinator や `environmentObject` 連鎖用に同一参照を保持する。
+    let appState: AppState
 
     // App-wide sessions (View は直接見ない前提 / Actions が参照)
     var userSession: UserSession
@@ -54,6 +55,7 @@ final class RootViewModel: ObservableObject {
         
         // UIState
         self.colorUIState = colorUIState
+        self.appState = appState
         
         self.userActions = userActions
         self.listActions = listActions
@@ -61,6 +63,5 @@ final class RootViewModel: ObservableObject {
         self.playActions = playActions
         self.loginActions = loginActions
         
-        self.appState = appState
     }
 }

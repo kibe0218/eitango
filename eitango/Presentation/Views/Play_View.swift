@@ -173,8 +173,8 @@ struct PlayCardView: View{
                         withAnimation {
                             showNotification = true
                         }
-                        try await vm.playActions.mistakeTask(slotIndex: position)
-                        try await DelayController.wait(seconds: 2)
+                        await vm.playActions.mistakeTask(slotIndex: position)
+                        await DelayController.wait(seconds: 2)
                             showNotification = false
                     }
                 }
