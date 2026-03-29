@@ -5,38 +5,62 @@ class UserViewModel: ObservableObject {
     
     private let repository: UserRepositoryProtocol
     private let session: UserSession
+    private let appState: AppState
     
     init(
         repository: UserRepositoryProtocol,
-        session: UserSession
+        session: UserSession,
+        appState: AppState
     ) {
         self.repository = repository
         self.session = session
+        self.appState = appState
     }
     
+    @MainActor
     func fetch() {
         do {
             session.user = try repository.fetchFromCoreData()
         } catch {
-            fatalError()
+            appState.error = ErrorToUIAlertError(error)
         }
     }
     
-    func signUp(email: String, password: String, name: String) async throws {
-        session.user = try await repository.signUp(email: email, password: password, name: name)
+    @MainActor
+    func signUp(email: String, password: String, name: String) async {
+        do {
+            session.user = try await repository.signUp(email: email, password: password, name: name)
+        } catch {
+            appState.error = ErrorToUIAlertError(error)
+        }
     }
     
-    func login(email: String, password: String) async throws {
-        session.user = try await repository.login(email: email, password: password)
+    @MainActor
+    func login(email: String, password: String) async {
+        do {
+            session.user = try await repository.login(email: email, password: password)
+        } catch {
+            appState.error = ErrorToUIAlertError(error)
+        }
     }
     
-    func logout() async throws {
-        try await repository.logout()
-        session.user = nil
+    @MainActor
+    func logout() async {
+        do {
+            try await repository.logout()
+            session.user = nil
+        } catch {
+            appState.error = ErrorToUIAlertError(error)
+        }
     }
     
-    func delete() async throws {
-        try await repository.delete(id: session.userId())
-        session.user = nil
+    @MainActor
+    func delete() async {
+        do {
+            try await repository.delete(id: session.userId())
+            session.user = nil
+        } catch {
+            appState.error = ErrorToUIAlertError(error)
+        }
     }
 }

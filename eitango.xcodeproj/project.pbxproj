@@ -62,6 +62,7 @@
 				Domain/Logic/UserValidator.swift,
 				Domain/UseCase/DivideLoginMethod.swift,
 				eitango.swift,
+				eitangoData.xcdatamodeld,
 				"GoogleService-Info.plist",
 				"NSManagedObject/CardEntity+CoreDataClass.swift",
 				"NSManagedObject/CardEntity+CoreDataProperties.swift",
@@ -84,9 +85,10 @@
 				Presentation/Session/ListSession.swift,
 				Presentation/Session/SettingSession.swift,
 				Presentation/Session/UserSession.swift,
-				Presentation/State/State.swift,
+				Presentation/State/AppState.swift,
 				Presentation/UIHelper/CardColor.swift,
 				Presentation/UIHelper/ColorTheme.swift,
+				Presentation/UIHelper/FontSize.swift,
 				Presentation/ViewModel/Card_VM.swift,
 				Presentation/ViewModel/KeyBoardObserver.swift,
 				Presentation/ViewModel/List_VM.swift,
@@ -94,13 +96,12 @@
 				Presentation/ViewModel/Play_VM.swift,
 				Presentation/ViewModel/Root_VM.swift,
 				Presentation/ViewModel/Signin_VM.swift,
-				Presentation/ViewModel/UIState/Color.swift,
+				Presentation/ViewModel/UIState/ColorUIState.swift,
 				Presentation/ViewModel/User_VM.swift,
 				Presentation/ViewModel/Utils/DalayController.swift,
+				Presentation/ViewModel/Utils/ErrorToUIError.swift,
 				"Presentation/ViewModel/Utils/Extensions/Character+Emoji.swift",
 				"Presentation/ViewModel/Utils/Extensions/Color+Hex.swift",
-				Presentation/ViewModel/Utils/FontSize.swift,
-				Presentation/ViewModel/Utils/HandleError.swift,
 				Presentation/Views/Alert_View.swift,
 				Presentation/Views/Card_View.swift,
 				Presentation/Views/Home_View.swift,
@@ -116,22 +117,11 @@
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
-/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-		18D671F12F6FF01B0048FB77 /* Exceptions for "eitango" folder in "Compile Sources" phase from "memoRise" target */ = {
-			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
-			buildPhase = 1821FF642E98E2100021BAF9 /* Sources */;
-			membershipExceptions = (
-				eitangoData.xcdatamodeld,
-			);
-		};
-/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		18D671932F6FF01B0048FB77 /* eitango */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				18D671F02F6FF01B0048FB77 /* Exceptions for "eitango" folder in "memoRise" target */,
-				18D671F12F6FF01B0048FB77 /* Exceptions for "eitango" folder in "Compile Sources" phase from "memoRise" target */,
 			);
 			path = eitango;
 			sourceTree = "<group>";

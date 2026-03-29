@@ -2,7 +2,10 @@ struct CompositionRoot {
     
     static func build() -> RootViewModel {
         
+        //State
         let colorUIState = ColorUIState()
+        let appState = AppState()
+        
         // Session
         let userSession = UserSession()
         let listSession = ListSession()
@@ -43,20 +46,23 @@ struct CompositionRoot {
         
         let userVM = UserViewModel(
             repository: userRepository,
-            session: userSession
+            session: userSession,
+            appState: appState
         )
         
         let listVM = ListViewModel(
             repository: listRepository,
             session: listSession,
-            userSession: userSession
+            userSession: userSession,
+            appState: appState
         )
         
         let cardVM = CardViewModel(
             repository: cardRepository,
             session: cardSession,
             userSession: userSession,
-            listSession: listSession
+            listSession: listSession,
+            appState: appState
         )
         
         let playVM = PlayViewModel(
@@ -67,9 +73,7 @@ struct CompositionRoot {
             colorState: colorUIState,
             uiRepository: playRepository
         )
-        
-        let appState = AppState()
-        
+                
         return RootViewModel(
             userSession: userSession,
             listSession: listSession,

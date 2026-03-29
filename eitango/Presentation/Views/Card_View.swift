@@ -37,7 +37,7 @@ struct CardView: View {
                         let cardsToDelete = indices.map { vm.cardSession.cards[$0] }
                         Task {
                             for card in cardsToDelete {
-                                try await vm.cardActions.delete(listId: list.id, id: card.id)
+                                await vm.cardActions.delete(listId: list.id, id: card.id)
                             }
                         }
                     }
@@ -56,7 +56,7 @@ struct CardView: View {
                         guard !trimmedWord.isEmpty && trimmedWord != "-" else { return }
                         isTextFieldFocused = true
                         Task {
-                            try await vm.cardActions.addTranslated(listId: list.id, source: "en", target: "jp", sourceWord: newWord)
+                            await vm.cardActions.addTranslated(listId: list.id, source: "en", target: "jp", sourceWord: newWord)
                         }
                     }
                     .frame(width: geo.size.width * 0.85, height: geo.size.height * 0.18, alignment: .center)
@@ -73,7 +73,7 @@ struct CardView: View {
         .foregroundColor(.accentColor)
         .onAppear {
             Task {
-                try vm.cardActions.fetchAllBy(listId: list.id)
+                vm.cardActions.fetchAllBy(listId: list.id)
                 isTextFieldFocused = true
             }
         }
@@ -110,7 +110,7 @@ struct CardItem: View {
                 let trimmedWord = inputText.trimmingCharacters(in: .whitespacesAndNewlines)
                 guard !trimmedWord.isEmpty && trimmedWord != "-" else { return }
                 Task {
-                    try await vm.cardActions.update(
+                    await vm.cardActions.update(
                         listId: list.id,
                         card: UpdateCardRequest(
                             id: card.id,

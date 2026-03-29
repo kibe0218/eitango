@@ -30,7 +30,7 @@ struct ListView: View {
                         }
                         Button("OK") {
                             Task {
-                                let list = try await vm.listActions.add(list: AddListRequest(title: title))
+                                let list =  try await vm.listActions.add(list: AddListRequest(title: title))
                                 title = ""
                                 vm.path.append(.card(list))
                             }

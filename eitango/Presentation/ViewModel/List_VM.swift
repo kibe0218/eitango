@@ -6,33 +6,51 @@ class ListViewModel: ObservableObject {
     private let repository: ListRepositoryProtocol
     private let session: ListSession
     private let userSession: UserSession
+    private let appState: AppState
 
     init(
         repository: ListRepositoryProtocol,
         session: ListSession,
-        userSession: UserSession
+        userSession: UserSession,
+        appState: AppState
     ) {
         self.repository = repository
         self.session = session
         self.userSession = userSession
+        self.appState = appState
     }
     
-    func fetchAll() async throws {
-        session.lists = try await repository.fetchAll()
+    func fetchAll() async {
+        do {
+            session.lists = try await repository.fetchAll()
+        } catch {
+            appState.error = ErrorToUIAlertError(error)
+        }
     }
     
-    func reload() async throws {
-        session.lists = try await repository.reload(userId: userSession.userId())
+    func reload() async {
+        do {
+            session.lists = try await repository.reload(userId: userSession.userId())
+        } catch {
+            appState.error = ErrorToUIAlertError(error)
+        }
     }
     
-    func add(list: AddListRequest) async throws -> CardList {
-        let newList = try await repository.add(userId: userSession.userId(), list: list)
-        session.lists.append(newList)
-        return newList
+    func add(list: AddListRequest) async {
+        do {
+            let newList = try await repository.add(userId: userSession.userId(), list: list)
+            session.lists.append(newList)
+        } catch {
+            appState.error = ErrorToUIAlertError(error)
+        }
     }
     
-    func delete(id: String) async throws {
-        try await repository.delete(userId: userSession.userId(), id: id)
-        session.lists.removeAll { $0.id == id }
+    func delete(id: String) async {
+        do {
+            try await repository.delete(userId: userSession.userId(), id: id)
+            session.lists.removeAll { $0.id == id }
+        } catch {
+            appState.error = ErrorToUIAlertError(error)
+        }
     }
 }
