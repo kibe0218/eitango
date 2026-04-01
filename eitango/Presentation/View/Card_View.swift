@@ -3,6 +3,9 @@ import Combine
 
 struct CardView: View {
     @EnvironmentObject var vm: RootViewModel
+    @EnvironmentObject var colorUIState: ColorUIState
+    @EnvironmentObject var keyboard: KeyboardObserver
+    
     @Environment(\.colorScheme) var scheme
     
     @FocusState private var isTextFieldFocused: Bool
@@ -21,12 +24,12 @@ struct CardView: View {
                             Spacer()
                             Text("翻訳中: \(vm.cardActions.translatingCount)件...")
                                 .font(.system(size: CGFloat(20)))
-                                .foregroundStyle(vm.colorUIState.palette.customaccentColor)
+                                .foregroundStyle(colorUIState.palette.customaccentColor)
                                 .frame(height: geo_height * 0.05, alignment: .center)
-                                .background(vm.colorUIState.palette.backColor)
+                                .background(colorUIState.palette.backColor)
                             Spacer()
                         }
-                        .listRowBackground(vm.colorUIState.palette.backColor)
+                        .listRowBackground(colorUIState.palette.backColor)
                         .listRowSeparator(.hidden)
                         .scrollContentBackground(.hidden)
                     }
@@ -60,12 +63,12 @@ struct CardView: View {
                         }
                     }
                     .frame(width: geo.size.width * 0.85, height: geo.size.height * 0.18, alignment: .center)
-                    .foregroundStyle(vm.colorUIState.palette.cardfrontColor)
-                    .background(vm.colorUIState.palette.cardColor)
+                    .foregroundStyle(colorUIState.palette.cardfrontColor)
+                    .background(colorUIState.palette.cardColor)
                     .cornerRadius(20)
                     .frame(maxWidth: .infinity, alignment: .center)
             }
-            .animation(.easeInOut, value: vm.keyboard.keyboardHeight)
+            .animation(.easeInOut, value: keyboard.keyboardHeight)
             .onAppear {
                 geo_height = geo.size.height
             }
@@ -77,13 +80,15 @@ struct CardView: View {
                 isTextFieldFocused = true
             }
         }
-        .background(vm.colorUIState.palette.backColor.ignoresSafeArea())
+        .background(colorUIState.palette.backColor.ignoresSafeArea())
     }
 }
 
 struct CardItem: View {
     
     @EnvironmentObject var vm: RootViewModel
+    @EnvironmentObject var colorUIState: ColorUIState
+    
     @Environment(\.colorScheme) var colorScheme
     
     @State private var inputText: String = ""
@@ -98,14 +103,14 @@ struct CardItem: View {
         VStack{
             Text(card.en)
                 .font(.system(size: CGFloat(enFontSize(card.en))))
-                .foregroundStyle(vm.colorUIState.palette.cardfrontColor)
+                .foregroundStyle(colorUIState.palette.cardfrontColor)
             TextField(
                 "",
                 text: $inputText,
-                prompt: Text(card.jp).foregroundColor(vm.colorUIState.palette.cardbackColor)
+                prompt: Text(card.jp).foregroundColor(colorUIState.palette.cardbackColor)
             )
             .font(.system(size: 30))
-            .foregroundStyle(vm.colorUIState.palette.cardbackColor)
+            .foregroundStyle(colorUIState.palette.cardbackColor)
             .onSubmit{
                 let trimmedWord = inputText.trimmingCharacters(in: .whitespacesAndNewlines)
                 guard !trimmedWord.isEmpty && trimmedWord != "-" else { return }
@@ -124,7 +129,7 @@ struct CardItem: View {
             .frame(height: height * 0.02)
         }
         .frame(width: width * 0.85, height: height * 0.18, alignment: .center)
-        .background(vm.colorUIState.palette.cardColor)
+        .background(colorUIState.palette.cardColor)
         .cornerRadius(20)
         .frame(maxWidth: .infinity, alignment: .center)
     }

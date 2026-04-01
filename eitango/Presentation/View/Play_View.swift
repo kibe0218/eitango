@@ -2,6 +2,7 @@ import SwiftUI
 
 struct PlayView: View {
     @Environment(\.colorScheme) var colorScheme
+    @EnvironmentObject var colorUIState: ColorUIState
     @EnvironmentObject var vm: RootViewModel
     
     @State var showNotification: Bool = false
@@ -29,7 +30,7 @@ struct PlayView: View {
                             Text("追加しました👍")
                                 .frame(width: 200,height: 25)
                                 .padding()
-                                .background(vm.colorUIState.palette.customaccentColor.opacity(0.5))
+                                .background(colorUIState.palette.customaccentColor.opacity(0.5))
                                 .foregroundColor(.white)
                                 .cornerRadius(10)
                                 .transition(.move(edge: .top).combined(with: .opacity))
@@ -52,12 +53,14 @@ struct PlayView: View {
         .task(id: vm.playActions.playSession.reverse) {
             await vm.playActions.updateView()
         }
-        .background(vm.colorUIState.palette.backColor.ignoresSafeArea())
+        .background(colorUIState.palette.backColor.ignoresSafeArea())
     }
 }
 
 struct PlayHeaderView: View {
+    
     @EnvironmentObject var vm: RootViewModel
+    @EnvironmentObject var colorUIState: ColorUIState
 
     var body: some View {
         ZStack {
@@ -73,8 +76,8 @@ struct PlayHeaderView: View {
                         .font(.title)
                         .foregroundStyle(
                             vm.playActions.playSession.mode == .ordered
-                            ? vm.colorUIState.palette.customaccentColor
-                            : vm.colorUIState.palette.noaccentColor
+                            ? colorUIState.palette.customaccentColor
+                            : colorUIState.palette.noaccentColor
                         )
                 }
                 .padding(.leading, 40)
@@ -83,7 +86,7 @@ struct PlayHeaderView: View {
                 }) {
                     Image(systemName: "repeat")
                         .font(.title)
-                        .foregroundStyle(vm.playActions.playSession.looping ? vm.colorUIState.palette.customaccentColor : vm.colorUIState.palette.noaccentColor)
+                        .foregroundStyle(vm.playActions.playSession.looping ? colorUIState.palette.customaccentColor : colorUIState.palette.noaccentColor)
                 }
                 Spacer()
             }
@@ -104,7 +107,7 @@ struct PlayHeaderView: View {
             HStack {
                 Spacer()
                 Toggle("", isOn: $vm.playActions.playSession.reverse)
-                    .tint(vm.colorUIState.palette.customaccentColor)
+                    .tint(colorUIState.palette.customaccentColor)
             }
             .padding(30)
         }
@@ -113,7 +116,10 @@ struct PlayHeaderView: View {
 }
 
 struct PlayCardView: View{
+    
     @EnvironmentObject var vm: RootViewModel
+    @EnvironmentObject var colorUIState: ColorUIState
+
     @Environment(\.colorScheme) var colorScheme
     
     @Binding var showNotification: Bool
@@ -136,7 +142,7 @@ struct PlayCardView: View{
                             )
                         )
                         .frame(width: width * 0.85, height: height * 0.18)
-                        .background(vm.colorUIState.palette.cardColor)
+                        .background(colorUIState.palette.cardColor)
                         .cornerRadius(20)
                 case .back:
                     Text(screenCard.card.jp)
@@ -148,7 +154,7 @@ struct PlayCardView: View{
                             )
                         )
                         .frame(width: width * 0.85, height: height * 0.18)
-                        .background(vm.colorUIState.palette.cardColor)
+                        .background(colorUIState.palette.cardColor)
                         .cornerRadius(20)
                 }
             }
@@ -187,7 +193,7 @@ struct PlayCardView: View{
                     )
                 )
                 .frame(width: width * 0.85, height: height * 0.18)
-                .background(vm.colorUIState.palette.cardColor)
+                .background(colorUIState.palette.cardColor)
                 .cornerRadius(20)
         }
     }

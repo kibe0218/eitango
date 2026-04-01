@@ -2,6 +2,7 @@ import SwiftUI
 
 struct HomeView: View {
     @EnvironmentObject var vm: RootViewModel
+    @EnvironmentObject var colorUIState: ColorUIState
     @Environment(\.colorScheme) var colorScheme
     @State private var selection: Int
 
@@ -44,9 +45,9 @@ struct HomeView: View {
                 }
             }
             .onChange(of: colorScheme) {
-                vm.colorUIState.updateForColorScheme(colorScheme)
+                colorUIState.updateForColorScheme(colorScheme)
             }
-            .accentColor(vm.colorUIState.palette.customaccentColor)
+            .accentColor(colorUIState.palette.customaccentColor)
         }
     }
 }

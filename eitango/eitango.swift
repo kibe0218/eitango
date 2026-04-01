@@ -26,5 +26,9 @@ struct eitangoApp: App {
                 vm.userActions.fetch()
             }
         }
+        .environmentObject(vm)
+        .environmentObject(vm.appState)
+        .environmentObject(vm.colorUIState)
+        .environmentObject(vm.keyboard)
     }
 }

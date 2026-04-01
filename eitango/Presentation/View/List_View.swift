@@ -3,6 +3,7 @@ import SwiftUI
 
 struct ListView: View {
     @EnvironmentObject var vm: RootViewModel
+    @EnvironmentObject var colorUIState: ColorUIState
     @Environment(\.colorScheme) var colorScheme
     
     @State private var showAlert = false
@@ -18,7 +19,7 @@ struct ListView: View {
                     }) {
                         Image(systemName: "plus")
                             .font(.title)
-                            .foregroundStyle(vm.colorUIState.palette.customaccentColor)
+                            .foregroundStyle(colorUIState.palette.customaccentColor)
                     }
                     .padding(.horizontal, 30)
                     .frame(width: geo.size.height * 0.06,  height: geo.size.height * 0.06)
@@ -51,9 +52,9 @@ struct ListView: View {
                                         CardListView(z: z, width: geo.size.width, height: geo.size.height)
                                     }
                                     Text(list.title.isEmpty ? "Untitled" : list.title)      .font(.system(size: CGFloat(jpFontSize(list.title))))
-                                        .foregroundStyle(vm.colorUIState.palette.cardfrontColor)
+                                        .foregroundStyle(colorUIState.palette.cardfrontColor)
                                         .frame(width: geo.size.width * 0.85, height: geo.size.height * 0.18)
-                                        .background(vm.colorUIState.palette.cardColor)
+                                        .background(colorUIState.palette.cardColor)
                                         .cornerRadius(20)
                                         .zIndex(100)
                                 }
@@ -85,12 +86,15 @@ struct ListView: View {
                 await vm.listActions.fetchAll()
             }
         }
-        .background(vm.colorUIState.palette.backColor.ignoresSafeArea())
+        .background(colorUIState.palette.backColor.ignoresSafeArea())
     }
 }
 
 struct CardListView: View {
+    
     @EnvironmentObject var vm: RootViewModel
+    @EnvironmentObject var colorUIState: ColorUIState
+
     @Environment(\.colorScheme) var colorScheme
     
     let z: Int
@@ -100,7 +104,7 @@ struct CardListView: View {
     var body: some View {
             Text("")
                 .frame(width: width * 0.85, height: height * 0.18)
-                .background(vm.colorUIState.palette.cardlistmobColor)
+                .background(colorUIState.palette.cardlistmobColor)
                 .cornerRadius(20)
                 .offset(y: Double(z) * 5 + 5)
                 .scaleEffect(1 - Double(z) * 0.01)

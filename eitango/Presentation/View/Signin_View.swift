@@ -58,13 +58,13 @@
 //                            .multilineTextAlignment(.center)
 //                            .background(
 //                                RoundedRectangle(cornerRadius: 10)
-//                                    .fill(vm.colorUIState.palette.backColor)
+//                                    .fill(colorUIState.palette.backColor)
 //                            )
 //                        Spacer()
 //                            .frame(width: geo.size.width * 0.1)
 //                    }
 //                    Triangle()
-//                        .fill(vm.colorUIState.palette.backColor)
+//                        .fill(colorUIState.palette.backColor)
 //                        .frame(width: geo.size.width * 0.2, height: geo.size.height * 0.2)
 //                        .padding(.leading, geo.size.width * 0.05)
 //                        .offset(x: -0.4 * geo.size.width, y: -0.5 * geo.size.height)
@@ -80,7 +80,7 @@
 //    var body: some View {
 //        GeometryReader { geo in
 //            ZStack {
-//                vm.colorUIState.palette.customaccentColor
+//                colorUIState.palette.customaccentColor
 //                    .ignoresSafeArea()
 //                VStack {
 //                    if keyboard.keyboardHeight.isZero {
@@ -89,12 +89,12 @@
 //                    }
 //                    if selectedOption == "新規作成" {
 //                        Text("ようこそ")
-//                            foregroundStyle(vm.colorUIState.palette.backColor)
+//                            foregroundStyle(colorUIState.palette.backColor)
 //                            .font(.system(size: 30))
 //                    }
 //                    else {
 //                        Text("おかえりなさい")
-//                            foregroundStyle(vm.colorUIState.palette.backColor)
+//                            foregroundStyle(colorUIState.palette.backColor)
 //                            .font(.system(size: 30))
 //                    }
 //                    if keyboard.keyboardHeight.isZero {
@@ -111,7 +111,7 @@
 //                    }
 //                    .frame(width: geo_width * 0.6)
 //                    .pickerStyle(.segmented)
-//                    foregroundStyle(vm.colorUIState.palette.backColor)
+//                    foregroundStyle(colorUIState.palette.backColor)
 //                    if keyboard.keyboardHeight.isZero {
 //                        Spacer()
 //                            .frame(height: geo_height * 0.03)
@@ -119,13 +119,13 @@
 //                    if selectedOption == "新規作成" {
 //                        Text("アカウント名(1~4文字)")
 //                            .font(.system(size: geo_height * 0.025))
-//                            foregroundStyle(vm.colorUIState.palette.backColor)
+//                            foregroundStyle(colorUIState.palette.backColor)
 //                        ZStack{
 //                            TextField("", text: $user)
 //                                .foregroundStyle(.black)
 //                                .multilineTextAlignment(.center)
 //                                .frame(width: geo_width * 0.6, height: geo_height * 0.05)
-//                                .background(vm.colorUIState.palette.backColor)
+//                                .background(colorUIState.palette.backColor)
 //                                .cornerRadius(10)
 //                                .focused($focusedField, equals: .user)
 //                                .submitLabel(.next)
@@ -158,7 +158,7 @@
 //                    }
 //                    Text("E-mailアドレス")
 //                        .font(.system(size: geo_height * 0.025))
-//                        foregroundStyle(vm.colorUIState.palette.backColor)
+//                        foregroundStyle(colorUIState.palette.backColor)
 //                    ZStack{
 //                        TextField("", text: $email)
 //                            .foregroundStyle(.black)
@@ -194,13 +194,13 @@
 //                    }
 //                    Text("パスワード(10~64文字）")
 //                        .font(.system(size: geo_height * 0.025))
-//                        foregroundStyle(vm.colorUIState.palette.backColor)
+//                        foregroundStyle(colorUIState.palette.backColor)
 //                    ZStack{
 //                        SecureField("", text: $pass)
 //                            .foregroundStyle(.black)
 //                            .multilineTextAlignment(.center)
 //                            .frame(width: geo_width * 0.6, height: geo_height * 0.05)
-//                            .background(vm.colorUIState.palette.backColor)
+//                            .background(colorUIState.palette.backColor)
 //                            .cornerRadius(10)
 //                            .focused($focusedField, equals: .pass)
 //                            .submitLabel(.done)
@@ -236,12 +236,12 @@
 //                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
 //            }
 //            .onChange(of: colorScheme) {
-//                vm.colorUIState.updateForColorScheme(colorScheme)
+//                colorUIState.updateForColorScheme(colorScheme)
 //            }
 //            .onAppear {
 //                geo_height = geo.size.height
 //                geo_width = geo.size.width
-//                vm.colorUIState.updateForColorScheme(colorScheme)
+//                colorUIState.updateForColorScheme(colorScheme)
 //            }
 //        }
 //    }

@@ -3,6 +3,7 @@ import FirebaseAuth
 
 struct LoginView: View {
     @EnvironmentObject var vm: RootViewModel
+    @EnvironmentObject var colorUIState: ColorUIState
     @EnvironmentObject var keyboard: KeyboardObserver
     @Environment(\.colorScheme) var colorScheme
     
@@ -27,7 +28,7 @@ struct LoginView: View {
     var body: some View {
         GeometryReader { geo in
             ZStack {
-                vm.colorUIState.palette.customaccentColor
+                colorUIState.palette.customaccentColor
                     .ignoresSafeArea()
                     .onTapGesture {
                         focusedField = nil
@@ -40,10 +41,10 @@ struct LoginView: View {
                         .frame(width: 130, height: 130)
                     
                     TextField("ユーザー名,メールまたは電話番号", text: $identifier)
-                        .foregroundStyle(vm.colorUIState.palette.textColor)
+                        .foregroundStyle(colorUIState.palette.textColor)
                         .multilineTextAlignment(.center)
                         .frame(width: geo_width * 0.8, height: geo_height * 0.06)
-                        .background(vm.colorUIState.palette.backColor)
+                        .background(colorUIState.palette.backColor)
                         .cornerRadius(10)
                         .focused($focusedField, equals: .user)
                         .submitLabel(.next)
@@ -56,10 +57,10 @@ struct LoginView: View {
                         .frame(height: geo_height * 0.02)
                     
                     SecureField("パスワード", text: $pass)
-                        .foregroundStyle(vm.colorUIState.palette.textColor)
+                        .foregroundStyle(colorUIState.palette.textColor)
                         .multilineTextAlignment(.center)
                         .frame(width: geo_width * 0.8, height: geo_height * 0.06)
-                        .background(vm.colorUIState.palette.backColor)
+                        .background(colorUIState.palette.backColor)
                         .cornerRadius(10)
                         .focused($focusedField, equals: .pass)
                         .submitLabel(.done)
@@ -78,16 +79,16 @@ struct LoginView: View {
                         }
                     }
                     .font(.title3)
-                    .foregroundStyle(vm.colorUIState.palette.textColor)
+                    .foregroundStyle(colorUIState.palette.textColor)
                     .frame(width: geo_width * 0.8, height: geo_height * 0.08)
-                    .background(vm.colorUIState.palette.strongaccentColor)
+                    .background(colorUIState.palette.strongaccentColor)
                     .cornerRadius(40)
                     
                     Spacer()
                     
-                    if vm.keyboard.keyboardHeight.isZero {
+                    if keyboard.keyboardHeight.isZero {
                         Text("または")
-                            .foregroundStyle(vm.colorUIState.palette.backColor)
+                            .foregroundStyle(colorUIState.palette.backColor)
                         Spacer()
                             .frame(height: geo_height * 0.03)
                         Button("新規作成") {
@@ -95,12 +96,12 @@ struct LoginView: View {
                             }
                         }
                         .font(.title3)
-                        .foregroundStyle(vm.colorUIState.palette.backColor)
+                        .foregroundStyle(colorUIState.palette.backColor)
                         .frame(width: geo_width * 0.8, height: geo_height * 0.08)
                         .background(Color.clear) // ← 塗り消す
                         .overlay(
                             RoundedRectangle(cornerRadius: 40)
-                                .stroke(vm.colorUIState.palette.strongaccentColor, lineWidth: 4)
+                                .stroke(colorUIState.palette.strongaccentColor, lineWidth: 4)
                         )
                     }
                 }
@@ -110,13 +111,13 @@ struct LoginView: View {
                 
             }
             .onChange(of: colorScheme) {
-                vm.colorUIState.updateForColorScheme(colorScheme)
+                colorUIState.updateForColorScheme(colorScheme)
             }
             .onAppear {
                 print("🟡 LoginView表示")
                 geo_height = geo.size.height
                 geo_width = geo.size.width
-                vm.colorUIState.updateForColorScheme(colorScheme)
+                colorUIState.updateForColorScheme(colorScheme)
             }
         }
     }
@@ -129,5 +130,6 @@ struct ContentView_Previews: PreviewProvider {
         return LoginView()
             .environmentObject(vm)
             .environmentObject(vm.appState)
+            .environmentObject(vm.keyboard)
     }
 }

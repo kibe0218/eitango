@@ -1,8 +1,11 @@
 import SwiftUI
 
 struct SettingView: View {
-    @Environment(\.colorScheme) var colorScheme
     @EnvironmentObject var vm: RootViewModel
+    @EnvironmentObject var colorUIState: ColorUIState
+    
+    @Environment(\.colorScheme) var colorScheme
+
     @State private var showLogoutAlert = false
     @State private var showDeleteAlert = false
     
@@ -10,18 +13,18 @@ struct SettingView: View {
         GeometryReader { geo in
             ZStack {
                 Form {
-                    Section(header: Text("テーマ").foregroundColor(vm.colorUIState.palette.textColor)) {
-                        Picker("テーマ選択", selection: $vm.colorUIState.currentTheme) {
+                    Section(header: Text("テーマ").foregroundColor(colorUIState.palette.textColor)) {
+                        Picker("テーマ選択", selection: $colorUIState.currentTheme) {
                             Text("シンプルモード").tag(ColorTheme.monochromatic)
                             Text("暖色系").tag(ColorTheme.normal)
                         }
                         .pickerStyle(.menu)
-                        .onChange(of: vm.colorUIState.currentTheme) { _, _ in
-                            vm.colorUIState.palette = vm.colorUIState.currentTheme.palette(for: colorScheme)
+                        .onChange(of: colorUIState.currentTheme) { _, _ in
+                            colorUIState.palette = colorUIState.currentTheme.palette(for: colorScheme)
                         }
                     }
-                    .listRowBackground(vm.colorUIState.palette.cardColor)
-                    Section(header: Text("ユーザー").foregroundColor(vm.colorUIState.palette.textColor)) {
+                    .listRowBackground(colorUIState.palette.cardColor)
+                    Section(header: Text("ユーザー").foregroundColor(colorUIState.palette.textColor)) {
                         Button(action: {
                             showLogoutAlert = true
                         }) {
@@ -52,8 +55,8 @@ struct SettingView: View {
                             }
                         }
                     }
-                    .listRowBackground(vm.colorUIState.palette.cardColor)
-                    Section(header: Text("機能").foregroundColor(vm.colorUIState.palette
+                    .listRowBackground(colorUIState.palette.cardColor)
+                    Section(header: Text("機能").foregroundColor(colorUIState.palette
                         .textColor)) {
                         Picker(selection: $vm.settingSession.setting.waitTime) {
                             ForEach(1..<10) { second in
@@ -67,14 +70,14 @@ struct SettingView: View {
                             Task { await vm.playActions.updateView() }
                         }
                     }
-                    .listRowBackground(vm.colorUIState.palette.cardColor)
+                    .listRowBackground(colorUIState.palette.cardColor)
                 }
                 .scrollContentBackground(.hidden)
-                .background(vm.colorUIState.palette.backColor)
+                .background(colorUIState.palette.backColor)
             }
         }
         .onChange(of: colorScheme) { _, newValue in
-            vm.colorUIState.updateForColorScheme(newValue)
+            colorUIState.updateForColorScheme(newValue)
         }
     }
 }

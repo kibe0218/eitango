@@ -26,7 +26,7 @@
 //                            }) {
 //                                Image(systemName: "gearshape.2.fill")
 //                                    .font(.title)
-//                                foregroundStyle(vm.colorUIState.palette.customaccentColor)
+//                                foregroundStyle(colorUIState.palette.customaccentColor)
 //                            }
 //                        }
 //                        .frame(width: geo_width * 0.25,  height: geo_height * 0.06)
@@ -36,7 +36,7 @@
 //                    .padding(.horizontal, 30)
 //                }
 //                Text(vm.userSession.user?.name ?? "")
-//                    .foregroundColor(vm.colorUIState.palette.customaccentColor)
+//                    .foregroundColor(colorUIState.palette.customaccentColor)
 //                    .font(.system(size: geo_height * 0.05))
 //                    .bold()
 //            }
@@ -45,6 +45,6 @@
 //                geo_width = geo.size.width
 //            }
 //        }
-//        .background(vm.colorUIState.palette.backColor.ignoresSafeArea())
+//        .background(colorUIState.palette.backColor.ignoresSafeArea())
 //    }
 //}

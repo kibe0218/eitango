@@ -3,6 +3,7 @@ import SwiftUI
 struct ErrorAlertView: View {
     @EnvironmentObject var vm: RootViewModel
     @EnvironmentObject var appState: AppState
+    @EnvironmentObject var colorUIState: ColorUIState
     @Environment(\.colorScheme) var scheme
     
     var body: some View {
@@ -16,11 +17,11 @@ struct ErrorAlertView: View {
                             VStack {
                                 Text("エラー")
                                     .font(.title)
-                                    .foregroundStyle(vm.colorUIState.palette.customaccentColor)
+                                    .foregroundStyle(colorUIState.palette.customaccentColor)
                                     .multilineTextAlignment(.center)
                                 Spacer()
                                 Text(msg)
-                                    .foregroundColor(vm.colorUIState.palette.cardfrontColor)
+                                    .foregroundColor(colorUIState.palette.cardfrontColor)
                                     .multilineTextAlignment(.center)
                                 Spacer()
                                 Button("OK") {
@@ -30,12 +31,12 @@ struct ErrorAlertView: View {
                                 .padding()
                                 .frame(width: geo.size.width * 0.3)
                                 .cornerRadius(20)
-                                .glassEffect(.regular.tint(vm.colorUIState.palette.customaccentColor).interactive())
+                                .glassEffect(.regular.tint(colorUIState.palette.customaccentColor).interactive())
                                 
                             }
                             .padding()
                             .frame(width: geo.size.width * 0.85, height: geo.size.height * 0.26, alignment: .top)
-                            .background(vm.colorUIState.palette.backColor)
+                            .background(colorUIState.palette.backColor)
                             .cornerRadius(50)
                             .shadow(radius: 5)
                             Spacer()

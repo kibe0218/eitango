@@ -1,8 +1,12 @@
 import SwiftUI
 
 struct SplashScreenView: View {
+    
     @EnvironmentObject var vm: RootViewModel
+    @EnvironmentObject var colorUIState: ColorUIState
+
     @Environment(\.colorScheme) var colorScheme
+    
     
     @State private var isActive = false
     @State private var size = 0.8
@@ -48,9 +52,9 @@ struct SplashScreenView: View {
                 }
             }
             .onChange(of: colorScheme) {
-                vm.colorUIState.updateForColorScheme(colorScheme)
+                colorUIState.updateForColorScheme(colorScheme)
             }
-            .background(vm.colorUIState.palette.backColor.ignoresSafeArea())
+            .background(colorUIState.palette.backColor.ignoresSafeArea())
         }
     }
 }
