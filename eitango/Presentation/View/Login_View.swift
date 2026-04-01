@@ -84,7 +84,7 @@ struct LoginView: View {
                     
                     Spacer()
                     
-                    if focusedField == nil {
+                    if vm.keyboard.keyboardHeight.isZero {
                         Text("または")
                             .foregroundStyle(vm.colorUIState.palette.backColor)
                         Spacer()
