@@ -11,8 +11,6 @@ struct SplashScreenView: View {
     var body: some View {
         if isActive {
             HomeView()
-                .environmentObject(vm)
-                .environmentObject(vm.appState)
         } else {
             GeometryReader { geo in
                 HStack {

@@ -14,14 +14,12 @@ struct HomeView: View {
             NavigationStack(path: $vm.path) {
                 TabView(selection: $selection) {
                     PlayView()
-                        .environmentObject(vm)
                         .tabItem {
                             Image(systemName: "play")
                             Text("Play")
                         }
                         .tag(0)
                     ListView()
-                        .environmentObject(vm)
                         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                         .tabItem {
                             Image(systemName: "pencil.and.ellipsis.rectangle")
@@ -29,7 +27,6 @@ struct HomeView: View {
                         }
                         .tag(1)
 //                    UserView()
-//                        .environmentObject(vm)
 //                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
 //                        .tabItem {
 //                            Image(systemName: "person")

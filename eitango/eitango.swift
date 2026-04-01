@@ -20,8 +20,6 @@ struct eitangoApp: App {
                     SplashScreenView()
                 }
             }
-            .environmentObject(vm)
-            .environmentObject(vm.appState)
             .onAppear {
                 print("🟡 RootView表示された")
                 print("🟡 user:", vm.userSession.user as Any)

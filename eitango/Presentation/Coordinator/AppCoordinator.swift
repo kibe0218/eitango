@@ -11,8 +11,6 @@ extension RootViewModel {
                let window = windowScene.windows.first {
                 window.rootViewController = UIHostingController(
                     rootView: SplashScreenView()
-                        .environmentObject(self)
-                        .environmentObject(appState)
                 )
                 window.makeKeyAndVisible()
             }
@@ -26,8 +24,6 @@ extension RootViewModel {
                let window = windowScene.windows.first {
                 window.rootViewController = UIHostingController(
                     rootView: LoginView()
-                        .environmentObject(self)
-                        .environmentObject(appState)
                 )
                 window.makeKeyAndVisible()
             }

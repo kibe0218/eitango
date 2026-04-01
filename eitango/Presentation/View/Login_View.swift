@@ -3,6 +3,7 @@ import FirebaseAuth
 
 struct LoginView: View {
     @EnvironmentObject var vm: RootViewModel
+    @EnvironmentObject var keyboard: KeyboardObserver
     @Environment(\.colorScheme) var colorScheme
     
     @State private var identifier: String = ""

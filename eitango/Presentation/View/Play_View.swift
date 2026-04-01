@@ -11,7 +11,6 @@ struct PlayView: View {
             ZStack{
                 VStack {
                     PlayHeaderView()
-                        .environmentObject(vm)
                     ForEach(Array(vm.playActions.playUI.screenSlots.enumerated()), id: \.offset) { position, _ in
                         PlayCardView(
                             showNotification: $showNotification,
@@ -19,7 +18,6 @@ struct PlayView: View {
                             width: geo.size.width,
                             height: geo.size.height
                         )
-                        .environmentObject(vm)
                     }
                     .padding(.bottom, 10)
                 }

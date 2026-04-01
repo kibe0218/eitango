@@ -31,7 +31,7 @@ struct CardView: View {
                         .scrollContentBackground(.hidden)
                     }
                     ForEach(vm.cardSession.cards, id: \.id) { card in
-                        CardItem(list: list, card: card, title: vm.listSession.lists.first(where: { $0.id == card.listId})?.title ?? "", width: geo.size.width, height: geo_height)                                .environmentObject(vm)
+                        CardItem(list: list, card: card, title: vm.listSession.lists.first(where: { $0.id == card.listId})?.title ?? "", width: geo.size.width, height: geo_height)
                     }
                     .onDelete { indices in
                         let cardsToDelete = indices.map { vm.cardSession.cards[$0] }

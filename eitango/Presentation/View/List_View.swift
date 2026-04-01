@@ -49,7 +49,6 @@ struct ListView: View {
                                 ZStack{
                                     ForEach(0..<6, id: \.self){ z in
                                         CardListView(z: z, width: geo.size.width, height: geo.size.height)
-                                            .environmentObject(vm)
                                     }
                                     Text(list.title.isEmpty ? "Untitled" : list.title)      .font(.system(size: CGFloat(jpFontSize(list.title))))
                                         .foregroundStyle(vm.colorUIState.palette.cardfrontColor)
