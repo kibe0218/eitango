@@ -106,7 +106,7 @@ extension PlayViewModel {
     
     enum AuthFunc {
         case addUserAuth
-        case loginUserAuth
+        case logInUserAuth
         case logoutUserAuth
         case deleteUserAuth
     }
@@ -145,8 +145,8 @@ extension PlayViewModel.AuthAppError {
             self = .emailAlreadyInUse
         case AuthErrorCode.invalidEmail.rawValue:
             self = .invalidEmail
-        case AuthErrorCode.requiresRecentLogin.rawValue:
-            self = .requiresRecentLogin
+        case AuthErrorCode.requiresRecentlogIn.rawValue:
+            self = .requiresRecentlogIn
         case NSURLErrorNotConnectedToInternet,
              NSURLErrorTimedOut,
              NSURLErrorCannotFindHost,
@@ -173,8 +173,8 @@ extension PlayViewModel.AuthAppError {
         case .emailAlreadyInUse:
             print("🟡 message case: emailAlreadyInUse")
             return "そのメールアドレスは既に使用されています"
-        case .requiresRecentLogin:
-            print("🟡 message case: requiresRecentLogin")
+        case .requiresRecentlogIn:
+            print("🟡 message case: requiresRecentlogIn")
             return "もう一度ログインしてください"
         case .network:
             print("🟡 message case: network")

@@ -5,7 +5,7 @@ import FirebaseAuth
 
 protocol AuthRepositoryProtocol {
     func signUp(provider: AuthProvider) async throws -> String
-    func login(provider: AuthProvider) async throws -> String
+    func logIn(provider: AuthProvider) async throws -> String
     func logout() async throws
     func delete() async throws
     func currentUser() async throws -> String?
@@ -41,7 +41,7 @@ class AuthRepository: AuthRepositoryProtocol {
     }
 
     // ログイン
-    func login(provider: AuthProvider) async throws -> String {
+    func logIn(provider: AuthProvider) async throws -> String {
         switch provider {
         case .email(let email, let password):
             return try await wrapAuthError {

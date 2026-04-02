@@ -36,9 +36,9 @@ class UserViewModel: ObservableObject {
     }
     
     @MainActor
-    func login(email: String, password: String) async {
+    func logIn(email: String, password: String) async {
         do {
-            session.user = try await repository.login(email: email, password: password)
+            session.user = try await repository.logIn(email: email, password: password)
         } catch {
             appState.error = ErrorToUIAlertError(error)
         }
@@ -47,7 +47,7 @@ class UserViewModel: ObservableObject {
     @MainActor
     func logout() async {
         do {
-            try await repository.logout()
+            try await repository.logOut()
             session.user = nil
         } catch {
             appState.error = ErrorToUIAlertError(error)

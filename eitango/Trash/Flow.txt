@@ -29,8 +29,8 @@ extension PlayViewModel {
         }
     }
     
-    func Login(email: String, password: String) {
-        loginUserAuth(email: email, password: password) { [weak self]
+    func logIn(email: String, password: String) {
+        logInUserAuth(email: email, password: password) { [weak self]
             uid in
             guard let self else { return }
             if let uid {
@@ -38,9 +38,9 @@ extension PlayViewModel {
                     await self.fetchUser(userId: uid)
                     self.reinit()
                 }
-                print("🟡loginAuth登録成功 uid =", uid)
+                print("🟡logInAuth登録成功 uid =", uid)
             } else {
-                print("🟡loginAuth失敗")
+                print("🟡logInAuth失敗")
             }
         }
             

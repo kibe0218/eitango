@@ -14,7 +14,7 @@ struct eitangoApp: App {
         WindowGroup {
             Group {
                 if vm.userSession.user == nil {
-                    LoginView()
+                    LogInView()
                 }
                 else {
                     SplashScreenView()

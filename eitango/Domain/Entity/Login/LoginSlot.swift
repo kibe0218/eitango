@@ -1,4 +1,4 @@
-enum LoginSlot {
+enum logInSlot {
     case identifier
     case password
 }

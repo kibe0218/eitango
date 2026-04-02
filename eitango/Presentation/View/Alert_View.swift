@@ -4,6 +4,7 @@ struct ErrorAlertView: View {
     @EnvironmentObject var vm: RootViewModel
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var colorUIState: ColorUIState
+    
     @Environment(\.colorScheme) var scheme
     
     var body: some View {

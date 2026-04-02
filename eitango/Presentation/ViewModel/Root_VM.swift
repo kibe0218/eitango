@@ -28,7 +28,7 @@ final class RootViewModel: ObservableObject {
     var listActions: ListViewModel
     var cardActions: CardViewModel
     var playActions: PlayViewModel
-    var loginActions: LoginViewModel
+    var logInActions: LogInViewModel
 
 
     init(
@@ -43,7 +43,7 @@ final class RootViewModel: ObservableObject {
         listActions: ListViewModel,
         cardActions: CardViewModel,
         playActions: PlayViewModel,
-        loginActions: LoginViewModel,
+        logInActions: LogInViewModel,
     ) {
         
         // Sessions
@@ -61,7 +61,7 @@ final class RootViewModel: ObservableObject {
         self.listActions = listActions
         self.cardActions = cardActions
         self.playActions = playActions
-        self.loginActions = loginActions
+        self.logInActions = logInActions
         
     }
 }

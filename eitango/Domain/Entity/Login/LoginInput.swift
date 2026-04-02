@@ -1,5 +1,5 @@
-struct LoginInput {
+struct logInInput {
     let identifier: String
     let password: String
-    let method: LoginMethod
+    let method: logInMethod
 }

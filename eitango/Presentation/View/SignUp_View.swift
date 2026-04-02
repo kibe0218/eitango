@@ -1,7 +1,7 @@
 //import SwiftUI
 //import FirebaseAuth
 //
-//struct SignInView: View {
+//struct SignUpView: View {
 //    @EnvironmentObject var vm: RootViewModel
 //    @Environment(\.colorScheme) var colorScheme
 //    @StateObject var keyboard = KeyboardObserver()
@@ -211,7 +211,7 @@
 //                                    isSubmitting = true
 //                                    defer { isSubmitting = false }
 //                                    if selectedOption == "ログイン" {
-//                                        try await vm.login(email: email, password: pass)
+//                                        try await vm.logIn(email: email, password: pass)
 //                                    } else {
 //                                        try await vm.signUp(email: email, password: pass, name: user)
 //                                    }

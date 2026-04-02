@@ -16,7 +16,7 @@ extension AuthError {
             print("🟡 message case: emailAlreadyInUse")
             return "そのメールアドレスは既に使用されています。\n他のアドレスで" + mouitido
         case .requiresRecentLogin:
-            print("🟡 message case: requiresRecentLogin")
+            print("🟡 message case: requiresRecentlogin")
             return mouitido
         case .network:
             print("🟡 message case: network")

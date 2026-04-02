@@ -1,15 +1,15 @@
 import SwiftUI
 import FirebaseAuth
 
-struct LoginView: View {
+struct LogInView: View {
     @EnvironmentObject var vm: RootViewModel
     @EnvironmentObject var colorUIState: ColorUIState
     @EnvironmentObject var keyboard: KeyboardObserver
+    
     @Environment(\.colorScheme) var colorScheme
     
     @State private var identifier: String = ""
     @State private var pass: String = ""
-    
     @State private var geo_height: CGFloat = 0
     @State private var geo_width: CGFloat = 0
     
@@ -75,7 +75,7 @@ struct LoginView: View {
                     {
                         print("🟡 ログイン押")
                         Task {
-                            await vm.loginActions.divideInputAndLogin(identifier: identifier, password: pass)
+                            await vm.logInActions.divideInputAndLogIn(identifier: identifier, password: pass)
                         }
                     }
                     .font(.title3)
@@ -110,11 +110,12 @@ struct LoginView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                 
             }
+            
             .onChange(of: colorScheme) {
                 colorUIState.updateForColorScheme(colorScheme)
             }
             .onAppear {
-                print("🟡 LoginView表示")
+                print("🟡 logInView表示")
                 geo_height = geo.size.height
                 geo_width = geo.size.width
                 colorUIState.updateForColorScheme(colorScheme)
@@ -127,7 +128,7 @@ struct LoginView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         let vm = CompositionRoot.build()
-        return LoginView()
+        return LogInView()
             .environmentObject(vm)
             .environmentObject(vm.appState)
             .environmentObject(vm.keyboard)

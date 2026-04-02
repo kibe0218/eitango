@@ -4,8 +4,8 @@ import Combine
 protocol UserRepositoryProtocol {
     func fetchFromCoreData() throws -> User?
     func signUp(email: String, password: String, name: String) async throws -> User
-    func login(email: String, password: String) async throws -> User
-    func logout() async throws
+    func logIn(email: String, password: String) async throws -> User
+    func logOut() async throws
     func delete(id: String) async throws
 }
 
@@ -48,8 +48,8 @@ class UserRepository: UserRepositoryProtocol {
     }
 
     // ログイン
-    func login(email: String, password: String) async throws -> User {
-        let userId = try await authRepository.login(
+    func logIn(email: String, password: String) async throws -> User {
+        let userId = try await authRepository.logIn(
             provider: .email(email: email, password: password)
         )
         return try await dbRepository.fetch(id: userId)
@@ -57,7 +57,7 @@ class UserRepository: UserRepositoryProtocol {
     }
     
     // ログアウト
-    func logout() async throws {
+    func logOut() async throws {
         try await authRepository.logout()
     }
     

@@ -33,13 +33,13 @@ struct CompositionRoot {
         )
         
         // UseCase
-        let loginUseCase = AuthUseCase()
+        let logInUseCase = AuthUseCase()
         
         // ViewModel
-        let loginVM = LoginViewModel(
+        let logInVM = LogInViewModel(
             repository: userRepository,
             session: userSession,
-            useCase: loginUseCase,
+            useCase: logInUseCase,
             appState: appState
         )
         
@@ -85,7 +85,7 @@ struct CompositionRoot {
             listActions: listVM,
             cardActions: cardVM,
             playActions: playVM,
-            loginActions: loginVM
+            logInActions: logInVM
         )
     }
 }

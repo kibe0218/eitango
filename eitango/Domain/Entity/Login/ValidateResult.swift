@@ -1,4 +1,4 @@
 enum ValidateResult {
-    case success(LoginInput)
+    case success(logInInput)
     case failure
 }
