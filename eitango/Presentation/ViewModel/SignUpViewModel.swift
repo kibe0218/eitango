@@ -21,13 +21,13 @@ class SignUpViewModel: ObservableObject {
     }
     
     // 最終判定
-    func divideInputAndSignup(identifier: String, password: String) async {
+    func divideInputAndSignUp(identifier: String, password: String, name: String) async {
         let result = useCase.resolveAuthMethod(identifier: identifier, password: password)
         if case .success(let input) = result {
             switch input.method {
             case .email:
                 do {
-                    session.user = try await repository.signUp(email: input.identifier, password: input.password, name: "debug")
+                    session.user = try await repository.signUp(email: input.identifier, password: input.password, name: name)
                 } catch {
                     appState.error = ErrorToUIAlertError(error)
                 }

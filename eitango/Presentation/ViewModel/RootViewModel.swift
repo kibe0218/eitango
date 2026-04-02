@@ -29,6 +29,7 @@ final class RootViewModel: ObservableObject {
     var cardActions: CardViewModel
     var playActions: PlayViewModel
     var logInActions: LogInViewModel
+    var signUpActions: SignUpViewModel
 
 
     init(
@@ -39,11 +40,13 @@ final class RootViewModel: ObservableObject {
         playSession: PlaySession,
         colorUIState: ColorUIState,
         appState: AppState,
+        logInActions: LogInViewModel,
+        signUpActions: SignUpViewModel,
         userActions: UserViewModel,
         listActions: ListViewModel,
         cardActions: CardViewModel,
         playActions: PlayViewModel,
-        logInActions: LogInViewModel,
+        
     ) {
         
         // Sessions
@@ -57,11 +60,14 @@ final class RootViewModel: ObservableObject {
         self.colorUIState = colorUIState
         self.appState = appState
         
+        // ViewModel
+        self.logInActions = logInActions
+        self.signUpActions = signUpActions
         self.userActions = userActions
         self.listActions = listActions
         self.cardActions = cardActions
         self.playActions = playActions
-        self.logInActions = logInActions
+        
         
     }
 }

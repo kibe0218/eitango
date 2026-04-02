@@ -1,4 +1,5 @@
 import SwiftUI
+import AuthenticationServices
 import FirebaseAuth
 
 struct LogInView: View {
@@ -20,7 +21,6 @@ struct LogInView: View {
         case pass
     }
     
-    
     // =========
     // body部分📱
     // =========
@@ -34,7 +34,15 @@ struct LogInView: View {
                         focusedField = nil
                     }
                 VStack {
-                    Spacer()
+                    
+                    if keyboard.keyboardHeight.isZero {
+                        Spacer()
+
+                    } else {
+                        Spacer()
+                            .frame(height: geo_height * 0.1)
+                        
+                    }
                     
                     Image("memodog")
                         .resizable()
@@ -66,7 +74,16 @@ struct LogInView: View {
                         .submitLabel(.done)
                         .textContentType(.password)
                         .onSubmit {
+                            print("🟡 onSubmit")
+                            Task {
+                                await vm.logInActions.divideInputAndLogIn(identifier: identifier, password: pass)
+                            }
                         }
+                    
+                    Spacer()
+                        .frame(height: geo_height * 0.02)
+                    
+                    ASAuthorizationAppleIDButton()
                     
                     Spacer()
                         .frame(height: geo_height * 0.06)
@@ -86,31 +103,29 @@ struct LogInView: View {
                     
                     Spacer()
                     
-                    if keyboard.keyboardHeight.isZero {
-                        Text("または")
-                            .foregroundStyle(colorUIState.palette.backColor)
-                        Spacer()
-                            .frame(height: geo_height * 0.03)
-                        Button("新規作成") {
-                            Task {
-                            }
-                        }
-                        .font(.title3)
+                    Text("または")
                         .foregroundStyle(colorUIState.palette.backColor)
-                        .frame(width: geo_width * 0.8, height: geo_height * 0.08)
-                        .background(Color.clear) // ← 塗り消す
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 40)
-                                .stroke(colorUIState.palette.strongaccentColor, lineWidth: 4)
-                        )
+                    Spacer()
+                        .frame(height: geo_height * 0.03)
+                    Button("新規作成") {
+                        Task {
+                        }
                     }
+                    .font(.title3)
+                    .foregroundStyle(colorUIState.palette.backColor)
+                    .frame(width: geo_width * 0.8, height: geo_height * 0.08)
+                    .background(Color.clear) // ← 塗り消す
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 40)
+                            .stroke(colorUIState.palette.strongaccentColor, lineWidth: 4)
+                    )
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                 ErrorAlertView()
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                 
             }
-            
+            .ignoresSafeArea(.keyboard)
             .onChange(of: colorScheme) {
                 colorUIState.updateForColorScheme(colorScheme)
             }
