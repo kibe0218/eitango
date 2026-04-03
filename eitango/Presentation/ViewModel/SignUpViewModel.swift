@@ -22,7 +22,7 @@ class SignUpViewModel: ObservableObject {
     
     // 最終判定
     func divideInputAndSignUp(identifier: String, password: String, name: String) async {
-        let result = useCase.resolveAuthMethod(identifier: identifier, password: password)
+        let result = useCase.resolveDefaultAuthMethod(identifier: identifier, password: password)
         if case .success(let input) = result {
             switch input.method {
             case .email:
@@ -37,6 +37,7 @@ class SignUpViewModel: ObservableObject {
             case .phoneNumber:
                 appState.error = .alert("未実装です")
             }
+
         } else {
             appState.error = .alert("アドレスまたはパスワードが\n適切な形ではありません。")
         }

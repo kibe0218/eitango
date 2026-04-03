@@ -1,4 +1,5 @@
 import Foundation
+import AuthenticationServices
 import Combine
 
 class LogInViewModel: ObservableObject {
@@ -22,23 +23,31 @@ class LogInViewModel: ObservableObject {
     
     // 最終判定
     func divideInputAndLogIn(identifier: String, password: String) async {
-        let result = useCase.resolveAuthMethod(identifier: identifier, password: password)
+        let result = useCase.(identifier: identifier, password: password)
         if case .success(let input) = result {
-            switch input.method {
-            case .email:
-                do {
-                    session.user = try await repository.logIn(email: input.identifier, password: input.password)
-                } catch {
-                    appState.error = ErrorToUIAlertError(error)
-                }
-            case .userName:
-                appState.error = .alert("未実装です")
-                
-            case .phoneNumber:
-                appState.error = .alert("未実装です")
-            }
+            session.user = try await repository.logIn(provider: .email(email: input.identifier, password: password))
         } else {
             appState.error = .alert("アドレスまたはパスワードが違います")
         }
     }
+    
+    // Appleログイン
+    func signInWithApple(credential: ASAuthorizationAppleIDCredential) {
+        guard let tokenData = credential.identityToken,
+                  let tokenString = String(data: tokenData, encoding: .utf8) else {
+                appState.error = .alert("Apple認証に失敗しました")
+                return
+            }
+
+        print("🟡 token:", tokenString)
+
+        Task {
+            do {
+                session.user = try await repository.signInWithApple(idToken: tokenString)
+            } catch {
+                appState.error = ErrorToUIAlertError(error)
+            }
+        }
+    }
+    
 }

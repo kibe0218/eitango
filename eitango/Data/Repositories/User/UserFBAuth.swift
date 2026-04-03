@@ -1,11 +1,13 @@
 import Foundation
 import FirebaseAuth
+import AuthenticationServices
 
 
 
 protocol AuthRepositoryProtocol {
-    func signUp(provider: AuthProvider) async throws -> String
-    func logIn(provider: AuthProvider) async throws -> String
+    func signUp(provider: AuthMethod) async throws -> String
+    func logInWithEmail(email: String, password: String) async throws -> String
+    func logInWithApple(idToken: String) async throws -> String
     func logout() async throws
     func delete() async throws
     func currentUser() async throws -> String?
@@ -30,7 +32,7 @@ class AuthRepository: AuthRepositoryProtocol {
     // MARK: - User Authentication / Account Operations
     
     // 新規登録
-    func signUp(provider: AuthProvider) async throws -> String {
+    func signUp(provider: AuthMethod) async throws -> String {
         switch provider {
         case .email(let email, let password):
             return try await wrapAuthError {
@@ -41,15 +43,23 @@ class AuthRepository: AuthRepositoryProtocol {
     }
 
     // ログイン
-    func logIn(provider: AuthProvider) async throws -> String {
-        switch provider {
-        case .email(let email, let password):
+    func logInWithEmail(email: String, password: String) async throws -> String {
             return try await wrapAuthError {
                 let result = try await Auth.auth().signIn(withEmail: email, password: password)
                 return result.user.uid
             }
-        }
     }
+
+    func logInWithApple(idToken: String) async throws -> String {
+        let credential = OAuthProvider.credential(
+            providerID: AuthProviderID.apple,
+            idToken: idToken,
+            rawNonce: nil
+        )
+        let result = try await Auth.auth().signIn(with: credential)
+        return result.user.uid
+    }
+
 
     // 現在のユーザー
     func currentUser() async throws -> String? {
