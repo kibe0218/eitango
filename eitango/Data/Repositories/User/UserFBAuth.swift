@@ -5,9 +5,9 @@ import AuthenticationServices
 
 
 protocol AuthRepositoryProtocol {
-    func signUp(provider: AuthMethod) async throws -> String
+    func signUpWithEmail(email: String, password: String) async throws -> String
     func logInWithEmail(email: String, password: String) async throws -> String
-    func logInWithApple(idToken: String) async throws -> String
+    func authenticateWithApple(credential: AuthCredential) async throws -> String
     func logout() async throws
     func delete() async throws
     func currentUser() async throws -> String?
@@ -32,32 +32,27 @@ class AuthRepository: AuthRepositoryProtocol {
     // MARK: - User Authentication / Account Operations
     
     // 新規登録
-    func signUp(provider: AuthMethod) async throws -> String {
-        switch provider {
-        case .email(let email, let password):
-            return try await wrapAuthError {
-                let result = try await Auth.auth().createUser(withEmail: email, password: password)
-                return result.user.uid
-            }
+    func signUpWithEmail(email: String, password: String) async throws -> String {
+        return try await wrapAuthError {
+            let result = try await Auth.auth().createUser(withEmail: email, password: password)
+            return result.user.uid
         }
     }
 
     // ログイン
     func logInWithEmail(email: String, password: String) async throws -> String {
-            return try await wrapAuthError {
-                let result = try await Auth.auth().signIn(withEmail: email, password: password)
-                return result.user.uid
-            }
+        return try await wrapAuthError {
+            let result = try await Auth.auth().signIn(withEmail: email, password: password)
+            return result.user.uid
+        }
     }
-
-    func logInWithApple(idToken: String) async throws -> String {
-        let credential = OAuthProvider.credential(
-            providerID: AuthProviderID.apple,
-            idToken: idToken,
-            rawNonce: nil
-        )
-        let result = try await Auth.auth().signIn(with: credential)
-        return result.user.uid
+    
+    //apple
+    func authenticateWithApple(credential: AuthCredential) async throws -> String {
+        return try await wrapAuthError {
+            let result = try await Auth.auth().signIn(with: credential)
+            return result.user.uid
+        }
     }
 
 

@@ -29,7 +29,7 @@ class UserViewModel: ObservableObject {
     @MainActor
     func signUp(email: String, password: String, name: String) async {
         do {
-            session.user = try await repository.signUp(email: email, password: password, name: name)
+            session.user = try await repository.signUpWithEmail(email: email, password: password, name: name)
         } catch {
             appState.error = ErrorToUIAlertError(error)
         }
@@ -38,7 +38,7 @@ class UserViewModel: ObservableObject {
     @MainActor
     func logIn(email: String, password: String) async {
         do {
-            session.user = try await repository.logIn(email: email, password: password)
+            session.user = try await repository.logInWithEmail(email: email, password: password)
         } catch {
             appState.error = ErrorToUIAlertError(error)
         }

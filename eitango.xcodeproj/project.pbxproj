@@ -14,6 +14,7 @@
 /* Begin PBXFileReference section */
 		1862C2C62EF0BF3C00077808 /* memoRise.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = memoRise.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		189175AF2F0698A00066AC02 /* memoRise-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "memoRise-Info.plist"; sourceTree = "<group>"; };
+		18DBC2E12F91251000DC9A52 /* memoRise.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = memoRise.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -55,6 +56,8 @@
 				Domain/Entity/User/AuthMethod.swift,
 				Domain/Entity/User/User.swift,
 				Domain/Logic/CardNavigation.swift,
+				Domain/Logic/Hasher.swift,
+				Domain/Logic/RandomNonce.swift,
 				Domain/Logic/UserValidator.swift,
 				Domain/UseCase/ResolveDefaultAuthMethod.swift,
 				eitango.swift,
@@ -140,6 +143,7 @@
 		1821FF5F2E98E2100021BAF9 = {
 			isa = PBXGroup;
 			children = (
+				18DBC2E12F91251000DC9A52 /* memoRise.entitlements */,
 				189175AF2F0698A00066AC02 /* memoRise-Info.plist */,
 				1862C2C62EF0BF3C00077808 /* memoRise.app */,
 				18D671932F6FF01B0048FB77 /* eitango */,
@@ -356,6 +360,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = memoRise.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1.0.0;
 				DEVELOPMENT_TEAM = Y896Y98DM5;
@@ -394,6 +399,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = memoRise.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1.0.0;
 				DEVELOPMENT_TEAM = Y896Y98DM5;

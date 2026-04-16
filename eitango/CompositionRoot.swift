@@ -33,11 +33,12 @@ struct CompositionRoot {
         )
         
         // UseCase
-        let logInUseCase = AuthUseCase()
+        let logInUseCase = AuthUseCase(
+            repository: userRepository
+        )
         
         // ViewModel
         let logInVM = LogInViewModel(
-            repository: userRepository,
             session: userSession,
             useCase: logInUseCase,
             appState: appState

@@ -21,25 +21,11 @@ class SignUpViewModel: ObservableObject {
     }
     
     // 最終判定
-    func divideInputAndSignUp(identifier: String, password: String, name: String) async {
-        let result = useCase.resolveDefaultAuthMethod(identifier: identifier, password: password)
-        if case .success(let input) = result {
-            switch input.method {
-            case .email:
-                do {
-                    session.user = try await repository.signUp(email: input.identifier, password: input.password, name: name)
-                } catch {
-                    appState.error = ErrorToUIAlertError(error)
-                }
-            case .userName:
-                appState.error = .alert("未実装です")
-                
-            case .phoneNumber:
-                appState.error = .alert("未実装です")
-            }
-
-        } else {
-            appState.error = .alert("アドレスまたはパスワードが\n適切な形ではありません。")
+    func signUp(method: AuthMethod, name: String) async {
+        do {
+            session.user = try await useCase.divideMethodAndLogIn(method: method)
+        } catch {
+            appState.error = ErrorToUIAlertError(error)
         }
     }
 }

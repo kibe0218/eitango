@@ -77,7 +77,8 @@ struct SignUpView: View {
                     {
                         print("🟡 ログイン押")
                         Task {
-                            await vm.signUpActions.divideInputAndSignUp(identifier: identifier, password: pass, name: name)
+                            await vm.logInActions.logIn(method: .input(identifier: identifier, password: pass)
+                            )
                         }
                     }
                     .font(.title3)

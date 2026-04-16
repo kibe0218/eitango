@@ -10,7 +10,7 @@ struct LogInView: View {
     @Environment(\.colorScheme) var colorScheme
     
     @State private var identifier: String = ""
-    @State private var pass: String = ""
+    @State private var password: String = ""
     @State private var geo_height: CGFloat = 0
     @State private var geo_width: CGFloat = 0
     
@@ -48,42 +48,63 @@ struct LogInView: View {
                         .resizable()
                         .frame(width: 130, height: 130)
                     
-                    TextField("ユーザー名,メールまたは電話番号", text: $identifier)
-                        .foregroundStyle(colorUIState.palette.textColor)
-                        .multilineTextAlignment(.center)
-                        .frame(width: geo_width * 0.8, height: geo_height * 0.06)
-                        .background(colorUIState.palette.backColor)
-                        .cornerRadius(10)
-                        .focused($focusedField, equals: .user)
-                        .submitLabel(.next)
-                        .textContentType(.username)
-                        .onSubmit {
-                            focusedField = .pass
+                    ZStack {
+                        if identifier.isEmpty {
+                            Text("ユーザー名,メールまたは電話番号")
+                                .foregroundStyle(.gray)
+                                .frame(width: geo_width * 0.8, height: geo_height * 0.06)
                         }
-                    
-                    Spacer()
-                        .frame(height: geo_height * 0.02)
-                    
-                    SecureField("パスワード", text: $pass)
-                        .foregroundStyle(colorUIState.palette.textColor)
-                        .multilineTextAlignment(.center)
-                        .frame(width: geo_width * 0.8, height: geo_height * 0.06)
-                        .background(colorUIState.palette.backColor)
-                        .cornerRadius(10)
-                        .focused($focusedField, equals: .pass)
-                        .submitLabel(.done)
-                        .textContentType(.password)
-                        .onSubmit {
-                            print("🟡 onSubmit")
-                            Task {
-                                await vm.logInActions.divideInputAndLogIn(identifier: identifier, password: pass)
+                        
+                        TextField("", text: $identifier)
+                            .foregroundStyle(.primary)
+                            .multilineTextAlignment(.center)
+                            .frame(width: geo_width * 0.8, height: geo_height * 0.06)
+                            .focused($focusedField, equals: .user)
+                            .submitLabel(.next)
+                            .textContentType(.username)
+                            .onSubmit {
+                                focusedField = .pass
                             }
-                        }
+                    }
+                    .background(colorUIState.palette.backColor)
+                    .cornerRadius(10)
                     
                     Spacer()
                         .frame(height: geo_height * 0.02)
                     
-                    ASAuthorizationAppleIDButton()
+                    ZStack {
+                        if password.isEmpty {
+                            Text("パスワード")
+                                .foregroundStyle(colorUIState.palette.textColor.opacity(0.5))
+                                .frame(maxWidth: .infinity)
+                                .frame(width: geo_width * 0.8, height: geo_height * 0.06)
+                        }
+                        
+                        SecureField("", text: $password)
+                            .foregroundStyle(.primary)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 12)
+                            .frame(width: geo_width * 0.8, height: geo_height * 0.06)
+                            .focused($focusedField, equals: .pass)
+                            .submitLabel(.done)
+                            .textContentType(.password)
+                            .onSubmit {
+                                print("🟡 onSubmit")
+                                Task {
+                                    await vm.logInActions.logIn(method: .input(identifier: identifier, password: password))
+                                }
+                            }
+                    }
+                    .background(colorUIState.palette.backColor)
+                    .cornerRadius(10)
+                    
+                    Spacer()
+                        .frame(height: geo_height * 0.02)
+                    
+                    CustomButton(iconName: "apple.logo", title: "Sign in with Apple") {
+                        vm.logInActions.handleSignInWithApple()
+                    }
+                    .padding([.leading, .trailing, .bottom], 20)
                     
                     Spacer()
                         .frame(height: geo_height * 0.06)
@@ -92,7 +113,7 @@ struct LogInView: View {
                     {
                         print("🟡 ログイン押")
                         Task {
-                            await vm.logInActions.divideInputAndLogIn(identifier: identifier, password: pass)
+                            await vm.logInActions.logIn(method: .input(identifier: identifier, password: password))
                         }
                     }
                     .font(.title3)
@@ -139,6 +160,34 @@ struct LogInView: View {
     }
 }
 
+struct CustomButton: View {
+    var iconName: String
+    var title: String
+    var action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 12) { // spacing を明示的に設定
+                Image(systemName: iconName)
+                    .frame(width: 24)
+                
+                Text(title)
+                    .frame(maxWidth: .infinity)
+                
+                // 右側の余白を確保するための透明なスペーサー
+                Image(systemName: iconName)
+                    .frame(width: 24)
+                    .opacity(0) // 透明にすることで、左のアイコンとバランスを取る
+            }
+            .padding(.horizontal, 16)
+            .foregroundColor(.black)
+            .font(.system(size: 16, weight: .semibold))
+            .frame(maxWidth: 300, minHeight: 52)
+            .background(.white)
+            .cornerRadius(15)
+        }
+    }
+}
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {

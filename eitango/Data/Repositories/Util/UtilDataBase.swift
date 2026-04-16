@@ -43,7 +43,7 @@ func sendRequest(
 
 // URL作成
 struct URLBuilder {
-    private let baseURL = "http:// 172.20.10.4:8080/"
+    private let baseURL = "https://card-api-1058988137386.asia-northeast1.run.app/"
     func makeURL(
         path: String,
         queryItems: [URLQueryItem]? = nil
@@ -51,8 +51,9 @@ struct URLBuilder {
         var components = URLComponents(string: baseURL + path)
         components?.queryItems = queryItems
         guard let url = components?.url else {
-            fatalError("🟡URL生成失敗")
+            fatalError("🟡 URL生成失敗")
         }
+        print("🟡 \(url)")
         return url
     }
 }
