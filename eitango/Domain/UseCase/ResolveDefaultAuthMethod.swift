@@ -31,6 +31,27 @@ struct AuthUseCase {
             return try await repository.authenticateWithApple(credential: credential)
         }
     }
+    
+    func divideMethodAndSignUp(method: AuthMethod) async throws -> User {
+        switch method {
+        case .input(let identifier, let password):
+            let defaultMethod = try resolveDefaultAuthMethod(identifier: identifier, password: password)
+            
+            switch defaultMethod {
+            case .email(let email, let password):
+                return try await repository.signUpWithEmail(email: email, password: password)
+            }
+            
+        case .apple(let idToken, let nonce):
+            let credential = OAuthProvider.credential(
+                providerID: AuthProviderID.apple,
+                idToken: idToken,
+                rawNonce: nonce
+            )
+            return try await repository.authenticateWithApple(credential: credential)
+        }
+        }
+    }
 
     // 入力値のログインの分別(今後増やす用途)
     func resolveDefaultAuthMethod(identifier: String, password: String) throws -> DefaultAuthMethod {

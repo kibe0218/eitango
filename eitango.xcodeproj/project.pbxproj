@@ -98,6 +98,7 @@
 				Presentation/View/SignUpView.swift,
 				Presentation/View/SplashView.swift,
 				Presentation/View/UserView.swift,
+				Presentation/ViewModel/AuthViewModel.swift,
 				Presentation/ViewModel/CardViewModel.swift,
 				Presentation/ViewModel/KeyBoardObserver.swift,
 				Presentation/ViewModel/ListViewModel.swift,
