@@ -101,7 +101,7 @@ struct LogInView: View {
                     Spacer()
                         .frame(height: geo_height * 0.02)
                     
-                    CustomButton(iconName: "apple.logo", title: "Sign in with Apple") {
+                    CustomButton(systemName: "apple.logo", title: "Sign in with Apple", width: geo_width * 0.8, height: geo_height * 0.06) {
                         vm.logInActions.handleSignInWithApple()
                     }
                     .padding([.leading, .trailing, .bottom], 20)
@@ -161,30 +161,31 @@ struct LogInView: View {
 }
 
 struct CustomButton: View {
-    var iconName: String
+    
+    @EnvironmentObject var colorUIState: ColorUIState
+
+    var systemName: String
     var title: String
+    var width: CGFloat
+    var height: CGFloat
     var action: () -> Void
+
     
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 12) { // spacing を明示的に設定
-                Image(systemName: iconName)
-                    .frame(width: 24)
+            HStack(spacing: 6) {
+                Image(systemName: systemName)
                 
                 Text(title)
                     .frame(maxWidth: .infinity)
                 
-                // 右側の余白を確保するための透明なスペーサー
-                Image(systemName: iconName)
-                    .frame(width: 24)
-                    .opacity(0) // 透明にすることで、左のアイコンとバランスを取る
             }
-            .padding(.horizontal, 16)
+            .padding(.horizontal, width * 0.1)
             .foregroundColor(.black)
             .font(.system(size: 16, weight: .semibold))
-            .frame(maxWidth: 300, minHeight: 52)
-            .background(.white)
-            .cornerRadius(15)
+            .frame(width: width, height: height)
+            .background(colorUIState.palette.backColor)
+            .cornerRadius(10)
         }
     }
 }

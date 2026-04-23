@@ -5,7 +5,7 @@ import AuthenticationServices
 
 protocol UserRepositoryProtocol {
     func fetchFromCoreData() throws -> User?
-    func signUpWithEmail(email: String, password: String, name: String) async throws -> User
+    func signUpWithEmail(email: String, password: String) async throws -> User
     func logInWithEmail(email: String, password: String) async throws -> User
     func authenticateWithApple(credential: AuthCredential) async throws -> User
     func logOut() async throws
@@ -35,28 +35,33 @@ class UserRepository: UserRepositoryProtocol {
     }
     
     // サインアップ
-    func signUpWithEmail(email: String, password: String, name: String) async throws -> User {
+    func signUpWithEmail(email: String, password: String) async throws -> User {
         do {
             let uid = try await authRepository.signUpWithEmail(email: email, password: password)
             guard !uid.isEmpty else { throw AuthError.unknown }
-            let body = AddUserRequest(id: uid, name: name)
-            return try await dbRepository.add(user: body)
+            return try await dbRepository.add(id: uid)
         } catch {
             try await authRepository.delete()
             throw error
         }
     }
     
-    func authenticateWithApple(credential: AuthCredential) async throws -> User {
-        let uid = try await authRepository.authenticateWithApple(credential: credential)
-        return try await dbRepository.fetch(id: uid)
-    }
-
     // ログイン
     func logInWithEmail(email: String, password: String) async throws -> User  {
         let uid = try await authRepository.logInWithEmail(email: email, password: password)
         return try await dbRepository.fetch(id: uid)
     }
+    
+    // Apple
+    func authenticateWithApple(credential: AuthCredential) async throws -> User {
+        let uid = try await authRepository.authenticateWithApple(credential: credential)
+        do {
+            return try await dbRepository.fetch(id: uid)
+        } catch {
+            return try await dbRepository.add(id: uid)
+        }
+    }
+
 
     // ログアウト
     func logOut() async throws {

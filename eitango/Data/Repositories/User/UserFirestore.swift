@@ -2,7 +2,7 @@ import Foundation
 
 protocol User_DataBaseRepositoryProtocol {
     func fetch(id: String) async throws -> User
-    func add(user: AddUserRequest) async throws -> User
+    func add(id: String) async throws -> User
     func delete(id: String) async throws
 }
 
@@ -26,9 +26,9 @@ final class User_DataBaseRepository: User_DataBaseRepositoryProtocol {
     }
     
     // 追加
-    func add(user: AddUserRequest) async throws -> User {
+    func add(id: String) async throws -> User {
         let url = try urlBuilder.makeURL(path: "users")
-        let body = try encoder.encode(user)
+        let body = try encoder.encode(id)
         let data = try await sendRequest(url: url, method: "POST", body: body)
         return try decoder.decode(User.self, from: data)
     }
