@@ -29,7 +29,7 @@ class UserViewModel: ObservableObject {
     @MainActor
     func signUp(email: String, password: String, name: String) async {
         do {
-            session.user = try await repository.signUpWithEmail(email: email, password: password, name: name)
+            session.user = try await repository.signUpWithEmail(email: email, password: password)
         } catch {
             appState.error = ErrorToUIAlertError(error)
         }

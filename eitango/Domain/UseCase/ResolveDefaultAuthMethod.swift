@@ -12,14 +12,18 @@ struct AuthUseCase {
     }
     
     // 成功だったらuser、失敗だったらerrorを返す
-    func divideMethodAndLogIn(method: AuthMethod) async throws -> User {
+    func divideMethod(action: AuthAction?, method: AuthMethod) async throws -> User {
         switch method {
         case .input(let identifier, let password):
             let defaultMethod = try resolveDefaultAuthMethod(identifier: identifier, password: password)
             
             switch defaultMethod {
             case .email(let email, let password):
-                return try await repository.logInWithEmail(email: email, password: password)
+                if .login == action {
+                    return try await repository.logInWithEmail(email: email, password: password)
+                } else {
+                    return try await repository.signUpWithEmail(email: email, password: password)
+                }
             }
             
         case .apple(let idToken, let nonce):
@@ -29,35 +33,14 @@ struct AuthUseCase {
                 rawNonce: nonce
             )
             return try await repository.authenticateWithApple(credential: credential)
-        }
-    }
-    
-    func divideMethodAndSignUp(method: AuthMethod) async throws -> User {
-        switch method {
-        case .input(let identifier, let password):
-            let defaultMethod = try resolveDefaultAuthMethod(identifier: identifier, password: password)
-            
-            switch defaultMethod {
-            case .email(let email, let password):
-                return try await repository.signUpWithEmail(email: email, password: password)
-            }
-            
-        case .apple(let idToken, let nonce):
-            let credential = OAuthProvider.credential(
-                providerID: AuthProviderID.apple,
-                idToken: idToken,
-                rawNonce: nonce
-            )
-            return try await repository.authenticateWithApple(credential: credential)
-        }
         }
     }
 
     // 入力値のログインの分別(今後増やす用途)
     func resolveDefaultAuthMethod(identifier: String, password: String) throws -> DefaultAuthMethod {
-        if UserValidator.isValidEmail(identifier) != nil {
+        if let email = UserValidator.isValidEmail(identifier) {
             print("🟡 email")
-            return .email(email: identifier, password: password)
+            return .email(email: email, password: password)
         } else {
             print("🟡 unknown")
             throw AuthError.invalidEmail

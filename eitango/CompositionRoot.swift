@@ -38,14 +38,7 @@ struct CompositionRoot {
         )
         
         // ViewModel
-        let logInVM = LogInViewModel(
-            session: userSession,
-            useCase: logInUseCase,
-            appState: appState
-        )
-        
-        let signUpVM = SignUpViewModel(
-            repository: userRepository,
+        let authVM = AuthViewModel(
             session: userSession,
             useCase: logInUseCase,
             appState: appState
@@ -89,8 +82,7 @@ struct CompositionRoot {
             playSession: playSession,
             colorUIState: colorUIState,
             appState: appState,
-            logInActions: logInVM,
-            signUpActions: signUpVM,
+            authActions: authVM,
             userActions: userVM,
             listActions: listVM,
             cardActions: cardVM,

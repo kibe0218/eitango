@@ -91,7 +91,7 @@ struct LogInView: View {
                             .onSubmit {
                                 print("🟡 onSubmit")
                                 Task {
-                                    await vm.logInActions.logIn(method: .input(identifier: identifier, password: password))
+                                    await vm.authActions.auth(action: .login, method: .input(identifier: identifier, password: password))
                                 }
                             }
                     }
@@ -102,7 +102,7 @@ struct LogInView: View {
                         .frame(height: geo_height * 0.02)
                     
                     CustomButton(systemName: "apple.logo", title: "Sign in with Apple", width: geo_width * 0.8, height: geo_height * 0.06) {
-                        vm.logInActions.handleSignInWithApple()
+                        vm.authActions.handleSignInWithApple()
                     }
                     .padding([.leading, .trailing, .bottom], 20)
                     
@@ -113,7 +113,7 @@ struct LogInView: View {
                     {
                         print("🟡 ログイン押")
                         Task {
-                            await vm.logInActions.logIn(method: .input(identifier: identifier, password: password))
+                            await vm.authActions.auth(action: .login, method: .input(identifier: identifier, password: password))
                         }
                     }
                     .font(.title3)
@@ -190,12 +190,3 @@ struct CustomButton: View {
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        let vm = CompositionRoot.build()
-        return LogInView()
-            .environmentObject(vm)
-            .environmentObject(vm.appState)
-            .environmentObject(vm.keyboard)
-    }
-}

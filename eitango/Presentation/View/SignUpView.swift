@@ -11,7 +11,6 @@ struct SignUpView: View {
     
     @State private var identifier: String = ""
     @State private var pass: String = ""
-    @State private var name: String = ""
     @State private var geo_height: CGFloat = 0
     @State private var geo_width: CGFloat = 0
     
@@ -73,11 +72,11 @@ struct SignUpView: View {
                     Spacer()
                         .frame(height: geo_height * 0.06)
                     
-                    Button("ログイン")
+                    Button("新規作成")
                     {
-                        print("🟡 ログイン押")
+                        print("🟡 新規作成押")
                         Task {
-                            await vm.logInActions.logIn(method: .input(identifier: identifier, password: pass)
+                            await vm.authActions.auth(action: .signup, method: .input(identifier: identifier, password: pass)
                             )
                         }
                     }
@@ -118,11 +117,22 @@ struct SignUpView: View {
                 colorUIState.updateForColorScheme(colorScheme)
             }
             .onAppear {
-                print("🟡 logInView表示")
+                print("🟡 signUpView表示")
                 geo_height = geo.size.height
                 geo_width = geo.size.width
                 colorUIState.updateForColorScheme(colorScheme)
             }
         }
+    }
+}
+
+
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        let vm = CompositionRoot.build()
+        return SignUpView()
+            .environmentObject(vm)
+            .environmentObject(vm.appState)
+            .environmentObject(vm.keyboard)
     }
 }

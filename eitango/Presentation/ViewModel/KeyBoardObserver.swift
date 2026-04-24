@@ -2,6 +2,7 @@ import Foundation
 import Combine
 import SwiftUI
 
+@MainActor
 class KeyboardObserver: ObservableObject{
     @Published var keyboardHeight: CGFloat = 0
     private var cancellable: AnyCancellable?
@@ -19,6 +20,7 @@ class KeyboardObserver: ObservableObject{
                     return CGFloat(0)
                 }
         )
+        .receive(on: RunLoop.main)
         .assign(to: \.keyboardHeight, on: self)
     }
 }

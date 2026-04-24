@@ -42,9 +42,12 @@ struct SplashScreenView: View {
                     .frame(alignment: .center)
                     .onAppear {
                         print("🟡 Splash表示")
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                            withAnimation {
-                                self.isActive = true
+                        Task {
+                            try? await Task.sleep(nanoseconds: 1_500_000_000)
+                            await MainActor.run {
+                                withAnimation {
+                                    self.isActive = true
+                                }
                             }
                         }
                     }
