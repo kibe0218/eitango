@@ -34,7 +34,7 @@ struct ListView: View {
                                 let list = await vm.listActions.add(list: AddListRequest(title: title))
                                 title = ""
                                 if let currentList = list {
-                                    vm.path.append(.card(currentList))
+                                    vm.homePath.append(.card(currentList))
                                 }
                             }
                         }
@@ -59,7 +59,7 @@ struct ListView: View {
                                         .zIndex(100)
                                 }
                                 .onTapGesture{
-                                    vm.path.append(.card(list))
+                                    vm.homePath.append(.card(list))
                                 }
                                 .frame(height: geo.size.height * 0.18 + 30)
                                 .padding(.bottom,10)

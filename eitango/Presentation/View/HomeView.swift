@@ -12,7 +12,7 @@ struct HomeView: View {
     }
     var body: some View {
         GeometryReader { geo in
-            NavigationStack(path: $vm.path) {
+            NavigationStack(path: $vm.homePath) {
                 TabView(selection: $selection) {
                     PlayView()
                         .tabItem {
@@ -36,7 +36,7 @@ struct HomeView: View {
 //                        .tag(2)
                 }
             }
-            .navigationDestination(for: Screen.self) { screen in
+            .navigationDestination(for: HomeScreen.self) { screen in
                 switch screen {
                 case .card(let list):
                     CardView(list: list)

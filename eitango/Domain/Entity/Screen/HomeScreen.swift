@@ -1,4 +1,4 @@
-enum Screen: Hashable {
+enum HomeScreen: Hashable {
     case card(CardList)
     case setting
 }

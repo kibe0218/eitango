@@ -22,7 +22,7 @@
 //                        Spacer()
 //                        HStack {
 //                            Button(action: {
-//                                vm.path.append(.setting)
+//                                vm.homePath.append(.setting)
 //                            }) {
 //                                Image(systemName: "gearshape.2.fill")
 //                                    .font(.title)

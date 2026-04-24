@@ -11,7 +11,8 @@ final class RootViewModel: ObservableObject {
     @Published var keyboard = KeyboardObserver()
     
     // Screen Observer
-    @Published var path: [Screen] = []
+    @Published var homePath: [HomeScreen] = []
+    @Published var authPath: [AuthScreen] = []
     
     /// 画面は `@EnvironmentObject` で受け取る。ここは Coordinator や `environmentObject` 連鎖用に同一参照を保持する。
     let appState: AppState

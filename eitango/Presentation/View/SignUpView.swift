@@ -36,10 +36,8 @@ struct SignUpView: View {
                     }
                 VStack {
                     Spacer()
-                    
-                    Image("memodog")
-                        .resizable()
-                        .frame(width: 130, height: 130)
+                        
+                    Text("新規作成")
                     
                     TextField("ユーザー名,メールまたは電話番号", text: $identifier)
                         .foregroundStyle(colorUIState.palette.textColor)
@@ -129,10 +127,13 @@ struct SignUpView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
+        // 1. 全てのデータの源を生成
         let vm = CompositionRoot.build()
+        
         return SignUpView()
-            .environmentObject(vm)
-            .environmentObject(vm.appState)
-            .environmentObject(vm.keyboard)
+            .environmentObject(vm)                 // RootViewModel
+            .environmentObject(vm.appState)        // AppState
+            .environmentObject(vm.colorUIState)    // ColorUIState
+            .environmentObject(vm.keyboard)       // KeyboardObserver
     }
 }
