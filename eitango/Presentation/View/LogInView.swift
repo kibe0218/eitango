@@ -159,13 +159,14 @@ struct LogInView: View {
                     colorUIState.updateForColorScheme(colorScheme)
                 }
             }
-        }
-        .navigationDestination(for: AuthScreen.self) { screen in
-            switch screen {
-            case .signUp:
-                SignUpView()
+            .navigationDestination(for: AuthScreen.self) { screen in
+                switch screen {
+                case .signUp:
+                    SignUpView()
+                }
             }
         }
+        
     }
 
     struct CustomButton: View {
