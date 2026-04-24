@@ -11,9 +11,10 @@ struct LogInView: View {
     
     @State private var identifier: String = ""
     @State private var password: String = ""
-    @State private var geo_height: CGFloat = 0
-    @State private var geo_width: CGFloat = 0
     
+    
+    @State private var width: CGFloat = 0
+    @State private var height: CGFloat = 0
     
     @FocusState private var focusedField: Field?
     enum Field {
@@ -26,7 +27,7 @@ struct LogInView: View {
     // =========
     
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $vm.authPath) {
             GeometryReader { geo in
                 ZStack {
                     colorUIState.palette.customaccentColor
@@ -36,14 +37,7 @@ struct LogInView: View {
                         }
                     VStack {
                         
-                        if keyboard.keyboardHeight.isZero {
-                            Spacer()
-
-                        } else {
-                            Spacer()
-                                .frame(height: geo_height * 0.1)
-                            
-                        }
+                        Spacer()
                         
                         Image("memodog")
                             .resizable()
@@ -53,13 +47,13 @@ struct LogInView: View {
                             if identifier.isEmpty {
                                 Text("ユーザー名,メールまたは電話番号")
                                     .foregroundStyle(.gray)
-                                    .frame(width: geo_width * 0.8, height: geo_height * 0.06)
+                                    .frame(width: width * 0.8, height: height * 0.06)
                             }
                             
                             TextField("", text: $identifier)
                                 .foregroundStyle(.primary)
                                 .multilineTextAlignment(.center)
-                                .frame(width: geo_width * 0.8, height: geo_height * 0.06)
+                                .frame(width: width * 0.8, height: height * 0.06)
                                 .focused($focusedField, equals: .user)
                                 .submitLabel(.next)
                                 .textContentType(.username)
@@ -71,21 +65,21 @@ struct LogInView: View {
                         .cornerRadius(10)
                         
                         Spacer()
-                            .frame(height: geo_height * 0.02)
+                            .frame(height: height * 0.02)
                         
                         ZStack {
                             if password.isEmpty {
                                 Text("パスワード")
                                     .foregroundStyle(colorUIState.palette.textColor.opacity(0.5))
                                     .frame(maxWidth: .infinity)
-                                    .frame(width: geo_width * 0.8, height: geo_height * 0.06)
+                                    .frame(width: width * 0.8, height: height * 0.06)
                             }
                             
                             SecureField("", text: $password)
                                 .foregroundStyle(.primary)
                                 .multilineTextAlignment(.center)
                                 .padding(.horizontal, 12)
-                                .frame(width: geo_width * 0.8, height: geo_height * 0.06)
+                                .frame(width: width * 0.8, height: height * 0.06)
                                 .focused($focusedField, equals: .pass)
                                 .submitLabel(.done)
                                 .textContentType(.password)
@@ -100,15 +94,15 @@ struct LogInView: View {
                         .cornerRadius(10)
                         
                         Spacer()
-                            .frame(height: geo_height * 0.02)
+                            .frame(height: height * 0.02)
                         
-                        CustomButton(systemName: "apple.logo", title: "Sign in with Apple", width: geo_width * 0.8, height: geo_height * 0.06) {
+                        CustomButton(systemName: "apple.logo", title: "Sign in with Apple", width: width * 0.8, height: height * 0.06) {
                             vm.authActions.handleSignInWithApple()
                         }
                         .padding([.leading, .trailing, .bottom], 20)
                         
                         Spacer()
-                            .frame(height: geo_height * 0.06)
+                            .frame(height: height * 0.06)
                         
                         Button("ログイン")
                         {
@@ -119,7 +113,7 @@ struct LogInView: View {
                         }
                         .font(.title3)
                         .foregroundStyle(colorUIState.palette.textColor)
-                        .frame(width: geo_width * 0.8, height: geo_height * 0.08)
+                        .frame(width: width * 0.8, height: height * 0.08)
                         .background(colorUIState.palette.strongaccentColor)
                         .cornerRadius(40)
                         
@@ -128,13 +122,13 @@ struct LogInView: View {
                         Text("または")
                             .foregroundStyle(colorUIState.palette.backColor)
                         Spacer()
-                            .frame(height: geo_height * 0.03)
+                            .frame(height: height * 0.03)
                         Button("新規作成") {
                             vm.authPath.append(.signUp)
                         }
                         .font(.title3)
                         .foregroundStyle(colorUIState.palette.backColor)
-                        .frame(width: geo_width * 0.8, height: geo_height * 0.08)
+                        .frame(width: width * 0.8, height: height * 0.08)
                         .background(Color.clear) // ← 塗り消す
                         .overlay(
                             RoundedRectangle(cornerRadius: 40)
@@ -150,15 +144,29 @@ struct LogInView: View {
                 .onChange(of: colorScheme) {
                     colorUIState.updateForColorScheme(colorScheme)
                 }
+                .onChange(of: geo.size.width) {
+                    if geo.size.width > width {
+                        width = geo.size.width
+                    }
+                }
+                .onChange(of: geo.size.height) {
+                    if geo.size.height > height {
+                        height = geo.size.height
+                    }
+                }
                 .onAppear {
                     print("🟡 logInView表示")
-                    geo_height = geo.size.height
-                    geo_width = geo.size.width
                     colorUIState.updateForColorScheme(colorScheme)
                 }
             }
         }
+        .navigationDestination(for: AuthScreen.self) { screen in
+            switch screen {
+            case .signUp:
+                SignUpView()
+            }
         }
+    }
 
     struct CustomButton: View {
         

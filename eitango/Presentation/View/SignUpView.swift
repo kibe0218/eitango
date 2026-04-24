@@ -130,7 +130,7 @@ struct ContentView_Previews: PreviewProvider {
         // 1. 全てのデータの源を生成
         let vm = CompositionRoot.build()
         
-        return SignUpView()
+        return LogInView()
             .environmentObject(vm)                 // RootViewModel
             .environmentObject(vm.appState)        // AppState
             .environmentObject(vm.colorUIState)    // ColorUIState
