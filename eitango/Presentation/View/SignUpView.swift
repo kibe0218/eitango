@@ -29,7 +29,7 @@ struct SignUpView: View {
     var body: some View {
         GeometryReader { geo in
             ZStack {
-                colorUIState.palette.customaccentColor
+                colorUIState.palette.backColor
                     .ignoresSafeArea()
                     .onTapGesture {
                         focusedField = nil
@@ -38,64 +38,22 @@ struct SignUpView: View {
                     
                     Spacer()
                     
+                    Text("memoRiseに登録")
+                        .font(Font.largeTitle.bold())
+                        .foregroundStyle(.black)
+                    
+                    
                     Image("memodog")
                         .resizable()
                         .frame(width: 130, height: 130)
                     
-                    ZStack {
-                        if identifier.isEmpty {
-                            Text("ユーザー名,メールまたは電話番号")
-                                .foregroundStyle(.gray)
-                                .frame(width: width * 0.8, height: height * 0.06)
-                        }
-                        
-                        TextField("", text: $identifier)
-                            .foregroundStyle(.primary)
-                            .multilineTextAlignment(.center)
-                            .frame(width: width * 0.8, height: height * 0.06)
-                            .focused($focusedField, equals: .user)
-                            .submitLabel(.next)
-                            .textContentType(.username)
-                            .onSubmit {
-                                focusedField = .pass
-                            }
+                    Spacer().frame(height: height * 0.02)
+                    
+                    CustomButton(systemName: "envelope", title: "メールで登録", width: width * 0.8, height: height * 0.08) {
+                        vm.authPath.append(.emailSignUp)
                     }
-                    .background(colorUIState.palette.backColor)
-                    .cornerRadius(10)
-                    
-                    Spacer()
-                        .frame(height: height * 0.02)
-                    
-                    ZStack {
-                        if password.isEmpty {
-                            Text("パスワード")
-                                .foregroundStyle(colorUIState.palette.textColor.opacity(0.5))
-                                .frame(maxWidth: .infinity)
-                                .frame(width: width * 0.8, height: height * 0.06)
-                        }
-                        
-                        SecureField("", text: $password)
-                            .foregroundStyle(.primary)
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal, 12)
-                            .frame(width: width * 0.8, height: height * 0.06)
-                            .focused($focusedField, equals: .pass)
-                            .submitLabel(.done)
-                            .textContentType(.password)
-                            .onSubmit {
-                                print("🟡 onSubmit")
-                                Task {
-                                    await vm.authActions.auth(action: .signup, method: .input(identifier: identifier, password: password))
-                                }
-                            }
-                    }
-                    .background(colorUIState.palette.backColor)
-                    .cornerRadius(10)
-                    
-                    Spacer()
-                        .frame(height: height * 0.02)
-                    
-                    CustomButton(systemName: "apple.logo", title: "Sign in with Apple", width: width * 0.8, height: height * 0.06) {
+                    Spacer().frame(height: height * 0.02)
+                    CustomButton(systemName: "apple.logo", title: "Sign up with Apple", width: width * 0.8, height: height * 0.08) {
                         vm.authActions.handleSignInWithApple()
                     }
                     .padding([.leading, .trailing, .bottom], 20)
@@ -103,36 +61,7 @@ struct SignUpView: View {
                     Spacer()
                         .frame(height: height * 0.06)
                     
-                    Button("ログイン")
-                    {
-                        print("🟡 ログイン押")
-                        Task {
-                            await vm.authActions.auth(action: .signup, method: .input(identifier: identifier, password: password))
-                        }
-                    }
-                    .font(.title3)
-                    .foregroundStyle(colorUIState.palette.textColor)
-                    .frame(width: width * 0.8, height: height * 0.08)
-                    .background(colorUIState.palette.strongaccentColor)
-                    .cornerRadius(40)
-                    
                     Spacer()
-                    
-                    Text("または")
-                        .foregroundStyle(colorUIState.palette.backColor)
-                    Spacer()
-                        .frame(height: height * 0.03)
-                    Button("新規作成") {
-                        vm.authPath.append(.signUp)
-                    }
-                    .font(.title3)
-                    .foregroundStyle(colorUIState.palette.backColor)
-                    .frame(width: width * 0.8, height: height * 0.08)
-                    .background(Color.clear) // ← 塗り消す
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 40)
-                            .stroke(colorUIState.palette.strongaccentColor, lineWidth: 4)
-                    )
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                 ErrorAlertView()
@@ -144,16 +73,20 @@ struct SignUpView: View {
                 colorUIState.updateForColorScheme(colorScheme)
             }
             .onChange(of: geo.size.width) {
+                print("🟡 geo.size.width: \(geo.size.width)")
                 if geo.size.width > width {
                     width = geo.size.width
                 }
             }
             .onChange(of: geo.size.height) {
+                print("🟡 geo.size.height: \(geo.size.height)")
                 if geo.size.height > height {
                     height = geo.size.height
                 }
             }
             .onAppear {
+                width = geo.size.width
+                height = geo.size.height
                 print("🟡 signupView表示")
                 colorUIState.updateForColorScheme(colorScheme)
             }
@@ -180,12 +113,17 @@ struct SignUpView: View {
                         .frame(maxWidth: .infinity)
                     
                 }
-                .padding(.horizontal, width * 0.1)
-                .foregroundColor(.black)
-                .font(.system(size: 16, weight: .semibold))
+                .padding(20)
+                .font(.title3)
+                .foregroundStyle(.white)
                 .frame(width: width, height: height)
-                .background(colorUIState.palette.backColor)
-                .cornerRadius(10)
+                .background(colorUIState.palette.customaccentColor)
+                .cornerRadius(40)
+                .background(Color.clear) // ← 塗り消す
+                .overlay(
+                    RoundedRectangle(cornerRadius: 40)
+                        .stroke(colorUIState.palette.customaccentColor.opacity(0.3), lineWidth: 8)
+                )
             }
         }
     }

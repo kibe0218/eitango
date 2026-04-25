@@ -27,154 +27,147 @@ struct LogInView: View {
     // =========
     
     var body: some View {
-        NavigationStack(path: $vm.authPath) {
-            GeometryReader { geo in
-                ZStack {
-                    colorUIState.palette.customaccentColor
-                        .ignoresSafeArea()
-                        .onTapGesture {
-                            focusedField = nil
-                        }
-                    VStack {
-                        
-                        Spacer()
-                        
-                        Image("memodog")
-                            .resizable()
-                            .frame(width: 130, height: 130)
-                        
-                        ZStack {
-                            if identifier.isEmpty {
-                                Text("ユーザー名,メールまたは電話番号")
-                                    .foregroundStyle(.gray)
-                                    .frame(width: width * 0.8, height: height * 0.06)
-                            }
-                            
-                            TextField("", text: $identifier)
-                                .foregroundStyle(.primary)
-                                .multilineTextAlignment(.center)
-                                .frame(width: width * 0.8, height: height * 0.06)
-                                .focused($focusedField, equals: .user)
-                                .submitLabel(.next)
-                                .textContentType(.username)
-                                .onSubmit {
-                                    focusedField = .pass
-                                }
-                        }
-                        .background(colorUIState.palette.backColor)
-                        .cornerRadius(10)
-                        
-                        Spacer()
-                            .frame(height: height * 0.02)
-                        
-                        ZStack {
-                            if password.isEmpty {
-                                Text("パスワード")
-                                    .foregroundStyle(colorUIState.palette.textColor.opacity(0.5))
-                                    .frame(maxWidth: .infinity)
-                                    .frame(width: width * 0.8, height: height * 0.06)
-                            }
-                            
-                            SecureField("", text: $password)
-                                .foregroundStyle(.primary)
-                                .multilineTextAlignment(.center)
-                                .padding(.horizontal, 12)
-                                .frame(width: width * 0.8, height: height * 0.06)
-                                .focused($focusedField, equals: .pass)
-                                .submitLabel(.done)
-                                .textContentType(.password)
-                                .onSubmit {
-                                    print("🟡 onSubmit")
-                                    Task {
-                                        await vm.authActions.auth(action: .login, method: .input(identifier: identifier, password: password))
-                                    }
-                                }
-                        }
-                        .background(colorUIState.palette.backColor)
-                        .cornerRadius(10)
-                        
-                        Spacer()
-                            .frame(height: height * 0.02)
-                        
-                        CustomButton(systemName: "apple.logo", title: "Sign in with Apple", width: width * 0.8, height: height * 0.06) {
-                            vm.authActions.handleSignInWithApple()
-                        }
-                        .padding([.leading, .trailing, .bottom], 20)
-                        
-                        Spacer()
-                            .frame(height: height * 0.06)
-                        
-                        Button("ログイン")
-                        {
-                            print("🟡 ログイン押")
-                            Task {
-                                await vm.authActions.auth(action: .login, method: .input(identifier: identifier, password: password))
-                            }
-                        }
-                        .font(.title3)
-                        .foregroundStyle(colorUIState.palette.textColor)
-                        .frame(width: width * 0.8, height: height * 0.08)
-                        .background(colorUIState.palette.strongaccentColor)
-                        .cornerRadius(40)
-                        
-                        Spacer()
-                        
-                        Text("または")
-                            .foregroundStyle(colorUIState.palette.backColor)
-                        Spacer()
-                            .frame(height: height * 0.03)
-                        Button("新規作成") {
-                            vm.authPath.append(.signUp)
-                        }
-                        .font(.title3)
-                        .foregroundStyle(colorUIState.palette.backColor)
-                        .frame(width: width * 0.8, height: height * 0.08)
-                        .background(Color.clear) // ← 塗り消す
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 40)
-                                .stroke(colorUIState.palette.strongaccentColor, lineWidth: 4)
-                        )
+        GeometryReader { geo in
+            ZStack {
+                colorUIState.palette.customaccentColor
+                    .ignoresSafeArea()
+                    .onTapGesture {
+                        focusedField = nil
                     }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                    ErrorAlertView()
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                VStack {
                     
-                }
-                .ignoresSafeArea(.keyboard)
-                .onChange(of: colorScheme) {
-                    colorUIState.updateForColorScheme(colorScheme)
-                }
-                .onChange(of: geo.size.width) {
-                    if geo.size.width > width {
-                        width = geo.size.width
+                    Spacer()
+                    
+                    Image("memodog")
+                        .resizable()
+                        .frame(width: 130, height: 130)
+                    
+                    ZStack {
+                        if identifier.isEmpty {
+                            Text("ユーザー名,メールまたは電話番号")
+                                .foregroundStyle(.gray)
+                                .frame(width: width * 0.8, height: height * 0.06)
+                        }
+                        
+                        TextField("", text: $identifier)
+                            .foregroundStyle(.primary)
+                            .multilineTextAlignment(.center)
+                            .frame(width: width * 0.8, height: height * 0.06)
+                            .focused($focusedField, equals: .user)
+                            .submitLabel(.next)
+                            .textContentType(.username)
+                            .onSubmit {
+                                focusedField = .pass
+                            }
                     }
-                }
-                .onChange(of: geo.size.height) {
-                    if geo.size.height > height {
-                        height = geo.size.height
+                    .background(colorUIState.palette.backColor)
+                    .cornerRadius(10)
+                    
+                    Spacer()
+                        .frame(height: height * 0.02)
+                    
+                    ZStack {
+                        if password.isEmpty {
+                            Text("パスワード")
+                                .foregroundStyle(colorUIState.palette.textColor.opacity(0.5))
+                                .frame(maxWidth: .infinity)
+                                .frame(width: width * 0.8, height: height * 0.06)
+                        }
+                        
+                        SecureField("", text: $password)
+                            .foregroundStyle(.primary)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 12)
+                            .frame(width: width * 0.8, height: height * 0.06)
+                            .focused($focusedField, equals: .pass)
+                            .submitLabel(.done)
+                            .textContentType(.password)
+                            .onSubmit {
+                                print("🟡 onSubmit")
+                                Task {
+                                    await vm.authActions.auth(action: .login, method: .input(identifier: identifier, password: password))
+                                }
+                            }
                     }
+                    .background(colorUIState.palette.backColor)
+                    .cornerRadius(10)
+                    
+                    Spacer()
+                        .frame(height: height * 0.02)
+                    
+                    AppleButton(width: width * 0.8, height: height * 0.06) {
+                        vm.authActions.handleSignInWithApple()
+                    }
+                    .padding([.leading, .trailing, .bottom], 20)
+                    
+                    Spacer()
+                        .frame(height: height * 0.06)
+                    
+                    Button("ログイン")
+                    {
+                        print("🟡 ログイン押")
+                        Task {
+                            await vm.authActions.auth(action: .login, method: .input(identifier: identifier, password: password))
+                        }
+                    }
+                    .font(.title3)
+                    .foregroundStyle(colorUIState.palette.textColor)
+                    .frame(width: width * 0.8, height: height * 0.08)
+                    .background(colorUIState.palette.strongaccentColor)
+                    .cornerRadius(40)
+                    
+                    Spacer()
+                    
+                    Text("または")
+                        .foregroundStyle(colorUIState.palette.backColor)
+                    Spacer()
+                        .frame(height: height * 0.03)
+                    Button("新規作成") {
+                        vm.authPath.append(.signUp)
+                    }
+                    .font(.title3)
+                    .foregroundStyle(colorUIState.palette.backColor)
+                    .frame(width: width * 0.8, height: height * 0.08)
+                    .background(Color.clear) // ← 塗り消す
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 40)
+                            .stroke(colorUIState.palette.strongaccentColor, lineWidth: 4)
+                    )
                 }
-                .onAppear {
-                    print("🟡 logInView表示")
-                    colorUIState.updateForColorScheme(colorScheme)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                ErrorAlertView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                
+            }
+            .ignoresSafeArea(.keyboard)
+            .onChange(of: colorScheme) {
+                colorUIState.updateForColorScheme(colorScheme)
+            }
+            .onChange(of: geo.size.width) {
+                if geo.size.width > width {
+                    width = geo.size.width
                 }
             }
-            .navigationDestination(for: AuthScreen.self) { screen in
-                switch screen {
-                case .signUp:
-                    SignUpView()
+            .onChange(of: geo.size.height) {
+                if geo.size.height > height {
+                    height = geo.size.height
                 }
+            }
+            .onAppear {
+                print("🟡 logInView表示")
+                width = geo.size.width
+                height = geo.size.height
+                colorUIState.updateForColorScheme(colorScheme)
             }
         }
         
     }
 
-    struct CustomButton: View {
+    struct AppleButton: View {
         
         @EnvironmentObject var colorUIState: ColorUIState
         
-        var systemName: String
-        var title: String
+
         var width: CGFloat
         var height: CGFloat
         var action: () -> Void
@@ -183,9 +176,8 @@ struct LogInView: View {
         var body: some View {
             Button(action: action) {
                 HStack(spacing: 6) {
-                    Image(systemName: systemName)
-                    
-                    Text(title)
+                    Image(systemName: "apple.logo")
+                    Text("Sign in with Apple")
                         .frame(maxWidth: .infinity)
                     
                 }
@@ -196,6 +188,7 @@ struct LogInView: View {
                 .background(colorUIState.palette.backColor)
                 .cornerRadius(10)
             }
+                
         }
     }
 }

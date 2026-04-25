@@ -14,8 +14,18 @@ struct eitangoApp: App {
         WindowGroup {
             Group {
                 if vm.userSession.user == nil {
-                    LogInView()
-                }
+                    NavigationStack(path: $vm.authPath) {
+                        LogInView()
+                            .navigationDestination(for: AuthScreen.self) { screen in
+                                switch screen {
+                                case .signUp:
+                                    SignUpView()
+                                case .emailSignUp:
+                                    EmailSignUpView()
+                                }
+                            }
+                    }
+                    .environmentObject(vm)                }
                 else {
                     SplashScreenView()
                 }
