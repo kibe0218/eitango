@@ -3,7 +3,7 @@ import FirebaseAuth
 
 enum AuthAction {
     case login
-    case signup
+    case signUp
 }
 
 enum AuthMethod: Equatable {

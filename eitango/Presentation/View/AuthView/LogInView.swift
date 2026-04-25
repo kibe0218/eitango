@@ -117,7 +117,6 @@ struct LogInView: View {
                     .cornerRadius(40)
                     
                     Spacer()
-                    
                     Text("または")
                         .foregroundStyle(colorUIState.palette.backColor)
                     Spacer()

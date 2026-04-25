@@ -20,13 +20,11 @@ struct eitangoApp: App {
                                 switch screen {
                                 case .signUp:
                                     SignUpView()
-                                case .emailSignUp:
-                                    EmailSignUpView()
                                 }
                             }
+                            .environmentObject(vm)
                     }
-                    .environmentObject(vm)                }
-                else {
+                } else {
                     SplashScreenView()
                 }
             }

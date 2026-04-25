@@ -16,6 +16,8 @@ struct SignUpView: View {
     @State private var width: CGFloat = 0
     @State private var height: CGFloat = 0
     
+    @State private var isEmailMode = false
+    
     @FocusState private var focusedField: Field?
     enum Field {
         case user
@@ -37,6 +39,7 @@ struct SignUpView: View {
                 VStack {
                     
                     Spacer()
+                        .frame(height: height * 0.15)
                     
                     Text("memoRiseに登録")
                         .font(Font.largeTitle.bold())
@@ -49,17 +52,93 @@ struct SignUpView: View {
                     
                     Spacer().frame(height: height * 0.02)
                     
-                    CustomButton(systemName: "envelope", title: "メールで登録", width: width * 0.8, height: height * 0.08) {
-                        vm.authPath.append(.emailSignUp)
+                                            
+                    if isEmailMode {
+                        VStack {
+                            ZStack {
+                                if identifier.isEmpty {
+                                    Text("メールアドレス")
+                                        .foregroundStyle(.white)
+                                        .frame(width: width * 0.8, height: height * 0.06)
+                                }
+                                
+                                TextField("", text: $identifier)
+                                    .foregroundStyle(.primary)
+                                    .multilineTextAlignment(.center)
+                                    .frame(width: width * 0.8, height: height * 0.06)
+                                    .focused($focusedField, equals: .user)
+                                    .submitLabel(.next)
+                                    .textContentType(.username)
+                                    .onSubmit {
+                                        focusedField = .pass
+                                    }
+                            }
+                            .background(colorUIState.palette.customaccentColor)
+                            .cornerRadius(10)
+                            
+                            Spacer()
+                                .frame(height: height * 0.02)
+                            
+                            ZStack {
+                                if password.isEmpty {
+                                    Text("パスワード")
+                                        .foregroundStyle(.white)
+                                        .frame(maxWidth: .infinity)
+                                        .frame(width: width * 0.8, height: height * 0.06)
+                                }
+                                
+                                SecureField("", text: $password)
+                                    .foregroundStyle(.primary)
+                                    .multilineTextAlignment(.center)
+                                    .padding(.horizontal, 12)
+                                    .frame(width: width * 0.8, height: height * 0.06)
+                                    .focused($focusedField, equals: .pass)
+                                    .submitLabel(.done)
+                                    .textContentType(.password)
+                                    .onSubmit {
+                                        print("🟡 onSubmit")
+                                        Task {
+                                            await vm.authActions.auth(action: .signUp, method: .input(identifier: identifier, password: password))
+                                        }
+                                    }
+                            }
+                            .background(colorUIState.palette.customaccentColor)
+                            .cornerRadius(10)
+                            
+                            
+                            Spacer()
+                                .frame(height: height * 0.06)
+                            
+                            Button("次へ →")
+                            {
+                                print("🟡 次へ押")
+                                Task {
+                                    await vm.authActions.auth(action: .login, method: .input(identifier: identifier, password: password))
+                                }
+                            }
+                            .font(.title3)
+                            .foregroundStyle(colorUIState.palette.textColor)
+                            .frame(width: width * 0.8, height: height * 0.08)
+                            .background(colorUIState.palette.strongaccentColor)
+                            .cornerRadius(40)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 40)
+                                    .stroke(colorUIState.palette.customaccentColor.opacity(0.5), lineWidth: 4)
+                            )
+                        }
+                        
+                    } else {
+                        VStack {
+                            CustomButton(systemName: "envelope", title: "メールで登録", width: width * 0.8, height: height * 0.08) {
+                                isEmailMode = true
+                            }
+                            Spacer().frame(height: height * 0.02)
+                            CustomButton(systemName: "apple.logo", title: "Sign up with Apple", width: width * 0.8, height: height * 0.08) {
+                                vm.authActions.handleSignInWithApple()
+                            }
+                            .padding([.leading, .trailing, .bottom], 20)
+                        }
                     }
-                    Spacer().frame(height: height * 0.02)
-                    CustomButton(systemName: "apple.logo", title: "Sign up with Apple", width: width * 0.8, height: height * 0.08) {
-                        vm.authActions.handleSignInWithApple()
-                    }
-                    .padding([.leading, .trailing, .bottom], 20)
-                    
-                    Spacer()
-                        .frame(height: height * 0.06)
                     
                     Spacer()
                 }
@@ -122,7 +201,7 @@ struct SignUpView: View {
                 .background(Color.clear) // ← 塗り消す
                 .overlay(
                     RoundedRectangle(cornerRadius: 40)
-                        .stroke(colorUIState.palette.customaccentColor.opacity(0.3), lineWidth: 8)
+                        .stroke(colorUIState.palette.customaccentColor.opacity(0.5), lineWidth: 8)
                 )
             }
         }
@@ -141,5 +220,6 @@ struct ContentView_Previews: PreviewProvider {
             .environmentObject(vm.keyboard)       // KeyboardObserver
     }
 }
+
 
 
