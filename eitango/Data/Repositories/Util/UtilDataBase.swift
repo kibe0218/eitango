@@ -24,6 +24,7 @@ func sendRequest(
         var request = URLRequest(url: url)
         request.httpMethod = method
         if let body = body {
+            print("🟡 request body: \(String(data: body, encoding: .utf8) ?? "デコード失敗")")
             request.httpBody = body
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         }

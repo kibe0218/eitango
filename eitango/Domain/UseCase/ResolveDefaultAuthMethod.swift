@@ -11,9 +11,9 @@ struct AuthUseCase {
         self.repository = repository
     }
     
-    // 成功だったらuser、失敗だったらerrorを返す
+    // 成功だったらUser、失敗だったらerrorを返す
     // ログイン作業をまとめる
-    func divideMethod(action: AuthAction?, method: AuthMethod) async throws -> User {
+    func divideMethod(action: AuthAction, method: AuthMethod) async throws -> User {
         switch method {
         case .input(let identifier, let password):
             let defaultMethod = try resolveDefaultAuthMethod(identifier: identifier, password: password)

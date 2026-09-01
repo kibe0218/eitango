@@ -5,7 +5,7 @@ import AuthenticationServices
 
 protocol UserRepositoryProtocol {
     func fetchFromCoreData() throws -> User?
-    func signUpWithEmail(email: String, password: String) async throws -> User
+    func signUpWithEmail(email: String, password: String) async throws -> String
     func logInWithEmail(email: String, password: String) async throws -> User
     func authenticateWithApple(credential: AuthCredential) async throws -> User
     func logOut() async throws
@@ -35,11 +35,12 @@ class UserRepository: UserRepositoryProtocol {
     }
     
     // サインアップ
-    func signUpWithEmail(email: String, password: String) async throws -> User {
+    func signUpWithEmail(email: String, password: String) async throws -> String {
         do {
             let uid = try await authRepository.signUpWithEmail(email: email, password: password)
             guard !uid.isEmpty else { throw AuthError.unknown }
-            return try await dbRepository.add(id: uid)
+            try await dbRepository.add(id: uid)
+            return uid
         } catch {
             try await authRepository.delete()
             throw error

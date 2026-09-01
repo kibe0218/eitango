@@ -23,7 +23,7 @@ class AuthViewModel: NSObject, ObservableObject {
     
     private var currentNonce: String?
 
-    func auth(action: AuthAction?, method: AuthMethod) async {
+    func auth(action: AuthAction, method: AuthMethod) async {
         do {
             session.user = try await useCase.divideMethod(action: action, method: method)
         } catch {
