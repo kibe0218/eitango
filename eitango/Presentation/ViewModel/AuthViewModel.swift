@@ -25,10 +25,9 @@ class AuthViewModel: NSObject, ObservableObject {
 
     func auth(action: AuthAction?, method: AuthMethod) async {
         do {
-            
             session.user = try await useCase.divideMethod(action: action, method: method)
         } catch {
-            appState.error = .alert("アドレスまたはパスワードが違います")
+            appState.error = .alert("あのさぁ")
         }
     }
     

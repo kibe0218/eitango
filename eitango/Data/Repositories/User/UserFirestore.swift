@@ -30,6 +30,9 @@ final class User_DataBaseRepository: User_DataBaseRepositoryProtocol {
         let url = try urlBuilder.makeURL(path: "users")
         let body = try encoder.encode(id)
         let data = try await sendRequest(url: url, method: "POST", body: body)
+        print("🟡 url: \(url)")
+        print("🟡 body: \(String(decoding: body, as: UTF8.self))")
+        print("🟡 data = \(String(decoding: data, as: UTF8.self))")
         return try decoder.decode(User.self, from: data)
     }
     

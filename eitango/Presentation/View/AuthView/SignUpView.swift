@@ -63,7 +63,7 @@ struct SignUpView: View {
                                 }
                                 
                                 TextField("", text: $identifier)
-                                    .foregroundStyle(.primary)
+                                    .foregroundStyle(.white)
                                     .multilineTextAlignment(.center)
                                     .frame(width: width * 0.8, height: height * 0.06)
                                     .focused($focusedField, equals: .user)
@@ -88,7 +88,7 @@ struct SignUpView: View {
                                 }
                                 
                                 SecureField("", text: $password)
-                                    .foregroundStyle(.primary)
+                                    .foregroundStyle(.white)
                                     .multilineTextAlignment(.center)
                                     .padding(.horizontal, 12)
                                     .frame(width: width * 0.8, height: height * 0.06)
@@ -113,7 +113,7 @@ struct SignUpView: View {
                             {
                                 print("🟡 次へ押")
                                 Task {
-                                    await vm.authActions.auth(action: .login, method: .input(identifier: identifier, password: password))
+                                    await vm.authActions.auth(action: .signUp, method: .input(identifier: identifier, password: password))
                                 }
                             }
                             .font(.title3)

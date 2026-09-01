@@ -31,6 +31,7 @@ class UserViewModel: ObservableObject {
         do {
             session.user = try await repository.signUpWithEmail(email: email, password: password)
         } catch {
+            print("🟡 signupえらー")
             appState.error = ErrorToUIAlertError(error)
         }
     }

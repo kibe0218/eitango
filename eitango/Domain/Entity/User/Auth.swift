@@ -11,7 +11,7 @@ enum AuthMethod: Equatable {
     case apple(idToken: String, nonce: String)
 }
 
-// 今後phoneNumberとかいれたい
+// 今後phoneNumberとかいれたい拡張するならここ
 enum DefaultAuthMethod {
     case email(email: String, password: String)
 }

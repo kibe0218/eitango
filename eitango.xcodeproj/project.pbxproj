@@ -90,7 +90,6 @@
 				Presentation/UIHelper/ColorTheme.swift,
 				Presentation/UIHelper/FontSize.swift,
 				Presentation/View/AlertView.swift,
-				Presentation/View/AuthView/EmailSignUpView.swift,
 				Presentation/View/AuthView/LogInView.swift,
 				Presentation/View/AuthView/SignUpView.swift,
 				Presentation/View/CardView.swift,

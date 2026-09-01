@@ -33,8 +33,10 @@ class AuthRepository: AuthRepositoryProtocol {
     
     // 新規登録
     func signUpWithEmail(email: String, password: String) async throws -> String {
+        print("🟡 新規email: \(email)")
         return try await wrapAuthError {
             let result = try await Auth.auth().createUser(withEmail: email, password: password)
+            print("成功:\(result.user.uid)")
             return result.user.uid
         }
     }
@@ -42,7 +44,9 @@ class AuthRepository: AuthRepositoryProtocol {
     // ログイン
     func logInWithEmail(email: String, password: String) async throws -> String {
         return try await wrapAuthError {
+            print("🟡 email: \(email)")
             let result = try await Auth.auth().signIn(withEmail: email, password: password)
+            print("🟡 Firebase signIn成功: \(result.user.uid)")
             return result.user.uid
         }
     }
