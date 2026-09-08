@@ -55,7 +55,7 @@ func sendRequest(
 // URL作成
 struct URLBuilder {
 //    private let baseURL = "https://card-api-1058988137386.asia-northeast1.run.app/"
-    private let baseURL = "http://localhost:8080"
+    private let baseURL = "http://localhost:8080/"
     func makeURL(
         path: String,
         queryItems: [URLQueryItem]? = nil
