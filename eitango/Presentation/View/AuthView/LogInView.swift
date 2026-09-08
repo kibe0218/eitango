@@ -85,7 +85,7 @@ struct LogInView: View {
                             .onSubmit {
                                 print("🟡 onSubmit")
                                 Task {
-                                    await vm.authActions.auth(action: .login, method: .input(identifier: identifier, password: password))
+                                    await vm.authActions.auth(method: .input(action: .logIn, identifier: identifier, password: password))
                                 }
                             }
                     }
@@ -107,7 +107,7 @@ struct LogInView: View {
                     {
                         print("🟡 ログイン押")
                         Task {
-                            await vm.authActions.auth(action: .login, method: .input(identifier: identifier, password: password))
+                            await vm.authActions.auth(method: .input(action: .logIn, identifier: identifier, password: password))
                         }
                     }
                     .font(.title3)

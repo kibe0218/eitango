@@ -98,7 +98,7 @@ struct SignUpView: View {
                                     .onSubmit {
                                         print("🟡 onSubmit")
                                         Task {
-                                            await vm.authActions.auth(action: .signUp, method: .input(identifier: identifier, password: password))
+                                            await vm.authActions.auth(method: .input(action: .signUp, identifier: identifier, password: password))
                                         }
                                     }
                             }
@@ -113,7 +113,7 @@ struct SignUpView: View {
                             {
                                 print("🟡 次へ押")
                                 Task {
-                                    await vm.authActions.auth(action: .signUp, method: .input(identifier: identifier, password: password))
+                                    await vm.authActions.auth(method: .input(action: .signUp, identifier: identifier, password: password))
                                 }
                             }
                             .font(.title3)

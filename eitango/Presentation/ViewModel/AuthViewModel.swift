@@ -25,7 +25,7 @@ class AuthViewModel: NSObject, ObservableObject {
 
     func auth(method: AuthMethod) async {
         do {
-            session.user = try await useCase.divideMethod(action: action, method: method)
+            session.user = try await useCase.auth(method: method)
         } catch {
             appState.error = .alert("あのさぁ")
         }
@@ -74,7 +74,7 @@ extension AuthViewModel: ASAuthorizationControllerDelegate {
             
             
             Task { @MainActor in
-                await auth(action: nil, method: .apple(idToken: idTokenString, nonce: nonce))
+                await auth(method: .apple(idToken: idTokenString, nonce: nonce))
             }
         }
     }

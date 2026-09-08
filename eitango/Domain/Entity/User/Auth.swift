@@ -7,6 +7,11 @@ enum InputAuthMethod {
 }
 
 enum AuthMethod {
-    case input
-    case apple
+    case input(action: AuthAction, identifier: String, password: String)
+    case apple(idToken: String, nonce: String)
+}
+
+enum AuthAction {
+    case signUp
+    case logIn
 }
