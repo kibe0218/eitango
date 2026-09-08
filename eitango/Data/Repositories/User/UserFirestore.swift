@@ -15,7 +15,7 @@ final class User_DataBaseRepository: User_DataBaseRepositoryProtocol {
     
     // MARK: - Public CRUD Functions
     
-    // 同期
+    // uidを受け取ってUserを返す
     func fetch(id: String) async throws -> User {
         let url = try urlBuilder.makeURL(
             path: "users",

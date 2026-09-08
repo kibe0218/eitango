@@ -30,10 +30,20 @@ func sendRequest(
         }
         let (data, response) = try await URLSession.shared.data(for: request)
         
-        guard let httpResponse = response as? HTTPURLResponse,
-              200..<300 ~= httpResponse.statusCode else {
+        guard let httpResponse = response as? HTTPURLResponse
+        else {
+                throw DataBaseError.invalidResponse
+        }
+        
+        switch httpResponse.statusCode {
+        case 200..<300:
+            break
+        case 404:
+            throw DataBaseError.userNotFound
+        default:
             throw DataBaseError.invalidResponse
         }
+        
         return data
     } catch let error as DataBaseError {
         throw error
@@ -44,7 +54,8 @@ func sendRequest(
 
 // URL作成
 struct URLBuilder {
-    private let baseURL = "https://card-api-1058988137386.asia-northeast1.run.app/"
+//    private let baseURL = "https://card-api-1058988137386.asia-northeast1.run.app/"
+    private let baseURL = "http://localhost:8080"
     func makeURL(
         path: String,
         queryItems: [URLQueryItem]? = nil

@@ -3,6 +3,8 @@ import Foundation
 extension DataBaseError {
     var message: String {
         switch self {
+        case .userNotFound:
+            return "ユーザーを見つけることができませんでした。" + mouitido
         case .duplicatedUsername:
             return "このユーザー名は既に使用されています。他の名前で" + mouitido
         case .invalidURL:

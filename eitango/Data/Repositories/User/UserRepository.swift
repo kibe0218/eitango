@@ -5,7 +5,7 @@ import AuthenticationServices
 
 protocol UserRepositoryProtocol {
     func fetchFromCoreData() throws -> User?
-    func signUpWithEmail(email: String, password: String) async throws -> String
+    func signUpWithEmail(email: String, password: String) async throws -> User
     func logInWithEmail(email: String, password: String) async throws -> User
     func authenticateWithApple(credential: AuthCredential) async throws -> User
     func logOut() async throws
@@ -29,18 +29,29 @@ class UserRepository: UserRepositoryProtocol {
     
     // MARK: - Account Operations
 
+    // uidが存在→User 存在しない→Userを作成
+    func ensureUser(uid: String) async throws -> User {
+        do {
+            return try await dbRepository.fetch(id: uid)
+        } catch DataBaseError.userNotFound {
+            try await dbRepository.add(id: uid)
+            return try await dbRepository.fetch(id: uid)
+        }
+    }
+    
     // 同期
     func fetchFromCoreData() throws -> User? {
         return try cdRepository.fetch()
     }
     
+    
     // サインアップ
-    func signUpWithEmail(email: String, password: String) async throws -> String {
+    func signUpWithEmail(email: String, password: String) async throws -> User {
         do {
             let uid = try await authRepository.signUpWithEmail(email: email, password: password)
             guard !uid.isEmpty else { throw AuthError.unknown }
             try await dbRepository.add(id: uid)
-            return uid
+            return try await ensureUser(uid: uid)
         } catch {
             try await authRepository.delete()
             throw error
@@ -50,17 +61,13 @@ class UserRepository: UserRepositoryProtocol {
     // ログイン
     func logInWithEmail(email: String, password: String) async throws -> User  {
         let uid = try await authRepository.logInWithEmail(email: email, password: password)
-        return try await dbRepository.fetch(id: uid)
+        return try await ensureUser(uid: uid)//Authに存在するがDBに存在しないユーザーを新しく作ることができる
     }
     
     // Apple
     func authenticateWithApple(credential: AuthCredential) async throws -> User {
         let uid = try await authRepository.authenticateWithApple(credential: credential)
-        do {
-            return try await dbRepository.fetch(id: uid)
-        } catch {
-            return try await dbRepository.add(id: uid)
-        }
+        return try await ensureUser(uid: uid)
     }
 
 

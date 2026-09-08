@@ -11,33 +11,33 @@ struct AuthUseCase {
         self.repository = repository
     }
     
-    // 成功だったらUser、失敗だったらerrorを返す
-    // ログイン作業をまとめる
-    func divideMethod(action: AuthAction, method: AuthMethod) async throws -> User {
+    func signUpWithInput(identifier: String, password: String) async throws -> User {
+        let method = try resolveInputAuthMethod(identifier: identifier, password: password)
         switch method {
-        case .input(let identifier, let password):
-            let defaultMethod = try resolveDefaultAuthMethod(identifier: identifier, password: password)
-            switch defaultMethod {
-            case .email(let email, let password):
-                if .login == action {
-                    return try await repository.logInWithEmail(email: email, password: password)
-                } else {
-                    return try await repository.signUpWithEmail(email: email, password: password)
-                }
-            }
-            
-        case .apple(let idToken, let nonce):
-            let credential = OAuthProvider.credential(
-                providerID: AuthProviderID.apple,
-                idToken: idToken,
-                rawNonce: nonce
-            )
-            return try await repository.authenticateWithApple(credential: credential)
+        case .email:
+            return try await repository.signUpWithEmail(email: identifier, password: password)
         }
+    }
+    
+    func logInWithInput(identifier: String, password: String) async throws -> User {
+        let method = try resolveInputAuthMethod(identifier: identifier, password: password)
+        switch method {
+        case .email:
+            return try await repository.logInWithEmail(email: identifier, password: password)
+        }
+    }
+    
+    func withApple(idToken: String, nonce: String) async throws -> User {
+        let credential = OAuthProvider.credential(
+            providerID: AuthProviderID.apple,
+            idToken: idToken,
+            rawNonce: nonce
+        )
+        return try await repository.authenticateWithApple(credential: credential)
     }
 
     // 入力値のログインの分別(今後増やす用途)
-    func resolveDefaultAuthMethod(identifier: String, password: String) throws -> DefaultAuthMethod {
+    func resolveInputAuthMethod(identifier: String, password: String) throws -> InputAuthMethod {
         if let email = UserValidator.isValidEmail(identifier) {
             print("🟡 email")
             return .email(email: email, password: password)

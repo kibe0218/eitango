@@ -60,7 +60,7 @@
 				Domain/Logic/Hasher.swift,
 				Domain/Logic/RandomNonce.swift,
 				Domain/Logic/UserValidator.swift,
-				Domain/UseCase/ResolveDefaultAuthMethod.swift,
+				Domain/UseCase/AuthUseCase.swift,
 				eitango.swift,
 				eitangoData.xcdatamodeld,
 				"GoogleService-Info.plist",

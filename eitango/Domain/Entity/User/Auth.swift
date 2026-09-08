@@ -1,17 +1,12 @@
 import Foundation
 import FirebaseAuth
 
-enum AuthAction {
-    case login
-    case signUp
-}
-
-enum AuthMethod: Equatable {
-    case input(identifier: String, password: String)
-    case apple(idToken: String, nonce: String)
-}
-
 // 今後phoneNumberとかいれたい拡張するならここ
-enum DefaultAuthMethod {
+enum InputAuthMethod {
     case email(email: String, password: String)
+}
+
+enum AuthMethod {
+    case input
+    case apple
 }

@@ -2,6 +2,7 @@ import Foundation
 
 // DataBase
 enum DataBaseError: Error {
+    case userNotFound
     case duplicatedUsername
     case invalidURL
     case network
