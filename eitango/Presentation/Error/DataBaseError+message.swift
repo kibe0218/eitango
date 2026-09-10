@@ -1,7 +1,7 @@
 import Foundation
 
-extension DataBaseError {
-    var message: String {
+extension DataBaseError: LocalizedError {
+    var errorDescription: String? {
         switch self {
         case .userNotFound:
             return "ユーザーを見つけることができませんでした。" + mouitido

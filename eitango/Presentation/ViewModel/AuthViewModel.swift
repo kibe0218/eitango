@@ -27,6 +27,9 @@ class AuthViewModel: NSObject, ObservableObject {
         do {
             session.user = try await useCase.auth(method: method)
         } catch {
+            print("🔴 error:", error)
+            print("🔴 localizedDescription:", error.localizedDescription)
+            print("🔴 type:", type(of: error))
             appState.error = .alert(error.localizedDescription)
         }
     }
