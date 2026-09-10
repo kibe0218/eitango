@@ -24,6 +24,7 @@ struct ErrorAlertView: View {
                                 Text(msg)
                                     .foregroundColor(colorUIState.palette.cardfrontColor)
                                     .multilineTextAlignment(.center)
+                                    .font(.body)
                                 Spacer()
                                 Button("OK") {
                                     appState.error = nil
@@ -35,7 +36,7 @@ struct ErrorAlertView: View {
                                 .glassEffect(.regular.tint(colorUIState.palette.customaccentColor).interactive())
                                 
                             }
-                            .padding()
+                            .padding(.vertical)
                             .frame(width: geo.size.width * 0.85, height: geo.size.height * 0.26, alignment: .top)
                             .background(colorUIState.palette.backColor)
                             .cornerRadius(50)
