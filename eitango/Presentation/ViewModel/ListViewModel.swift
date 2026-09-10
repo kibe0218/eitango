@@ -24,7 +24,7 @@ class ListViewModel: ObservableObject {
         do {
             session.lists = try await repository.fetchAll()
         } catch {
-            appState.error = ErrorToUIAlertError(error)
+            appState.error = .alert(error.localizedDescription)
         }
     }
     
@@ -32,7 +32,7 @@ class ListViewModel: ObservableObject {
         do {
             session.lists = try await repository.reload(userId: userSession.userId())
         } catch {
-            appState.error = ErrorToUIAlertError(error)
+            appState.error = .alert(error.localizedDescription)
         }
     }
     
@@ -42,7 +42,7 @@ class ListViewModel: ObservableObject {
             session.lists.append(newList)
             return newList
         } catch {
-            appState.error = ErrorToUIAlertError(error)
+            appState.error = .alert(error.localizedDescription)
             return nil
         }
     }
@@ -52,7 +52,7 @@ class ListViewModel: ObservableObject {
             try await repository.delete(userId: userSession.userId(), id: id)
             session.lists.removeAll { $0.id == id }
         } catch {
-            appState.error = ErrorToUIAlertError(error)
+            appState.error = .alert(error.localizedDescription)
         }
     }
 }

@@ -29,7 +29,7 @@ class CardViewModel: ObservableObject {
         do {
             session.cards = try repository.fetchAll()
         } catch {
-            appState.error = ErrorToUIAlertError(error)
+            appState.error = .alert(error.localizedDescription)
         }
     }
     
@@ -37,7 +37,7 @@ class CardViewModel: ObservableObject {
         do {
             session.cards = try repository.fetchAllBy(listId: listId)
         } catch {
-            appState.error = ErrorToUIAlertError(error)
+            appState.error = .alert(error.localizedDescription)
         }
     }
     
@@ -45,7 +45,7 @@ class CardViewModel: ObservableObject {
         do {
             session.cards = try await repository.reload(userId: userSession.userId())
         } catch {
-            appState.error = ErrorToUIAlertError(error)
+            appState.error = .alert(error.localizedDescription)
         }
     }
     
@@ -56,7 +56,7 @@ class CardViewModel: ObservableObject {
                 session.cards[index] = updatedCard
             }
         } catch {
-            appState.error = ErrorToUIAlertError(error)
+            appState.error = .alert(error.localizedDescription)
         }
     }
     
@@ -67,7 +67,7 @@ class CardViewModel: ObservableObject {
             session.cards.append(newCard)
             translatingCount -= 1
         } catch {
-            appState.error = ErrorToUIAlertError(error)
+            appState.error = .alert(error.localizedDescription)
         }
     }
     
@@ -76,7 +76,7 @@ class CardViewModel: ObservableObject {
             let newCard = try await repository.add(userId: userSession.userId(), listId: listId, card: card)
             session.cards.append(newCard)
         } catch {
-            appState.error = ErrorToUIAlertError(error)
+            appState.error = .alert(error.localizedDescription)
         }
     }
     
@@ -85,7 +85,7 @@ class CardViewModel: ObservableObject {
             try await repository.delete(userId: userSession.userId(), listId: listId, id: id)
             session.cards.removeAll { $0.id == id }
         } catch {
-            appState.error = ErrorToUIAlertError(error)
+            appState.error = .alert(error.localizedDescription)
         }
     }
 

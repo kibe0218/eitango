@@ -1,7 +1,7 @@
 import Foundation
 
-extension AuthError {
-    var message: String {
+extension AuthError: LocalizedError {
+    var errorDescription: String? {
         switch self {
         case .wrongPassword:
             print("🟡 message case: wrongPassword")
@@ -27,5 +27,6 @@ extension AuthError {
             print("🟡 message case: unknown")
             return "ログインに失敗しました。\n" + mouitido
         }
+        
     }
 }

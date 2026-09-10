@@ -22,7 +22,7 @@ class UserViewModel: ObservableObject {
         do {
             session.user = try repository.fetchFromCoreData()
         } catch {
-            appState.error = ErrorToUIAlertError(error)
+            appState.error = .alert(error.localizedDescription)
         }
     }
     
@@ -31,8 +31,7 @@ class UserViewModel: ObservableObject {
         do {
             session.user = try await repository.signUpWithEmail(email: email, password: password)
         } catch {
-            print("🟡 signupえらー")
-            appState.error = ErrorToUIAlertError(error)
+            appState.error = .alert(error.localizedDescription)
         }
     }
     
@@ -41,7 +40,7 @@ class UserViewModel: ObservableObject {
         do {
             session.user = try await repository.logInWithEmail(email: email, password: password)
         } catch {
-            appState.error = ErrorToUIAlertError(error)
+            appState.error = .alert(error.localizedDescription)
         }
     }
     
@@ -51,7 +50,7 @@ class UserViewModel: ObservableObject {
             try await repository.logOut()
             session.user = nil
         } catch {
-            appState.error = ErrorToUIAlertError(error)
+            appState.error = .alert(error.localizedDescription)
         }
     }
     
@@ -61,7 +60,7 @@ class UserViewModel: ObservableObject {
             try await repository.delete(id: session.userId())
             session.user = nil
         } catch {
-            appState.error = ErrorToUIAlertError(error)
+            appState.error = .alert(error.localizedDescription)
         }
     }
 }
